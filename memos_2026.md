@@ -1,3 +1,8 @@
+> 微软微软微软为
+> @2026-06-04 17:32
+
+![](https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/1780565534963_993.png)
+
 ---
 title: memos_2026
 published: 2026-06-01
