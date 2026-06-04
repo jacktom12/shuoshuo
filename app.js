@@ -658,116 +658,204 @@ init();
 // ==============================================
 // 发说说功能（安全版：前端无密码！）
 // ==============================================
-const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev/"; // 只填这个
+const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
+
 let publishModal = null;
+let selectedPublishFiles = [];
 
-// 打开按钮
-document.getElementById("openPublishBtn").onclick = openPublishEditor;
+document.getElementById('openPublishBtn').onclick = openPublishEditor;
 
-// 打开发布界面（先让用户输密码）
 function openPublishEditor() {
   if (publishModal) publishModal.remove();
+  selectedPublishFiles = [];
 
-  publishModal = document.createElement("div");
-  publishModal.style.cssText = `
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,0.7);z-index:99999;
-    display:flex;align-items:center;justify-content:center;
-  `;
+  publishModal = document.createElement('div');
+  publishModal.className = 'publish-mask';
 
   publishModal.innerHTML = `
-  <div style="background:#1e1e1e;color:white;width:90%;max-width:600px;border-radius:16px;padding:22px;">
-    <h3>发布新说说</h3>
-    <input type="password" id="publishPwd" placeholder="请输入发布密码" style="width:100%;padding:12px;border-radius:8px;background:#2a2a2a;color:white;border:none;margin-bottom:10px;">
-    <textarea id="memoContent" placeholder="写点什么..." style="width:100%;height:120px;background:#2a2a2a;color:white;border:none;border-radius:8px;padding:12px;margin:10px 0;"></textarea>
-    
-    <div style="margin:10px 0;">
-      <button id="selectImg" style="padding:8px 14px;background:#333;color:white;border-radius:8px;margin-right:10px;">选择图片</button>
-      <input type="file" id="imgFile" accept="image/*" style="display:none;" multiple>
-      <div id="previewImgs" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
-    </div>
+    <div class="publish-panel" onclick="event.stopPropagation()">
+      <div class="publish-top">
+        <h3 class="publish-title">发布说说</h3>
+        <button id="closeMemo" class="publish-close" type="button">✕</button>
+      </div>
 
-    <div style="display:flex;gap:10px;">
-      <button id="submitMemo" style="flex:1;padding:12px;background:#1d9bf0;color:white;border:none;border-radius:8px;">发布</button>
-      <button id="closeMemo" style="padding:12px;background:#444;color:white;border:none;border-radius:8px;">取消</button>
+      <div class="publish-field">
+        <label class="publish-label" for="publishPwd">发布密码</label>
+        <input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码" />
+      </div>
+
+      <div class="publish-field">
+        <label class="publish-label" for="memoContent">这一刻想说什么</label>
+        <textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea>
+      </div>
+
+      <div class="publish-field">
+        <div class="publish-tools">
+          <button id="selectImg" class="pick-img-btn" type="button">选择照片</button>
+          <span id="imgCountText" class="publish-tip">未选择图片</span>
+        </div>
+
+        <input type="file" id="imgFile" accept="image/*" multiple hidden />
+        <div id="previewWrap">
+          <div class="publish-empty">可不传图片；支持一次选择多张，也支持重复补选。</div>
+        </div>
+      </div>
+
+      <div class="publish-footer">
+        <button id="submitMemo" class="publish-submit" type="button">发布</button>
+        <button id="closeMemo2" class="publish-cancel" type="button">取消</button>
+      </div>
     </div>
-  </div>
   `;
 
   document.body.appendChild(publishModal);
-  document.getElementById("closeMemo").onclick = () => publishModal.remove();
-  document.getElementById("selectImg").onclick = () => document.getElementById("imgFile").click();
-  document.getElementById("submitMemo").onclick = submitMemo;
 
-  document.getElementById("imgFile").onchange = (e) => {
-    const pre = document.getElementById("previewImgs");
-    pre.innerHTML = "";
-    for (let f of e.target.files) {
-      const url = URL.createObjectURL(f);
-      const img = document.createElement("img");
-      img.src = url;
-      img.style.width = "60px";
-      img.style.height = "60px";
-      img.style.objectFit = "cover";
-      img.style.borderRadius = "8px";
-      pre.appendChild(img);
+  const close = () => {
+    if (publishModal) {
+      publishModal.remove();
+      publishModal = null;
+      selectedPublishFiles.forEach(f => {
+        if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+      });
+      selectedPublishFiles = [];
     }
   };
+
+  publishModal.addEventListener('click', (e) => {
+    if (e.target === publishModal) close();
+  });
+
+  document.getElementById('closeMemo').onclick = close;
+  document.getElementById('closeMemo2').onclick = close;
+  document.getElementById('selectImg').onclick = () => {
+    document.getElementById('imgFile').click();
+  };
+
+  document.getElementById('imgFile').addEventListener('change', handlePublishFiles);
+  document.getElementById('submitMemo').onclick = submitMemo;
+
+  renderSelectedImages();
 }
 
-// 提交到 CF Workers
-async function submitMemo() {
-  const pwd = document.getElementById("publishPwd").value.trim();
-  const content = document.getElementById("memoContent").value.trim();
-  const fileInput = document.getElementById("imgFile");
+function handlePublishFiles(e) {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
 
-  if (!pwd || !content) {
-    alert("请输入密码 + 内容");
+  for (const file of files) {
+    const duplicate = selectedPublishFiles.some(
+      item =>
+        item.file.name === file.name &&
+        item.file.size === file.size &&
+        item.file.lastModified === file.lastModified
+    );
+
+    if (!duplicate) {
+      selectedPublishFiles.push({
+        file,
+        previewUrl: URL.createObjectURL(file)
+      });
+    }
+  }
+
+  e.target.value = '';
+  renderSelectedImages();
+}
+
+function renderSelectedImages() {
+  const wrap = document.getElementById('previewWrap');
+  const countText = document.getElementById('imgCountText');
+  if (!wrap || !countText) return;
+
+  countText.textContent = selectedPublishFiles.length
+    ? `已选择 ${selectedPublishFiles.length} 张图片`
+    : '未选择图片';
+
+  if (!selectedPublishFiles.length) {
+    wrap.innerHTML = `<div class="publish-empty">可不传图片；支持一次选择多张，也支持重复补选。</div>`;
     return;
   }
 
-  const imgBase64List = [];
-  for (let f of fileInput.files) {
-    const b64 = await toBase64(f);
-    imgBase64List.push(b64);
+  wrap.innerHTML = `
+    <div class="preview-grid">
+      ${selectedPublishFiles.map((item, idx) => `
+        <div class="preview-item">
+          <img src="${item.previewUrl}" alt="preview-${idx}" />
+          <button class="preview-del" type="button" data-idx="${idx}">✕</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  wrap.querySelectorAll('.preview-del').forEach(btn => {
+    btn.onclick = () => {
+      const idx = Number(btn.dataset.idx);
+      const target = selectedPublishFiles[idx];
+      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      selectedPublishFiles.splice(idx, 1);
+      renderSelectedImages();
+    };
+  });
+}
+
+async function submitMemo() {
+  const pwd = document.getElementById('publishPwd').value.trim();
+  const content = document.getElementById('memoContent').value.trim();
+
+  if (!pwd) {
+    alert('请输入发布密码');
+    return;
   }
 
-  const btn = document.getElementById("submitMemo");
-  btn.textContent = "发布中...";
+  if (!content && selectedPublishFiles.length === 0) {
+    alert('至少填写文字或选择一张图片');
+    return;
+  }
+
+  const btn = document.getElementById('submitMemo');
+  btn.textContent = '发布中...';
   btn.disabled = true;
 
   try {
+    const imgBase64List = [];
+    for (const item of selectedPublishFiles) {
+      const b64 = await toBase64(item.file);
+      imgBase64List.push(b64);
+    }
+
     const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        publishPassword: pwd,  // 只传密码到后端校验
+        publishPassword: pwd,
         content,
         imgList: imgBase64List
       })
     });
 
     const json = await res.json();
+
     if (json.code === 200) {
-      alert("发布成功！页面稍后刷新");
-      publishModal.remove();
-      setTimeout(() => location.reload(), 1500);
+      alert('发布成功');
+      if (publishModal) publishModal.remove();
+      setTimeout(() => location.reload(), 800);
     } else {
-      alert("错误：" + json.msg);
+      alert(json.msg || '发布失败');
+      btn.textContent = '发布';
+      btn.disabled = false;
     }
   } catch (e) {
-    alert("请求失败");
+    alert('发布失败，请稍后重试');
     console.error(e);
+    btn.textContent = '发布';
+    btn.disabled = false;
   }
-
-  btn.textContent = "发布";
-  btn.disabled = false;
 }
 
 function toBase64(file) {
-  return new Promise((res) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => res(reader.result);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
