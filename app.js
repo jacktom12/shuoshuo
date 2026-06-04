@@ -654,3 +654,120 @@ if (localStorage.theme === 'dark') {
 }
 
 init();
+
+// ==============================================
+// 发说说功能（安全版：前端无密码！）
+// ==============================================
+const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev/"; // 只填这个
+let publishModal = null;
+
+// 打开按钮
+document.getElementById("openPublishBtn").onclick = openPublishEditor;
+
+// 打开发布界面（先让用户输密码）
+function openPublishEditor() {
+  if (publishModal) publishModal.remove();
+
+  publishModal = document.createElement("div");
+  publishModal.style.cssText = `
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.7);z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+  `;
+
+  publishModal.innerHTML = `
+  <div style="background:#1e1e1e;color:white;width:90%;max-width:600px;border-radius:16px;padding:22px;">
+    <h3>发布新说说</h3>
+    <input type="password" id="publishPwd" placeholder="请输入发布密码" style="width:100%;padding:12px;border-radius:8px;background:#2a2a2a;color:white;border:none;margin-bottom:10px;">
+    <textarea id="memoContent" placeholder="写点什么..." style="width:100%;height:120px;background:#2a2a2a;color:white;border:none;border-radius:8px;padding:12px;margin:10px 0;"></textarea>
+    
+    <div style="margin:10px 0;">
+      <button id="selectImg" style="padding:8px 14px;background:#333;color:white;border-radius:8px;margin-right:10px;">选择图片</button>
+      <input type="file" id="imgFile" accept="image/*" style="display:none;" multiple>
+      <div id="previewImgs" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button id="submitMemo" style="flex:1;padding:12px;background:#1d9bf0;color:white;border:none;border-radius:8px;">发布</button>
+      <button id="closeMemo" style="padding:12px;background:#444;color:white;border:none;border-radius:8px;">取消</button>
+    </div>
+  </div>
+  `;
+
+  document.body.appendChild(publishModal);
+  document.getElementById("closeMemo").onclick = () => publishModal.remove();
+  document.getElementById("selectImg").onclick = () => document.getElementById("imgFile").click();
+  document.getElementById("submitMemo").onclick = submitMemo;
+
+  document.getElementById("imgFile").onchange = (e) => {
+    const pre = document.getElementById("previewImgs");
+    pre.innerHTML = "";
+    for (let f of e.target.files) {
+      const url = URL.createObjectURL(f);
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.width = "60px";
+      img.style.height = "60px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "8px";
+      pre.appendChild(img);
+    }
+  };
+}
+
+// 提交到 CF Workers
+async function submitMemo() {
+  const pwd = document.getElementById("publishPwd").value.trim();
+  const content = document.getElementById("memoContent").value.trim();
+  const fileInput = document.getElementById("imgFile");
+
+  if (!pwd || !content) {
+    alert("请输入密码 + 内容");
+    return;
+  }
+
+  const imgBase64List = [];
+  for (let f of fileInput.files) {
+    const b64 = await toBase64(f);
+    imgBase64List.push(b64);
+  }
+
+  const btn = document.getElementById("submitMemo");
+  btn.textContent = "发布中...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        publishPassword: pwd,  // 只传密码到后端校验
+        content,
+        imgList: imgBase64List
+      })
+    });
+
+    const json = await res.json();
+    if (json.code === 200) {
+      alert("发布成功！页面稍后刷新");
+      publishModal.remove();
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      alert("错误：" + json.msg);
+    }
+  } catch (e) {
+    alert("请求失败");
+    console.error(e);
+  }
+
+  btn.textContent = "发布";
+  btn.disabled = false;
+}
+
+function toBase64(file) {
+  return new Promise((res) => {
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
