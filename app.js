@@ -919,12 +919,12 @@ async function submitMemo() {
   const content = document.getElementById('memoContent').value.trim();
 
   if (!pwd) {
-    alert('请输入发布密码');
+   showToast('请输入发布密码', 'error');
     return;
   }
 
   if (!content && selectedPublishFiles.length === 0) {
-    alert('至少填写文字或选择一张图片');
+    showToast('至少填写文字或选择一张图片', 'error');
     return;
   }
 
@@ -966,17 +966,17 @@ async function submitMemo() {
       }
       selectedPublishFiles = [];
 
-      alert('发布成功');
+     showToast('发布成功', 'success');
     } else {
       if (json.code === 403 || /密码错误/.test(json.msg || '')) {
         clearPublishPassword();
       }
-      alert(json.msg || '发布失败');
+      showToast(json.msg || '发布失败', 'error');
       btn.textContent = '发布';
       btn.disabled = false;
     }
   } catch (e) {
-    alert('发布失败，请稍后重试');
+    showToast('发布失败，请稍后重试', 'error');
     console.error(e);
     btn.textContent = '发布';
     btn.disabled = false;
@@ -990,4 +990,29 @@ function toBase64(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+// ==============================================
+// 改一下弹窗风格
+// ==============================================
+function showToast(message, type = "success", duration = 2200) {
+  let wrap = document.getElementById("toastWrap");
+  if (!wrap) {
+    wrap = document.createElement("div");
+    wrap.id = "toastWrap";
+    wrap.className = "toast-wrap";
+    document.body.appendChild(wrap);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  wrap.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("hide");
+    setTimeout(() => {
+      toast.remove();
+      if (!wrap.children.length) wrap.remove();
+    }, 220);
+  }, duration);
 }
