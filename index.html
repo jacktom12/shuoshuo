@@ -1,58 +1,56 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>迷蒙幻影</title>
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌿</text></svg>'>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>碎碎念</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-
-<div class="app-container">
-  <header class="header">
-    <div class="header-top">
-      <button id="searchToggleBtn" class="icon-btn">🔍</button>
-      <h1>迷蒙幻影</h1>
-             <button id="openPublishBtn" class="publish-btn">发布</button>
-
-      <button id="themeBtn" class="icon-btn">🌙</button>
-    </div>
-    <!-- 默认隐藏搜索框，点击放大镜展开 -->
-    <div id="searchWrap" class="search-wrap">
-        <input id="search" placeholder="检索记忆碎片..." />
-    </div>
-  </header>
-
-  <main>
-    <div class="profile-header">
-      <div class="profile-info">
-        
-         
-        <p class="profile-bio">
-          生死去来，棚头傀儡。<br>
-          一线断时，落落磊磊。
-        </p>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-top">
+        <button id="searchToggleBtn" class="icon-btn">⌕</button>
+        <h1>碎碎念</h1>
+        <div class="header-actions">
+          <button id="openPublishBtn" class="publish-btn">发布</button>
+          <button id="themeBtn" class="icon-btn">☾</button>
+        </div>
       </div>
-      <div class="profile-avatar">
-        <img src="https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg" alt="头像">
+
+      <div id="searchWrap" class="search-wrap">
+        <input id="search" placeholder="搜索记忆..." />
       </div>
-    </div>
+    </header>
 
-    <div id="posts"></div>
-    <div id="loader">正在翻阅更久远的记忆...</div>
-  </main>
-</div>
+    <main>
+      <div class="profile-header">
+        <div class="profile-info">
+          <p class="profile-bio">生死去来，棚头傀儡。<br>一线断时，落落磊磊。</p>
+        </div>
+        <div class="profile-avatar">
+          <img
+            src="https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2FMuhte%C5%9Fem%20Whatsapp%20Profil%20Foto%C4%9Fraflar%C4%B1%20Full%20HD.jpg"
+            alt="avatar"
+          />
+        </div>
+      </div>
 
-<div id="lightbox" class="lightbox">
-  <button id="lb-close" class="lb-btn">✕</button>
-  <button id="lb-prev" class="lb-btn nav-btn">❮</button>
-  <img id="lightboxImg">
-  <button id="lb-next" class="lb-btn nav-btn">❯</button>
-  <div id="lb-counter">1 / 1</div>
-</div>
+      <div id="posts"></div>
+      <div id="loader">正在翻阅更久远的记忆...</div>
+    </main>
+  </div>
 
-<script src="app.js"></script>
+  <div id="lightbox" class="lightbox">
+    <button id="lb-close" class="lb-btn">✕</button>
+    <button id="lb-prev" class="lb-btn nav-btn">❮</button>
+    <img id="lightboxImg" alt="preview" />
+    <button id="lb-next" class="lb-btn nav-btn">❯</button>
+    <div id="lb-counter">1 / 1</div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>

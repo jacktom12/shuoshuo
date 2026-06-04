@@ -658,6 +658,9 @@ init();
 // ==============================================
 // 发说说功能（安全版：前端无密码！）
 // ==============================================
+const AVATAR_RAW_URL = "https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları Full HD.jpg";
+const AVATAR_URL = `https://images.weserv.nl/?url=${encodeURIComponent(AVATAR_RAW_URL)}`;
+
 const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
 const PUBLISH_PWD_KEY = "memo_publish_pwd";
 const PUBLISH_PWD_DAYS = 30;
@@ -679,15 +682,6 @@ function getPublishPassword() {
 
 function clearPublishPassword() {
   document.cookie = `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
-}
-
-function escapeHtml(str = "") {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
 
 function getNowBeijingString() {
@@ -728,7 +722,7 @@ function renderSinglePostHtml(p) {
   return `
     <article class="post" id="post-${p.id}">
       <div class="post-left">
-        <img class="avatar" src="https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem%20Whatsapp%20Profil%20Fotoğrafları%20Full%20HD.jpg" alt="avatar" />
+        <img class="avatar" src="${AVATAR_URL}" alt="avatar" />
       </div>
       <div class="post-right">
         <div class="post-header">
@@ -945,6 +939,9 @@ async function submitMemo() {
       imgBase64List.push(b64);
     }
 
+    const localPreviewUrls = selectedPublishFiles.map(item => item.previewUrl);
+    const publishTime = getNowBeijingString();
+
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -960,12 +957,13 @@ async function submitMemo() {
     if (json.code === 200) {
       setPublishPassword(pwd);
 
-      const localPreviewUrls = selectedPublishFiles.map(item => item.previewUrl);
-      const newPost = buildNewPostObject(content, localPreviewUrls, getNowBeijingString());
+      const newPost = buildNewPostObject(content, localPreviewUrls, publishTime);
       insertNewPostToTop(newPost);
 
-      if (publishModal) publishModal.remove();
-      publishModal = null;
+      if (publishModal) {
+        publishModal.remove();
+        publishModal = null;
+      }
       selectedPublishFiles = [];
 
       alert('发布成功');
