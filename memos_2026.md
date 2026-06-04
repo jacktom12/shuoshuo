@@ -3,17 +3,6 @@
 
 ![](https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/1780565534963_993.png)
 
----
-title: memos_2026
-published: 2026-06-01
-category: memos
-tags:
-  - 备忘录
-description: "好记性不如烂笔头！"
-draft: false
-image: ""
----
-
 >  有点遗憾反而有活人感 ![](https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Thirteen.Talks.S09E08.2160p.TX.WEB-DL.AAC2.0.H.265-MWeb-%5B01.08.20%5D.png) ![](https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Thirteen.Talks.S09E08.2160p.TX.WEB-DL.AAC2.0.H.265-MWeb-%5B01.08.26%5D.png) @2026-06-04 15:36
 
 >  我們的目標是實現公正的社會文明，這是我們幹事情背後的推動力。“透明公開”是公正社會文明的要點，但要點與目標是不可混淆的（意即：目標並非取得“透明公開”的社會文明）。話雖如此，用“透明公開”作為實現公正的途徑，亦是甚佳的方法，同時還避免犯下太多錯誤。 我們的意識形態是跨越政治的，非左，非右，其根基在於（對世界的）認知。在給出與“如何處世”、“如何從公民過渡至社會文明”、“如何影響他人”一類問題相關的忠告與觀念形態之前，應當對世界上正在發生的事情有較為深刻的認知。在未充分認知這個世界之前提出的建議與觀念形態，必然歸屬於謬解。當今世界上所有的意識形態系統，從某種程度上來講，都是虛空、缺乏實質的。它們缺乏在認知世界時至關重要，同時在自身面對這個世界時所必需的思想成分 @2026-06-04 13:14
