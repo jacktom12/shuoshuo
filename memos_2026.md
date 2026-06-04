@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+> GPT还是牛的，分分钟出货啊，还是对比图
+> ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780574947813_915.png)
+> @2026-06-04 20:09
+
 > 杀杀杀！！
 > ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780570236351_73.png)
 > @2026-06-04 18:50
