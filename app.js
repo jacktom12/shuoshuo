@@ -73,7 +73,7 @@ async function loadYearMd(year) {
   isLoading = true;
   loaderDom.textContent = `正在翻阅 ${year} 年的记忆...`;
 
-  const fileName = encodeURIComponent(`备忘录_${year}.md`);
+  const fileName = `备忘录_${year}.md`;
 
   try {
     const res = await fetch(fileName);
