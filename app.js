@@ -659,7 +659,7 @@ init();
 // 发说说功能（安全版：前端无密码！）
 // ==============================================
 
-const AVATAR_URL = "https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg}";
+const AVATAR_URL = "https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg";
 
 const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
 const PUBLISH_PWD_KEY = "memo_publish_pwd";
