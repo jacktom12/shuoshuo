@@ -1,4 +1,13 @@
-
+---
+title: memos_2026
+published: 2026-06-01
+category: memos
+tags:
+  - 备忘录
+description: "好记性不如烂笔头！"
+draft: false
+image: ""
+---
 
 >  时来天地皆同力，运去英雄不自由。何况是普通人呢。 @2026-06-04 11:03
 
