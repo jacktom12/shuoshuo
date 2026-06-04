@@ -73,7 +73,7 @@ async function loadYearMd(year) {
   isLoading = true;
   loaderDom.textContent = `正在翻阅 ${year} 年的记忆...`;
 
-  const fileName = `备忘录_${year}.md`;
+  const fileName = `memos_${year}.md`;
 
   try {
     const res = await fetch(fileName);
@@ -113,7 +113,7 @@ async function loadAllRemainingYears() {
 
   // 并行发送请求，最大化利用带宽，缩短等待时间
   const fetchPromises = yearsToFetch.map(y =>
-    fetch(encodeURIComponent(`备忘录_${y}.md`))
+    fetch(`memos_${y}.md`)
       .then(res => {
         if (!res.ok) throw new Error('无文件');
         return res.text();
