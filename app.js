@@ -76,7 +76,7 @@ async function loadYearMd(year) {
   const fileName = `memos_${year}.md`;
 
   try {
-    const res = await fetch(fileName);
+    const res = await fetch(`${fileName}?v=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) throw new Error('无文件');
 
     const mdContent = await res.text();
@@ -112,15 +112,15 @@ async function loadAllRemainingYears() {
   }
 
   // 并行发送请求，最大化利用带宽，缩短等待时间
-  const fetchPromises = yearsToFetch.map(y =>
-    fetch(`memos_${y}.md`)
-      .then(res => {
-        if (!res.ok) throw new Error('无文件');
-        return res.text();
-      })
-      .then(text => ({ year: y, text, ok: true }))
-      .catch(e => ({ year: y, ok: false }))
-  );
+   const fetchPromises = yearsToFetch.map(y =>
+  fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache: "no-store" })
+    .then(res => {
+      if (!res.ok) throw new Error('无文件');
+      return res.text();
+    })
+    .then(text => ({ year: y, text, ok: true }))
+    .catch(e => ({ year: y, ok: false }))
+);
 
   try {
     const results = await Promise.all(fetchPromises);
