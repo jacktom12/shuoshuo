@@ -25,20 +25,30 @@ let scale = 1;
 let lastScale = 1;
 let isScaling = false;
 
-const searchWrap = document.getElementById('searchWrap');
+ const searchInline = document.getElementById('searchInline');
 const searchToggleBtn = document.getElementById('searchToggleBtn');
+const searchInput = document.getElementById('search');
 
 searchToggleBtn.onclick = () => {
-  searchWrap.classList.toggle('open');
-  if (searchWrap.classList.contains('open')) {
-    document.getElementById('search').focus();
-    
-    // 展开搜索时，如果尚未加载全量，立刻在后台静默发起全量并行查询
+  searchInline.classList.toggle('open');
+
+  if (searchInline.classList.contains('open')) {
+    searchInput.focus();
     if (!isAllLoaded) {
       loadAllRemainingYears();
     }
+  } else {
+    searchInput.blur();
+    if (!searchInput.value.trim()) {
+      applyFilter();
+    }
   }
 };
+document.addEventListener('click', (e) => {
+  if (!searchInline.contains(e.target) && !searchInput.value.trim()) {
+    searchInline.classList.remove('open');
+  }
+});
 
 function formatRelativeTime(dateStr) {
   const target = new Date(dateStr);
