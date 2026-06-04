@@ -659,15 +659,126 @@ init();
 // 发说说功能（安全版：前端无密码！）
 // ==============================================
 const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
+const PUBLISH_PWD_KEY = "memo_publish_pwd";
+const PUBLISH_PWD_DAYS = 30;
 
 let publishModal = null;
 let selectedPublishFiles = [];
 
 document.getElementById('openPublishBtn').onclick = openPublishEditor;
 
+function setPublishPassword(password) {
+  const expires = new Date(Date.now() + PUBLISH_PWD_DAYS * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${PUBLISH_PWD_KEY}=${encodeURIComponent(password)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function getPublishPassword() {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function clearPublishPassword() {
+  document.cookie = `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+}
+
+function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getNowBeijingString() {
+  const d = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+}
+
+function buildNewPostObject(content, imageUrls = [], dateStr = "") {
+  const finalDate = dateStr || getNowBeijingString();
+  const text = String(content || "").trim();
+  return {
+    id: `local_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    date: finalDate,
+    content: [text ? `> ${text}` : "> "],
+    images: imageUrls
+  };
+}
+
+function renderSinglePostHtml(p) {
+  const textContent = Array.isArray(p.content) ? p.content.join('\n\n') : (p.content || '');
+  const parsedText = marked.parse(textContent);
+  const showTime = formatRelativeTime(p.date);
+
+  let imagesHtml = '';
+  if (p.images && p.images.length > 0) {
+    const imgsStr = p.images
+      .map(url => `<img src="${url}" alt="post-image" loading="lazy" />`)
+      .join('');
+    imagesHtml = `
+      <div class="post-images">
+        <div class="img-slide">${imgsStr}</div>
+        <div class="img-dots"></div>
+      </div>
+    `;
+  }
+
+  return `
+    <article class="post" id="post-${p.id}">
+      <div class="post-left">
+        <img class="avatar" src="https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem%20Whatsapp%20Profil%20Fotoğrafları%20Full%20HD.jpg" alt="avatar" />
+      </div>
+      <div class="post-right">
+        <div class="post-header">
+          <span class="author">迷蒙幻影</span>
+          <span class="post-time">${showTime}</span>
+        </div>
+        <div class="post-content">${parsedText}</div>
+        ${imagesHtml}
+      </div>
+    </article>
+  `;
+}
+
+function insertNewPostToTop(post) {
+  allPosts.unshift(post);
+  allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const kw = document.getElementById('search').value.toLowerCase();
+  const rawText = Array.isArray(post.content) ? post.content.join(' ') : (post.content || '');
+  const cleanText = rawText
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/https?:\/\/\S+/g, '')
+    .toLowerCase();
+
+  const isMatch = cleanText.includes(kw);
+  if (!isMatch && kw) return;
+
+  filtered.unshift(post);
+  filtered = Array.from(new Map(filtered.map(item => [item.id, item])).values());
+  filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const postsBox = document.getElementById('posts');
+  const temp = document.createElement('div');
+  temp.innerHTML = renderSinglePostHtml(post);
+  const node = temp.firstElementChild;
+
+  if (postsBox.firstChild) {
+    postsBox.insertBefore(node, postsBox.firstChild);
+  } else {
+    postsBox.appendChild(node);
+  }
+
+  bindImages();
+}
+
 function openPublishEditor() {
   if (publishModal) publishModal.remove();
   selectedPublishFiles = [];
+
+  const savedPwd = getPublishPassword();
 
   publishModal = document.createElement('div');
   publishModal.className = 'publish-mask';
@@ -679,10 +790,20 @@ function openPublishEditor() {
         <button id="closeMemo" class="publish-close" type="button">✕</button>
       </div>
 
-      <div class="publish-field">
-        <label class="publish-label" for="publishPwd">发布密码</label>
-        <input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码" />
-      </div>
+      ${
+        savedPwd
+          ? `
+            <div class="publish-field">
+              <div class="publish-empty">已记住发布密码，30 天内无需重复输入。</div>
+            </div>
+          `
+          : `
+            <div class="publish-field">
+              <label class="publish-label" for="publishPwd">发布密码</label>
+              <input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码" />
+            </div>
+          `
+      }
 
       <div class="publish-field">
         <label class="publish-label" for="memoContent">这一刻想说什么</label>
@@ -714,8 +835,8 @@ function openPublishEditor() {
     if (publishModal) {
       publishModal.remove();
       publishModal = null;
-      selectedPublishFiles.forEach(f => {
-        if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+      selectedPublishFiles.forEach(item => {
+        if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
       });
       selectedPublishFiles = [];
     }
@@ -798,7 +919,9 @@ function renderSelectedImages() {
 }
 
 async function submitMemo() {
-  const pwd = document.getElementById('publishPwd').value.trim();
+  const savedPwd = getPublishPassword();
+  const pwdInput = document.getElementById('publishPwd');
+  const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : '');
   const content = document.getElementById('memoContent').value.trim();
 
   if (!pwd) {
@@ -835,10 +958,21 @@ async function submitMemo() {
     const json = await res.json();
 
     if (json.code === 200) {
-      alert('发布成功');
+      setPublishPassword(pwd);
+
+      const localPreviewUrls = selectedPublishFiles.map(item => item.previewUrl);
+      const newPost = buildNewPostObject(content, localPreviewUrls, getNowBeijingString());
+      insertNewPostToTop(newPost);
+
       if (publishModal) publishModal.remove();
-      setTimeout(() => location.reload(), 800);
+      publishModal = null;
+      selectedPublishFiles = [];
+
+      alert('发布成功');
     } else {
+      if (json.code === 403 || /密码错误/.test(json.msg || '')) {
+        clearPublishPassword();
+      }
       alert(json.msg || '发布失败');
       btn.textContent = '发布';
       btn.disabled = false;
