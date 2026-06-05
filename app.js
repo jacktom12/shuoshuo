@@ -264,6 +264,8 @@ function bindImages() {
     const dots = dotsBox.querySelectorAll('.dot');
 
     let startX = 0;
+    let startY = 0;         // 新增：记录 Y 轴起点
+    let isScrolling = null; // 新增：标记当前是否为上下滚动页面
     let currentTranslate = 0;
     let prevTranslate = 0;
     let animationId = 0;
@@ -283,7 +285,9 @@ function bindImages() {
     function getPositionX(e) {
       return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
     }
-
+function getPositionY(e) {
+      return e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
+    }
     wrap.addEventListener('touchstart', touchStart, { passive: true });
     wrap.addEventListener('touchend', touchEnd);
     wrap.addEventListener('touchmove', touchMove, { passive: false });
@@ -292,25 +296,46 @@ function bindImages() {
     wrap.addEventListener('mouseleave', touchEnd);
     wrap.addEventListener('mousemove', touchMove);
 
-    function touchStart(e) {
+     
+function touchStart(e) {
       isDragging = true;
+      isScrolling = null; // 每次手指落下时，重置滚动状态
       globalGalleryLock = false;
       startX = getPositionX(e);
+      startY = getPositionY(e); // 记录初始 Y 坐标
       slide.style.transition = 'none';
       animationId = requestAnimationFrame(animation);
     }
 
     function touchMove(e) {
       if (!isDragging) return;
-      const currentX = getPositionX(e);
-      const diff = currentX - startX;
       
-      if (Math.abs(diff) > 5) {
-        globalGalleryLock = true; 
-        if (e.cancelable) e.preventDefault();
+      const currentX = getPositionX(e);
+      const currentY = getPositionY(e);
+      const diffX = currentX - startX;
+      const diffY = currentY - startY;
+
+      // 核心判断：第一次移动时，判断手指主要是上下走还是左右走
+      if (isScrolling === null) {
+        // 如果 Y 轴移动距离大于 X 轴，判定为用户在上下滚动页面
+        isScrolling = Math.abs(diffY) > Math.abs(diffX);
       }
-      currentTranslate = prevTranslate + diff;
+
+      // 如果判断为上下滚动页面
+      if (isScrolling) {
+        isDragging = false; // 放弃图片轮播的拖拽逻辑
+        currentTranslate = prevTranslate; // 强制复位，消除纵向滑动时的微弱横向抖动
+        return; // 直接 return，不执行 preventDefault，把控制权还给浏览器
+      }
+
+      // 如果是左右横向滑动图片
+      if (Math.abs(diffX) > 5) {
+        globalGalleryLock = true; 
+        if (e.cancelable) e.preventDefault(); // 阻止页面在横向翻图时跟着上下乱晃
+      }
+      currentTranslate = prevTranslate + diffX;
     }
+   
 
     function touchEnd() {
       if (!isDragging) return;
