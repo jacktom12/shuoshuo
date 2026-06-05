@@ -251,6 +251,7 @@ function bindImages() {
 
     if (total <= 1) {
       dotsBox.style.display = 'none';
+       wrap.classList.add('single-image'); // ← 加这一行
       return;
     }
 
