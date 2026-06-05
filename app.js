@@ -647,7 +647,7 @@ function buildNewPostObject(content, imageUrls = [], dateStr = "") {
   return {
     id: `local_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     date: finalDate,
-    content: [text ? `> ${text}` : "> "],
+    content: [text],
     images: imageUrls
   };
 }
