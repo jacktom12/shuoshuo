@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+美国走线！想到了那些电子宠物了。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780642517230_65.webp&n=-1)
+@2026-06-05 14:55
+
 重温了下电影《我去哪儿？？》
 @2026-06-05 08:31
 
