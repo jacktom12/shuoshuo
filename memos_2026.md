@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+gif
+> ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780632982739_221.gif&n=-1)
+> ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780632984071_104.png&n=-1)
+@2026-06-05 12:16
+
 测试下
 ![image](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780632414791_495.png)
 @2026-06-05 12:06
