@@ -12,10 +12,7 @@ image: ""
 > 重温了下电影《我去哪儿？？》
 > @2026-06-05 08:31
 
-> 8786
-> @2026-06-04 22:11
-
-> 258239
+> 抽奖送壁纸，好抠门啊，不过扫码送6毛钱的红包倒是不错的。
 > ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780581335727_726.png)
 > ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780581337631_194.png)
 > ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780581340518_648.png)
