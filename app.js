@@ -198,9 +198,10 @@ function render(reset = false) {
     }
     return `
       <article class="post" id="post-${p.id}">
-        <div class="post-left"><img class="avatar" src="https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg" alt=""></div>
+        <div class="post-header">
+          <span class="post-time">${showTime}</span>
+        </div>
         <div class="post-right">
-          <div class="post-header"><span class="author">迷蒙幻影</span><span class="post-time">${showTime}</span></div>
           <div class="post-content">${parsedText}</div>
           ${imagesHtml}
         </div>
@@ -666,9 +667,10 @@ function renderSinglePostHtml(p) {
   }
   return `
     <article class="post" id="post-${p.id}">
-      <div class="post-left"><img class="avatar" src="${AVATAR_URL}" alt="avatar" /></div>
+      <div class="post-header">
+        <span class="post-time">${showTime}</span>
+      </div>
       <div class="post-right">
-        <div class="post-header"><span class="author">迷蒙幻影</span><span class="post-time">${showTime}</span></div>
         <div class="post-content">${parsedText}</div>
         ${imagesHtml}
       </div>

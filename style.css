@@ -62,6 +62,7 @@ body {
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+  margin-bottom: 24px; /* 确保导航栏下方也有足够的留白 */
 }
 
 .topbar-inner {
@@ -163,29 +164,20 @@ main {
 }
 
 #posts {
-  padding-top: 4px;
+  padding-top: 12px;
 }
 
 .post {
   padding: 18px 0;
   border-bottom: 1px solid var(--border);
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+   
 }
 
-.post-left {
-  flex-shrink: 0;
-}
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border);
-  filter: brightness(var(--img-brightness));
-  transition: filter 0.3s ease;
-}
+
+ 
 
 .post-right {
   flex-grow: 1;
@@ -193,12 +185,10 @@ main {
   min-width: 0;
 }
 
-.post-header {
+ .post-header {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 5px;
-  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 2px;
 }
 
 .author {
@@ -208,6 +198,7 @@ main {
 .post-time {
   color: var(--secondary-text);
   font-size: 0.85rem;
+  letter-spacing: 0.3px;
 }
 
 .post-content {
