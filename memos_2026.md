@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+一辈子能翻身的机会不多。它不会像公交车那样过段时间又来临。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780655496734_710.png&n=-1)
+@2026-06-05 18:31
+
 美国走线！想到了那些电子宠物了。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780642517230_65.webp&n=-1)
 @2026-06-05 14:55
