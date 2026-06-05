@@ -80,24 +80,24 @@ body {
 }
 
 .topbar-icon {
-  width: 42px;
-  height: 42px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--paper);
+  background: none;             /* 确保默认无底色 */
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
   color: var(--text);
-  display: inline-flex;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 1.15rem;
-  line-height: 1;
-  transition: transform .18s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  transition: background 0.2s;
 }
 
 .topbar-icon:hover {
-  transform: translateY(-1px);
-  background: var(--bg);
+  background: rgba(0, 0, 0, 0.05); /* 浅色模式下微阴影 */
+}
+body.dark .topbar-icon:hover {
+  background: rgba(255, 255, 255, 0.08); /* 暗色模式下微阴影 */
 }
 
 .search-inline {
@@ -137,22 +137,25 @@ body {
   box-shadow: 0 0 0 3px rgba(125,125,125,.10);
 }
 
+ /* 2. 发布说说按钮（让它变成精致的镂空线条胶囊，而不是大黑块） */
 .publish-pill {
-  height: 42px;
-  padding: 0 18px;
-  border-radius: 999px;
-  border: 1px solid var(--text);
-  background: var(--text);
-  color: var(--paper);
-  font-size: 0.96rem;
-  font-weight: 700;
+  background: none;             /* 去掉死黑底色，变透明 */
+  color: var(--text);           /* 文字颜色跟随主题 */
+  border: 1px solid var(--border); /* 加上精致的边框 */
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.92rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: transform .18s ease, opacity .18s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;                     /* 让图标和文字有间距 */
+  transition: all 0.2s;
 }
 
 .publish-pill:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(0,0,0,.10);
+  background: var(--text);      /* 悬停时反色，极具现代感 */
+  color: var(--paper);
 }
 
 main {
