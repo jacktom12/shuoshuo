@@ -256,10 +256,10 @@ main {
   transition: none !important;
 }
 .post-images.single-image img {
-  width: 100%;
+   width: auto;
+  max-width: 100%;
   height: auto;
   max-height: 420px;
-  object-fit: contain;
   display: block;
   flex-shrink: 0;
 }
