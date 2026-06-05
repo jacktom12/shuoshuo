@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+今天看到一句话很喜欢：
+> 种一棵树最好的时间是十年前，其次是现在。
+大家共勉。
+@2026-06-05 11:39
+
 测试
 ![image](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780630555345_560.png)
 ![image](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780630556497_246.png)
