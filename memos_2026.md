@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+噩梦连连
+@2026-06-06 06:24
+
 一辈子能翻身的机会不多。它不会像公交车那样过段时间又来临。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780655496734_710.png&n=-1)
 @2026-06-05 18:31
