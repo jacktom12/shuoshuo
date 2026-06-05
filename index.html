@@ -2,51 +2,29 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>碎碎念</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>">
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div class="app-container">
-    <header class="header">
-      <div class="header-top">
-        <button id="searchToggleBtn" class="icon-btn">⌕</button>
-        <h1>碎碎念</h1>
-         <div class="header-actions">
-  <button id="openPublishBtn" class="publish-fab" aria-label="发布说说">+</button>
-  <button id="themeBtn" class="icon-btn">☾</button>
-</div>
-      </div>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button id="themeBtn" class="topbar-icon" aria-label="切换深浅色">☾</button>
 
-      <div id="searchWrap" class="search-wrap">
-        <input id="search" placeholder="搜索记忆..." />
+        <div class="topbar-right">
+          <div class="search-inline" id="searchInline">
+            <input id="search" type="text" placeholder="搜索记忆..." />
+            <button id="searchToggleBtn" class="topbar-icon" aria-label="搜索">⌕</button>
+          </div>
+
+          <button id="openPublishBtn" class="publish-pill" aria-label="发布说说">发布</button>
+        </div>
       </div>
     </header>
 
     <main>
-      <div class="profile-header profile-card">
-  <div class="profile-avatar profile-avatar-center">
-    <img src="https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg" alt="avatar" />
-  </div>
-
-  <h2 class="profile-title">迷蒙幻影</h2>
-  <p class="profile-subtitle">night archive / private memos</p>
-
-  <p class="profile-bio">
-    生死去来，棚头傀儡。<br>
-    一线断时，落落磊磊。
-  </p>
-
-  <div class="profile-tags">
-    <span>记录</span>
-    <span>幻影</span>
-    <span>高敏但不善表达</span>
-  </div>
-</div>
-
-      <div id="posts"></div>
+      <section id="posts"></section>
       <div id="loader">正在翻阅更久远的记忆...</div>
     </main>
   </div>
@@ -54,11 +32,12 @@
   <div id="lightbox" class="lightbox">
     <button id="lb-close" class="lb-btn">✕</button>
     <button id="lb-prev" class="lb-btn nav-btn">❮</button>
-    <img id="lightboxImg" alt="preview" />
+    <img id="lb-img" src="" alt="preview" />
     <button id="lb-next" class="lb-btn nav-btn">❯</button>
     <div id="lb-counter">1 / 1</div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

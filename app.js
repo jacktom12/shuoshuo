@@ -25,20 +25,30 @@ let scale = 1;
 let lastScale = 1;
 let isScaling = false;
 
-const searchWrap = document.getElementById('searchWrap');
+ const searchInline = document.getElementById('searchInline');
 const searchToggleBtn = document.getElementById('searchToggleBtn');
+const searchInput = document.getElementById('search');
 
 searchToggleBtn.onclick = () => {
-  searchWrap.classList.toggle('open');
-  if (searchWrap.classList.contains('open')) {
-    document.getElementById('search').focus();
-    
-    // 展开搜索时，如果尚未加载全量，立刻在后台静默发起全量并行查询
+  searchInline.classList.toggle('open');
+
+  if (searchInline.classList.contains('open')) {
+    searchInput.focus();
     if (!isAllLoaded) {
       loadAllRemainingYears();
     }
+  } else {
+    searchInput.blur();
+    if (!searchInput.value.trim()) {
+      applyFilter();
+    }
   }
 };
+document.addEventListener('click', (e) => {
+  if (!searchInline.contains(e.target) && !searchInput.value.trim()) {
+    searchInline.classList.remove('open');
+  }
+});
 
 function formatRelativeTime(dateStr) {
   const target = new Date(dateStr);
@@ -324,6 +334,7 @@ function setupInfinite() {
 
 let isDraggingGallery = false;
 
+// 精准重构：丝滑的多图滑动绑定
 function bindImages() {
   document.querySelectorAll('.post-images').forEach(wrap => {
     if (wrap.dataset.boundDrag) return;
@@ -339,132 +350,134 @@ function bindImages() {
       return;
     }
 
+    // 动态初始化导航圆点
+    dotsBox.innerHTML = '';
     for (let i = 0; i < total; i++) {
       const dot = document.createElement('span');
       dot.className = 'dot' + (i === 0 ? ' active' : '');
       dot.dataset.idx = i;
-      dot.onclick = () => goIndex(i);
+      dot.onclick = (e) => {
+        e.stopPropagation();
+        goIndex(i);
+      };
       dotsBox.appendChild(dot);
     }
 
     const dots = dotsBox.querySelectorAll('.dot');
-
     let startX = 0;
     let dragStartTrans = 0;
     let curIdx = 0;
-    let momentumID = null;
     let isDown = false;
+    let startTime = 0;
 
+    // 精准对齐函数
     function goIndex(idx) {
-      curIdx = idx;
+      curIdx = Math.max(0, Math.min(total - 1, idx));
       slide.classList.remove('no-trans');
-      const imgWidth = imgs[0].offsetWidth + 8;
-      slide.style.transform = `translateX(${-imgWidth * curIdx}px)`;
+      
+      // 核心抖动修复：使用更稳健的计算方式，避免混淆 margin/gap 产生的累积误差
+      const targetImg = imgs[curIdx];
+      if (targetImg) {
+        const offsetLeft = targetImg.offsetLeft;
+        slide.style.transform = `translateX(${-offsetLeft}px)`;
+      }
+
       dots.forEach(d => d.classList.remove('active'));
-      dots[curIdx].classList.add('active');
+      if (dots[curIdx]) dots[curIdx].classList.add('active');
     }
 
-    function stopMomentum() {
-      if (momentumID) cancelAnimationFrame(momentumID);
-      momentumID = null;
+    function getCurrentTransform() {
+      const trans = getComputedStyle(slide).transform;
+      if (!trans || trans === 'none') return 0;
+      return parseFloat(trans.split(',')[4]) || 0;
     }
 
-    function momentum(speed) {
-      stopMomentum();
-
-      const animate = () => {
-        speed *= 0.92;
-
-        if (Math.abs(speed) < 0.3) {
-          const imgW = imgs[0].offsetWidth + 8;
-          const trans = getComputedStyle(slide).transform;
-          let x = 0;
-          if (trans && trans !== 'none') {
-            x = parseFloat(trans.split(',')[4]);
-          }
-          const targetIdx = Math.round(-x / imgW);
-          curIdx = Math.max(0, Math.min(total - 1, targetIdx));
-          goIndex(curIdx);
-          return;
-        }
-
-        let nowX = parseFloat(
-          slide.style.transform.replace('translateX(', '').replace('px)', '')
-        ) || 0;
-
-        slide.style.transform = `translateX(${nowX + speed}px)`;
-        momentumID = requestAnimationFrame(animate);
-      };
-
-      momentumID = requestAnimationFrame(animate);
-    }
-
-    wrap.addEventListener('mousedown', e => {
+    // 统一处理按下
+    function startDrag(clientX) {
       isDown = true;
       isDraggingGallery = false;
+      startTime = Date.now();
       wrap.classList.add('dragging');
       slide.classList.add('no-trans');
-      stopMomentum();
-      startX = e.pageX;
+      startX = clientX;
+      dragStartTrans = getCurrentTransform();
+    }
 
-      const trans = getComputedStyle(slide).transform;
-      dragStartTrans = trans === 'none' ? 0 : parseFloat(trans.split(',')[4]);
-
-      e.preventDefault();
-    });
-
-    wrap.addEventListener('mousemove', e => {
+    // 统一处理移动
+    function moveDrag(clientX) {
       if (!isDown) return;
+      const dx = clientX - startX;
+      
+      // 边缘阻尼
+      let moveX = dragStartTrans + dx;
+      if (moveX > 0) {
+        moveX *= 0.3; 
+      } else {
+        const maxSub = slide.scrollWidth - wrap.offsetWidth;
+        if (Math.abs(moveX) > maxSub) {
+          const over = Math.abs(moveX) - maxSub;
+          moveX = -(maxSub + over * 0.3);
+        }
+      }
 
-      const dx = e.pageX - startX;
-      const moveX = dragStartTrans + dx * 1.2;
       slide.style.transform = `translateX(${moveX}px)`;
+      if (Math.abs(dx) > 10) {
+        isDraggingGallery = true;
+      }
+    }
 
-      if (Math.abs(dx) > 6) isDraggingGallery = true;
-    });
-
-    wrap.addEventListener('mouseup', e => {
+    // 统一处理松手：完美手势速度判断机制
+    function endDrag(clientX) {
       if (!isDown) return;
-
       isDown = false;
       wrap.classList.remove('dragging');
       slide.classList.remove('no-trans');
 
-      const dx = e.pageX - startX;
-      momentum(dx * 0.12);
-    });
+      const dx = clientX - startX;
+      const timeElapsed = Date.now() - startTime;
 
-    wrap.addEventListener('mouseleave', () => {
-      isDown = false;
-      wrap.classList.remove('dragging');
-    });
+      // 快速划过判定（即便距离短，速度快也触发翻页）
+      if (Math.abs(dx) > 30 && timeElapsed < 250) {
+        if (dx < 0) {
+          goIndex(curIdx + 1);
+        } else {
+          goIndex(curIdx - 1);
+        }
+      } else {
+        // 普通慢速拖拽，根据中线判定
+        let closestIdx = curIdx;
+        let minDiff = Infinity;
+        const currentX = Math.abs(getCurrentTransform());
 
-    wrap.addEventListener('touchstart', e => {
-      isDown = true;
-      slide.classList.add('no-trans');
-      stopMomentum();
-      startX = e.touches[0].pageX;
+        imgs.forEach((img, i) => {
+          const diff = Math.abs(img.offsetLeft - currentX);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIdx = i;
+          }
+        });
+        goIndex(closestIdx);
+      }
 
-      const trans = getComputedStyle(slide).transform;
-      dragStartTrans = trans === 'none' ? 0 : parseFloat(trans.split(',')[4]);
-    });
+      setTimeout(() => { isDraggingGallery = false; }, 80);
+    }
 
+    // 鼠标事件
+    wrap.addEventListener('mousedown', e => startDrag(e.pageX));
+    window.addEventListener('mousemove', e => moveDrag(e.pageX));
+    window.addEventListener('mouseup', e => endDrag(e.pageX));
+
+    // 触摸事件
+    wrap.addEventListener('touchstart', e => startDrag(e.touches[0].pageX), { passive: true });
     wrap.addEventListener('touchmove', e => {
-      if (!isDown) return;
-
-      const dx = e.touches[0].pageX - startX;
-      slide.style.transform = `translateX(${dragStartTrans + dx * 1.2}px)`;
-    });
-
-    wrap.addEventListener('touchend', e => {
-      isDown = false;
-      slide.classList.remove('no-trans');
-
-      const dx = e.changedTouches[0].pageX - startX;
-      momentum(dx * 0.12);
-    });
+      if(!isDown) return;
+      moveDrag(e.touches[0].pageX);
+      if (isDraggingGallery && e.cancelable) e.preventDefault();
+    }, { passive: false });
+    wrap.addEventListener('touchend', e => endDrag(e.changedTouches[0].pageX));
   });
 
+  // 全局灯箱点击事件绑定
   document.querySelectorAll('.post').forEach(post => {
     const imgs = Array.from(post.querySelectorAll('.post-right img'));
 
@@ -490,7 +503,7 @@ function bindImages() {
 }
 
 const lb = document.getElementById('lightbox');
-const lbImg = document.getElementById('lightboxImg');
+const lbImg = document.getElementById('lb-img');
 const lbCounter = document.getElementById('lb-counter');
 
 let isAnimating = false;
@@ -622,7 +635,7 @@ function setupLightboxControls() {
     'wheel',
     e => {
       e.preventDefault();
-      const delta = e.deltaY < 0 ? -0.1 : 0.1;
+      const delta = e.deltaY < 0 ? 0.1 : -0.1;
       scale = Math.max(0.5, Math.min(3, scale + delta));
       lbImg.style.transform = `scale(${scale})`;
     },
@@ -637,20 +650,22 @@ function setupLightboxControls() {
 
 document.getElementById('search').addEventListener('input', applyFilter);
 
-const themeBtn = document.getElementById('themeBtn');
+const SVG_SUN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 
+const SVG_MOON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+const themeBtn = document.getElementById('themeBtn');
 themeBtn.onclick = () => {
   document.body.classList.toggle('dark');
   const isDark = document.body.classList.contains('dark');
   localStorage.theme = isDark ? 'dark' : 'light';
-  themeBtn.textContent = isDark ? '☀️' : '🌙';
+  themeBtn.innerHTML = isDark ? SVG_MOON : SVG_SUN; // ✅ innerHTML 而非 textContent
 };
-
 if (localStorage.theme === 'dark') {
   document.body.classList.add('dark');
-  themeBtn.textContent = '☀️';
+  themeBtn.innerHTML = SVG_MOON;
 } else {
-  themeBtn.textContent = '🌙';
+  themeBtn.innerHTML = SVG_SUN;
 }
 
 init();
