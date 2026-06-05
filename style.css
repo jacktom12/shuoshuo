@@ -271,9 +271,11 @@ main {
 }
 
 .post-images img:only-child {
-  max-width: 100%;
-  height: auto;
-  max-height: 400px;
+   max-width: 100%;
+  width: 100%;          /* 让单张图铺满或者限制最大宽度 */
+  height: 320px;        /* 替代 height: auto，给它一个固定的大图高度 */
+  object-fit: cover;    /* 确保图片不变形 */
+  display: block;       /* 消除下方 inline 元素的微缝隙 */
 }
 
 .img-dots {
