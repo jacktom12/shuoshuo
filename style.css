@@ -138,26 +138,33 @@ body.dark .topbar-icon:hover {
   box-shadow: 0 0 0 3px rgba(125,125,125,.10);
 }
 
- /* 2. 发布说说按钮（让它变成精致的镂空线条胶囊，而不是大黑块） */
+  /* 发布按钮 —— 完全对齐顶部图标风格 */
 .publish-pill {
-  background: none;             /* 去掉死黑底色，变透明 */
-  color: var(--text);           /* 文字颜色跟随主题 */
-  border: 1px solid var(--border); /* 加上精致的边框 */
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.92rem;
+  background: none;
+  border: none;               /* 去掉边框，和图标统一 */
+  color: var(--text);
+  padding: 8px;
+  border-radius: 50%;         /* 圆形，和图标一样 */
+  font-size: 1.3rem;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;                     /* 让图标和文字有间距 */
-  transition: all 0.2s;
+  justify-content: center;
+  transition: background 0.2s ease;
 }
 
+/* 浅色模式 hover：淡灰背景（和你顶部图标完全一样） */
 .publish-pill:hover {
-  background: var(--text);      /* 悬停时反色，极具现代感 */
-  color: var(--paper);
+  background: rgba(0, 0, 0, 0.05);
 }
+
+/* 深色模式 hover：淡白背景（自动适配） */
+body.dark .publish-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+ 
+ 
 
 main {
   padding: 0 16px;
@@ -632,7 +639,7 @@ body.dark .publish-mask {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   :root {
     --top-gap: 12px;
   }
@@ -662,9 +669,8 @@ body.dark .publish-mask {
     width: 132px;
   }
 
-  .publish-pill {
-    padding: 0 14px;
-    font-size: 0.93rem;
+    .publish-pill {
+    padding: 8px;
   }
 
   main {
