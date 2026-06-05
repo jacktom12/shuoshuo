@@ -244,9 +244,9 @@ main {
 /* 修改这一处：确保过渡动画采用标准的 timing-function，消除位移间歇性发颤 */
 .img-slide {
   display: flex;
-  position: relative; /* 增加这一行，为 offsetLeft 提供精准锚定基准 */
+  position: relative;
   gap: 8px;
-  transition: transform 0.28s cubic-bezier(0.215, 0.610, 0.355, 1); /* 优化成非线性贝塞尔曲线 */
+  will-change: transform;
 }
 
 /* 确保这个不带过渡的类依然有效 */
@@ -306,28 +306,31 @@ main {
 .lightbox {
   display: none;
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 2000;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
+  touch-action: none; /* 必须加这行：禁用浏览器自带的全局下拉刷新，把触摸完全交给JS控制 */
   user-select: none;
-  touch-action: none;
 }
 
 .lightbox img {
-  max-width: 100vw;
-  max-height: 100vh;
+  max-width: 95%;
+  max-height: 95%;
   object-fit: contain;
-  transition: opacity 0.25s ease, filter 0.3s ease;
-  opacity: 1;
-  transform-origin: center center;
-  filter: brightness(var(--img-brightness));
+  cursor: grab;
+  transform-origin: center center; /* 确保缩放和拖拉始终基于核心原点 */
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.lightbox img.fading {
-  opacity: 0;
-  transform: scale(0.96);
+.lightbox img:active {
+  cursor: grabbing;
 }
 
 .lb-btn {
