@@ -79,5 +79,7 @@ vivetool /enable/ id:56005157，按下回车键（cmd管理员方式打开）（
 法国大革命太血腥，太跃进，想一下子把人间地狱变成人间天堂。
 @2026-06-03 10:20
 
-```bash python310 --version pip310 install moviepy ```
+```bash 
+python310 --version pip310 install moviepy
+```
 @2026-06-03 10:18
