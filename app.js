@@ -828,11 +828,7 @@ function setupPerfectLightbox() {
       lastClickTime = 0;
     } else {
       lastClickTime = now;
-      setTimeout(() => {
-        if (Date.now() - lastClickTime >= 280 && lastClickTime !== 0 && scale === 1) {
-          closePerfectLightbox();
-        }
-      }, 290);
+      
     }
   });
 
