@@ -385,15 +385,16 @@ function bindImages() {
       stopAnimation();
 
       const itemWidth = getItemWidth();
-      const movedSlides = Math.round(Math.abs(dragMoved) / itemWidth);
+const slideThreshold = itemWidth * 0.22;
 
-      if (movedSlides > 0) {
-        if (dragMoved < 0) {
-          curIdx = Math.min(total - 1, curIdx + movedSlides);
-        } else {
-          curIdx = Math.max(0, curIdx - movedSlides);
-        }
-      }
+if (Math.abs(dragMoved) > slideThreshold) {
+  const movedSlides = Math.max(1, Math.round(Math.abs(dragMoved) / itemWidth));
+  if (dragMoved < 0) {
+    curIdx = Math.min(total - 1, curIdx + movedSlides);
+  } else {
+    curIdx = Math.max(0, curIdx - movedSlides);
+  }
+}
 
       goToIndex(curIdx);
       dragMoved = 0;
@@ -548,7 +549,7 @@ function setupPerfectLightbox() {
   let isDragging = false;
   let lbWheelDeltaX = 0;
   let lbWheelTimer = null;
-  const SWIPE_THRESHOLD = 50;
+  const SWIPE_THRESHOLD = 32;
   const LB_WHEEL_THRESHOLD = 70;
 
   function resetTransform() {
