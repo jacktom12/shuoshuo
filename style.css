@@ -645,36 +645,50 @@ body.dark .publish-mask {
 }
 
 @media (max-width: 768px) {
+
   :root {
-    --top-gap: 12px;
+    --top-gap: 0px;
+  }
+
+  html,
+  body {
+    height: 100%;
+    background: var(--paper);
   }
 
   body {
-    padding: var(--top-gap) 0 0;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
   }
 
   .app-container {
+    width: 100%;
     max-width: 100%;
-    min-height: calc(100vh - var(--top-gap));
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    border-radius: 22px 22px 0 0;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    border: none;
+    border-radius: 0;
+ overflow:visible;
+    background: var(--paper);
   }
 
   .topbar {
-    top: var(--top-gap);
+    top: 0;
+    padding-top: env(safe-area-inset-top);
   }
 
   .topbar-inner {
-    padding: 14px;
+    padding: 14px 16px;
   }
 
   .search-inline.open input {
     width: 132px;
   }
 
-    .publish-pill {
+  .publish-pill {
     padding: 8px;
   }
 
@@ -686,15 +700,16 @@ body.dark .publish-mask {
     height: 200px;
   }
 
- .post-images.single-image img {
+  .post-images.single-image img {
     max-height: 340px;
   }
- 
-.post-images:has(img:only-child) {
-  height: auto;
-  min-height: 0;
-  contain: layout paint; /* 关键：让内部布局变化不影响外部 */
-}
+
+  .post-images:has(img:only-child) {
+    height: auto;
+    min-height: 0;
+    contain: layout paint;
+  }
+
   .nav-btn {
     display: none;
   }
@@ -711,5 +726,6 @@ body.dark .publish-mask {
     bottom: 0;
     background: var(--paper);
     padding-top: 12px;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
