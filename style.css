@@ -38,7 +38,8 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-   font-family: "LXGW WenKai", system-ui, sans-serif;
+   /* 正确字体名，必须和CSS内定义完全一致 */
+font-family: "LXGW WenKai Screen", sans-serif;
   display: flex;
   justify-content: center;
   overscroll-behavior: contain;
