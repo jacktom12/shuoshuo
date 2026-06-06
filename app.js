@@ -271,7 +271,9 @@ function bindImages() {
     let animationId = 0;
     let curIdx = 0;
     let isDragging = false;
-
+// 👇 新增：用于处理触摸板双指滑动的状态变量
+    let wheelTimeout;
+    let wheelDeltaX = 0;
     // 采用更精准的基于容器宽度的平滑平移方案，彻底解决发颤抖动
     function setSliderPosition() {
       slide.style.transform = `translateX(${currentTranslate}px)`;
@@ -295,7 +297,37 @@ function getPositionY(e) {
     wrap.addEventListener('mouseup', touchEnd);
     wrap.addEventListener('mouseleave', touchEnd);
     wrap.addEventListener('mousemove', touchMove);
+// 👇 新增这一整块：完美拦截并处理触摸板横向滑动
+    wrap.addEventListener('wheel', (e) => {
+      // 核心判断：只有横向滑动意图大于纵向时，才触发横向翻图
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        e.preventDefault(); // 阻止浏览器默认手势（防止触发网页的后退/前进）
+        
+        wheelDeltaX += e.deltaX; // 累加触摸板带来的横向偏移量
+        clearTimeout(wheelTimeout); // 打断之前的防抖倒计时
+        
+        // 让图片实时跟随触摸板滑动（取消过渡延迟）
+        slide.style.transition = 'none';
+        
+        // e.deltaX 为正代表两根手指向左滑（内容要向左滚动），所以用减法
+        currentTranslate = prevTranslate - wheelDeltaX; 
+        setSliderPosition();
 
+        // 防抖判定：100ms 内没有新的滚动事件，视为当前这一次双指滑动结束
+        wheelTimeout = setTimeout(() => {
+          const threshold = wrap.offsetWidth * 0.15; // 滑动超过图片宽度的 15% 即可翻页
+          
+          if (wheelDeltaX > threshold && curIdx < total - 1) {
+            curIdx++; // 下一张
+          } else if (wheelDeltaX < -threshold && curIdx > 0) {
+            curIdx--; // 上一张
+          }
+          
+          wheelDeltaX = 0; // 重置累加器，为下一次滑动做准备
+          goToIndex(curIdx); // 触发你原有的完美吸附归位逻辑
+        }, 100); 
+      }
+    }, { passive: false }); // 注意 passive: false 是必须的，这样才能 e.preventDefault()
      
 function touchStart(e) {
       isDragging = true;
