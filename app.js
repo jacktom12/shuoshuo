@@ -238,11 +238,10 @@ function setupInfinite() {
 // 优化版：极其顺滑的无抖动多图轮播
 // ==============================================
 let globalGalleryLock = false;
-
 function bindImages() {
   document.querySelectorAll('.post-images').forEach(wrap => {
     if (wrap.dataset.boundDrag) return;
-    wrap.dataset.boundDrag = true;
+    wrap.dataset.boundDrag = 'true';
 
     const slide = wrap.querySelector('.img-slide');
     const dotsBox = wrap.querySelector('.img-dots');
@@ -251,160 +250,217 @@ function bindImages() {
 
     if (total <= 1) {
       dotsBox.style.display = 'none';
-       wrap.classList.add('single-image'); // ← 加这一行
+      wrap.classList.add('single-image');
       return;
     }
 
     dotsBox.innerHTML = '';
     for (let i = 0; i < total; i++) {
       const dot = document.createElement('span');
-      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.className = i === 0 ? 'dot active' : 'dot';
       dotsBox.appendChild(dot);
     }
+
     const dots = dotsBox.querySelectorAll('.dot');
 
     let startX = 0;
-    let startY = 0;         // 新增：记录 Y 轴起点
-    let isScrolling = null; // 新增：标记当前是否为上下滚动页面
+    let startY = 0;
+    let isScrolling = null;
     let currentTranslate = 0;
     let prevTranslate = 0;
     let animationId = 0;
     let curIdx = 0;
     let isDragging = false;
-// 👇 新增：用于处理触摸板双指滑动的状态变量
-    let wheelTimeout;
+    let dragMoved = 0;
+    let wheelTimeout = null;
     let wheelDeltaX = 0;
-    // 采用更精准的基于容器宽度的平滑平移方案，彻底解决发颤抖动
+
+    function getItemWidth() {
+      if (!imgs[0]) return wrap.offsetWidth;
+      return imgs[0].offsetWidth + 8;
+    }
+
     function setSliderPosition() {
       slide.style.transform = `translateX(${currentTranslate}px)`;
     }
 
     function animation() {
+      if (!isDragging) return;
       setSliderPosition();
-      if (isDragging) requestAnimationFrame(animation);
+      animationId = requestAnimationFrame(animation);
+    }
+
+    function stopAnimation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = 0;
+      }
     }
 
     function getPositionX(e) {
       return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
     }
-function getPositionY(e) {
+
+    function getPositionY(e) {
       return e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
     }
-    wrap.addEventListener('touchstart', touchStart, { passive: true });
-    wrap.addEventListener('touchend', touchEnd);
-    wrap.addEventListener('touchmove', touchMove, { passive: false });
-    wrap.addEventListener('mousedown', touchStart);
-    wrap.addEventListener('mouseup', touchEnd);
-    wrap.addEventListener('mouseleave', touchEnd);
-    wrap.addEventListener('mousemove', touchMove);
-// 👇 新增这一整块：完美拦截并处理触摸板横向滑动
-    wrap.addEventListener('wheel', (e) => {
-      // 核心判断：只有横向滑动意图大于纵向时，才触发横向翻图
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        e.preventDefault(); // 阻止浏览器默认手势（防止触发网页的后退/前进）
-        
-        wheelDeltaX += e.deltaX; // 累加触摸板带来的横向偏移量
-        clearTimeout(wheelTimeout); // 打断之前的防抖倒计时
-        
-        // 让图片实时跟随触摸板滑动（取消过渡延迟）
-        slide.style.transition = 'none';
-        
-        // e.deltaX 为正代表两根手指向左滑（内容要向左滚动），所以用减法
-        currentTranslate = prevTranslate - wheelDeltaX; 
-        setSliderPosition();
 
-        // 防抖判定：100ms 内没有新的滚动事件，视为当前这一次双指滑动结束
-        wheelTimeout = setTimeout(() => {
-          const threshold = wrap.offsetWidth * 0.15; // 滑动超过图片宽度的 15% 即可翻页
-          
-          if (wheelDeltaX > threshold && curIdx < total - 1) {
-            curIdx++; // 下一张
-          } else if (wheelDeltaX < -threshold && curIdx > 0) {
-            curIdx--; // 上一张
-          }
-          
-          wheelDeltaX = 0; // 重置累加器，为下一次滑动做准备
-          goToIndex(curIdx); // 触发你原有的完美吸附归位逻辑
-        }, 100); 
-      }
-    }, { passive: false }); // 注意 passive: false 是必须的，这样才能 e.preventDefault()
-     
-function touchStart(e) {
+    function updateDots() {
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[curIdx]) dots[curIdx].classList.add('active');
+    }
+
+    function goToIndex(index, animate = true) {
+      curIdx = Math.max(0, Math.min(total - 1, index));
+      currentTranslate = -imgs[curIdx].offsetLeft;
+      prevTranslate = currentTranslate;
+      slide.style.transition = animate
+        ? 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)'
+        : 'none';
+      setSliderPosition();
+      updateDots();
+    }
+
+    function forceStopDrag() {
+      isDragging = false;
+      isScrolling = null;
+      dragMoved = 0;
+      wrap.classList.remove('dragging');
+      stopAnimation();
+      currentTranslate = prevTranslate;
+      setSliderPosition();
+    }
+
+    function touchStart(e) {
+      if (e.type === 'mousedown' && e.button !== 0) return;
+
       isDragging = true;
-      isScrolling = null; // 每次手指落下时，重置滚动状态
+      isScrolling = null;
+      dragMoved = 0;
       globalGalleryLock = false;
+
       startX = getPositionX(e);
-      startY = getPositionY(e); // 记录初始 Y 坐标
+      startY = getPositionY(e);
+
       slide.style.transition = 'none';
+      wrap.classList.add('dragging');
+
+      stopAnimation();
       animationId = requestAnimationFrame(animation);
     }
 
     function touchMove(e) {
       if (!isDragging) return;
-      
+
       const currentX = getPositionX(e);
       const currentY = getPositionY(e);
       const diffX = currentX - startX;
       const diffY = currentY - startY;
 
-      // 核心判断：第一次移动时，判断手指主要是上下走还是左右走
       if (isScrolling === null) {
-        // 如果 Y 轴移动距离大于 X 轴，判定为用户在上下滚动页面
         isScrolling = Math.abs(diffY) > Math.abs(diffX);
       }
 
-      // 如果判断为上下滚动页面
       if (isScrolling) {
-        isDragging = false; // 放弃图片轮播的拖拽逻辑
-        currentTranslate = prevTranslate; // 强制复位，消除纵向滑动时的微弱横向抖动
-        return; // 直接 return，不执行 preventDefault，把控制权还给浏览器
+        forceStopDrag();
+        return;
       }
 
-      // 如果是左右横向滑动图片
       if (Math.abs(diffX) > 5) {
-        globalGalleryLock = true; 
-        if (e.cancelable) e.preventDefault(); // 阻止页面在横向翻图时跟着上下乱晃
+        globalGalleryLock = true;
       }
+
+      dragMoved = diffX;
+
+      if (e.cancelable) e.preventDefault();
       currentTranslate = prevTranslate + diffX;
     }
-   
 
     function touchEnd() {
       if (!isDragging) return;
+
       isDragging = false;
-      cancelAnimationFrame(animationId);
+      isScrolling = null;
+      wrap.classList.remove('dragging');
+      stopAnimation();
 
-      const movedBy = currentTranslate - prevTranslate;
-      const threshold = wrap.offsetWidth * 0.2; // 滑动超过20%即翻页
+      const itemWidth = getItemWidth();
+      const movedSlides = Math.round(Math.abs(dragMoved) / itemWidth);
 
-      if (movedBy < -threshold && curIdx < total - 1) curIdx++;
-      else if (movedBy > threshold && curIdx > 0) curIdx--;
+      if (movedSlides > 0) {
+        if (dragMoved < 0) {
+          curIdx = Math.min(total - 1, curIdx + movedSlides);
+        } else {
+          curIdx = Math.max(0, curIdx - movedSlides);
+        }
+      }
 
       goToIndex(curIdx);
-      setTimeout(() => { globalGalleryLock = false; }, 50);
+      dragMoved = 0;
+
+      setTimeout(() => {
+        globalGalleryLock = false;
+      }, 50);
     }
 
-    function goToIndex(index) {
-      curIdx = index;
-      const gap = 8;
-      // 基于每张图准确的 offsetLeft 精准锚定，完美防抖
-      currentTranslate = -imgs[curIdx].offsetLeft;
-      prevTranslate = currentTranslate;
-      slide.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+    wrap.addEventListener('touchstart', touchStart, { passive: true });
+    wrap.addEventListener('touchmove', touchMove, { passive: false });
+    wrap.addEventListener('touchend', touchEnd);
+    wrap.addEventListener('touchcancel', forceStopDrag);
+
+    wrap.addEventListener('mousedown', touchStart);
+    wrap.addEventListener('mousemove', touchMove);
+    wrap.addEventListener('mouseup', touchEnd);
+    wrap.addEventListener('mouseleave', forceStopDrag);
+    wrap.addEventListener('dragstart', (e) => e.preventDefault());
+
+    window.addEventListener('blur', forceStopDrag);
+
+    wrap.addEventListener('wheel', (e) => {
+      const dominantDelta = Math.abs(e.deltaX) >= Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(dominantDelta) < 2) return;
+
+      e.preventDefault();
+      forceStopDrag();
+
+      wheelDeltaX += dominantDelta;
+      slide.style.transition = 'none';
+      currentTranslate = prevTranslate - wheelDeltaX;
       setSliderPosition();
-      
-      dots.forEach(d => d.classList.remove('active'));
-      if (dots[curIdx]) dots[curIdx].classList.add('active');
-    }
+
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(() => {
+        const itemWidth = getItemWidth();
+        const movedSlides = Math.round(Math.abs(wheelDeltaX) / itemWidth);
+
+        if (movedSlides > 0) {
+          if (wheelDeltaX > 0) {
+            curIdx = Math.min(total - 1, curIdx + movedSlides);
+          } else {
+            curIdx = Math.max(0, curIdx - movedSlides);
+          }
+        }
+
+        wheelDeltaX = 0;
+        goToIndex(curIdx);
+      }, 90);
+    }, { passive: false });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToIndex(index));
+    });
+
+    goToIndex(0, false);
   });
 
-  // 绑定点击唤醒灯箱
   document.querySelectorAll('.post').forEach(post => {
     const imgs = Array.from(post.querySelectorAll('.post-right img'));
+
     imgs.forEach((img, index) => {
-      if (img.dataset.bound) return;
-      img.dataset.bound = true;
-      img.onclick = e => {
+      if (img.dataset.boundClick) return;
+      img.dataset.boundClick = 'true';
+
+      img.onclick = (e) => {
         if (globalGalleryLock) {
           e.preventDefault();
           return;
@@ -416,6 +472,7 @@ function touchStart(e) {
     });
   });
 }
+
 
 // ==============================================
 // 工业级终极完美大图灯箱控制（Pointer 统一事件流）
@@ -477,42 +534,190 @@ function updateLightboxImage(animate = true) {
 }
 
 function setupPerfectLightbox() {
-  document.getElementById('lb-close').onclick = closePerfectLightbox;
-  document.getElementById('lb-next').onclick = e => { e.stopPropagation(); if(scale===1) { currentIndex = (currentIndex + 1) % currentGallery.length; updateLightboxImage(); } };
-  document.getElementById('lb-prev').onclick = e => { e.stopPropagation(); if(scale===1) { currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length; updateLightboxImage(); } };
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbCounter = document.getElementById('lb-counter');
+  const lbPrev = document.getElementById('lb-prev');
+  const lbNext = document.getElementById('lb-next');
+  const lbClose = document.getElementById('lb-close');
 
-  // 鼠标滚轮优化：向滑轮上滚动为放大，向下为缩小
-  lb.addEventListener('wheel', e => {
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let pointerStartClientX = 0;
+  let pointerStartClientY = 0;
+  let isDragging = false;
+  let lbWheelDeltaX = 0;
+  let lbWheelTimer = null;
+  const SWIPE_THRESHOLD = 50;
+  const LB_WHEEL_THRESHOLD = 70;
+
+  function resetTransform() {
+    scale = 1;
+    baseScale = 1;
+    translateX = 0;
+    translateY = 0;
+    pointerCache = [];
+    lastPinchDist = 0;
+    isPointerDown = false;
+    if (lbImg) {
+      lbImg.style.transition = 'none';
+      applyTransform();
+    }
+  }
+
+  function applyTransform() {
+    if (!lbImg) return;
+    lbImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
+  function updateLightboxImage(animate = true) {
+    if (!lbImg) return;
+
+    const showNav = currentGallery.length > 1 ? 'flex' : 'none';
+    lbPrev.style.display = showNav;
+    lbNext.style.display = showNav;
+    lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
+
+    const setImage = () => {
+      lbImg.src = currentGallery[currentIndex];
+      lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
+      resetTransform();
+      lbImg.style.opacity = '1';
+    };
+
+    if (!animate) {
+      setImage();
+      return;
+    }
+
+    lbImg.style.transition = 'opacity 0.2s ease';
+    lbImg.style.opacity = '0';
+    setTimeout(setImage, 180);
+  }
+
+  function openPerfectLightbox() {
+    resetTransform();
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    updateLightboxImage(false);
+  }
+
+  function closePerfectLightbox() {
+    lb.style.display = 'none';
+    document.body.style.overflow = '';
+    resetTransform();
+  }
+
+  function showNext() {
+    if (scale !== 1 || currentGallery.length <= 1) return;
+    if (currentIndex < currentGallery.length - 1) {
+      currentIndex += 1;
+      updateLightboxImage();
+    }
+  }
+
+  function showPrev() {
+    if (scale !== 1 || currentGallery.length <= 1) return;
+    if (currentIndex > 0) {
+      currentIndex -= 1;
+      updateLightboxImage();
+    }
+  }
+
+  function getDistance(p1, p2) {
+    const dx = p1.clientX - p2.clientX;
+    const dy = p1.clientY - p2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function updatePointerCache(e) {
+    for (let i = 0; i < pointerCache.length; i++) {
+      if (pointerCache[i].pointerId === e.pointerId) {
+        pointerCache[i] = e;
+        return;
+      }
+    }
+  }
+
+  function removePointerCache(e) {
+    for (let i = 0; i < pointerCache.length; i++) {
+      if (pointerCache[i].pointerId === e.pointerId) {
+        pointerCache.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  lbClose.onclick = closePerfectLightbox;
+
+  lbNext.onclick = (e) => {
+    e.stopPropagation();
+    showNext();
+  };
+
+  lbPrev.onclick = (e) => {
+    e.stopPropagation();
+    showPrev();
+  };
+
+  lb.addEventListener('wheel', (e) => {
+    const isHorizontal = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
+
+    if (scale === 1 && isHorizontal && currentGallery.length > 1) {
+      e.preventDefault();
+
+      lbWheelDeltaX += e.deltaX;
+
+      clearTimeout(lbWheelTimer);
+      lbWheelTimer = setTimeout(() => {
+        if (Math.abs(lbWheelDeltaX) >= LB_WHEEL_THRESHOLD) {
+          if (lbWheelDeltaX > 0) {
+            showNext();
+          } else {
+            showPrev();
+          }
+        }
+        lbWheelDeltaX = 0;
+      }, 60);
+
+      return;
+    }
+
     e.preventDefault();
+
     const delta = e.deltaY < 0 ? 0.15 : -0.15;
     const oldScale = scale;
     scale = Math.max(1, Math.min(5, scale + delta));
 
-    // 如果处于缩放状态，支持以鼠标为中心缩放
     if (scale > 1) {
       const rect = lbImg.getBoundingClientRect();
       const mouseX = e.clientX - rect.left - rect.width / 2;
       const mouseY = e.clientY - rect.top - rect.height / 2;
-      translateX -= mouseX * (scale / oldScale - 1);
-      translateY -= mouseY * (scale / oldScale - 1);
+      translateX += -mouseX * (scale / oldScale - 1);
+      translateY += -mouseY * (scale / oldScale - 1);
     } else {
       translateX = 0;
       translateY = 0;
     }
+
     lbImg.style.transition = 'transform 0.1s ease-out';
     applyTransform();
   }, { passive: false });
 
-  // 核心高级交互：绑定 PointerEvents（完美支持多指、单指拖拽、鼠标）
-  lbImg.addEventListener('pointerdown', e => {
+  lbImg.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    lbImg.setPointerCapture?.(e.pointerId);
+
     pointerCache.push(e);
     lbImg.style.transition = 'none';
+    isDragging = true;
 
     if (pointerCache.length === 1) {
       isPointerDown = true;
-      startX = e.clientX - translateX;
-      startY = e.clientY - translateY;
+      pointerStartClientX = e.clientX;
+      pointerStartClientY = e.clientY;
+      dragStartX = e.clientX - translateX;
+      dragStartY = e.clientY - translateY;
     } else if (pointerCache.length === 2) {
       isPointerDown = false;
       lastPinchDist = getDistance(pointerCache[0], pointerCache[1]);
@@ -520,79 +725,96 @@ function setupPerfectLightbox() {
     }
   });
 
-  lbImg.addEventListener('pointermove', e => {
-    e.preventDefault();
+  lbImg.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
     updatePointerCache(e);
 
-    // 1指：如果当前被放大，则允许自由拖拽移动查看图片区域
     if (pointerCache.length === 1 && isPointerDown) {
       if (scale > 1) {
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-        
-        // 增加边缘碰撞保护阻尼
-        const rect = lbImg.getBoundingClientRect();
-        const winW = window.innerWidth;
-        const winH = window.innerHeight;
-        if (rect.width > winW) {
-          const boundX = (rect.width - winW) / 2;
-          if (Math.abs(translateX) > boundX) startX = e.clientX - translateX; // 动态平滑边界
-        }
+        translateX = e.clientX - dragStartX;
+        translateY = e.clientY - dragStartY;
         applyTransform();
+      } else {
+        const deltaX = e.clientX - pointerStartClientX;
+        lbImg.style.transform = `translateX(${deltaX}px) scale(1)`;
       }
-    } 
-    // 2指：移动端捏合缩放（Pinch to Zoom）
-    else if (pointerCache.length === 2) {
+    } else if (pointerCache.length === 2) {
       const currentDist = getDistance(pointerCache[0], pointerCache[1]);
       const factor = currentDist / lastPinchDist;
       scale = Math.max(1, Math.min(5, baseScale * factor));
-      if (scale === 1) { translateX = 0; translateY = 0; }
+
+      if (scale === 1) {
+        translateX = 0;
+        translateY = 0;
+      }
       applyTransform();
     }
   });
 
   function handlePointerUp(e) {
+    if (!isDragging) {
+      removePointerCache(e);
+      return;
+    }
+
+    const hadSinglePointer = pointerCache.length === 1 && scale === 1 && isPointerDown;
+    let finalDeltaX = 0;
+
+    if (hadSinglePointer) {
+      finalDeltaX = e.clientX - pointerStartClientX;
+    }
+
     removePointerCache(e);
-    if (pointerCache.length < 1) {
+
+    if (pointerCache.length === 0) {
+      isDragging = false;
       isPointerDown = false;
-      // 松手后边界弹性恢复修正
-      if (scale <= 1) {
-        resetTransform();
-      } else {
-        // 防止拖出屏幕之外找不到图
-        const rect = lbImg.getBoundingClientRect();
-        if (rect.width <= window.innerWidth) translateX = 0;
-        if (rect.height <= window.innerHeight) translateY = 0;
+
+      if (scale > 1) {
         lbImg.style.transition = 'transform 0.2s ease-out';
         applyTransform();
+        return;
       }
+
+      lbImg.style.transition = 'transform 0.2s ease-out';
+
+      if (Math.abs(finalDeltaX) > SWIPE_THRESHOLD) {
+        if (finalDeltaX > 0) {
+          showPrev();
+        } else {
+          showNext();
+        }
+      } else {
+        lbImg.style.transform = 'translateX(0) scale(1)';
+      }
+    } else if (pointerCache.length === 1) {
+      isPointerDown = false;
+      lastPinchDist = 0;
     }
-    if (pointerCache.length < 2) lastPinchDist = 0;
   }
 
   lbImg.addEventListener('pointerup', handlePointerUp);
   lbImg.addEventListener('pointercancel', handlePointerUp);
-  lbImg.addEventListener('pointerout', handlePointerUp);
   lbImg.addEventListener('pointerleave', handlePointerUp);
 
-  // 终极点击和双击判断
-  lb.onclick = e => {
-    if (e.target === lb) {
-      // 只有在1倍状态下点击空白区才能退出
-      if (scale === 1) closePerfectLightbox();
+  lb.onclick = (e) => {
+    if (e.target === lb && scale === 1) {
+      closePerfectLightbox();
     }
   };
 
-  lbImg.addEventListener('click', e => {
+  lbImg.addEventListener('click', (e) => {
     const now = Date.now();
+    const movedX = Math.abs(e.clientX - pointerStartClientX);
+    const movedY = Math.abs(e.clientY - pointerStartClientY);
+
+    if (movedX > 5 || movedY > 5) return;
+
     if (now - lastClickTime < 280) {
-      // 触发双击逻辑
       if (scale > 1) {
-        // 当前已被放大：再次双击恢复1倍
         lbImg.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
         resetTransform();
       } else {
-        // 当前是原尺寸：在点击位置放大 2.5 倍
         scale = 2.5;
         const rect = lbImg.getBoundingClientRect();
         const clickX = e.clientX - rect.left - rect.width / 2;
@@ -604,25 +826,27 @@ function setupPerfectLightbox() {
       }
       lastClickTime = 0;
     } else {
-      // 单击逻辑：如果是 1 倍大小，单击直接退出
       lastClickTime = now;
       setTimeout(() => {
-        if (Date.now() - lastClickTime >= 280 && lastClickTime !== 0) {
-          if (scale === 1) closePerfectLightbox();
+        if (Date.now() - lastClickTime >= 280 && lastClickTime !== 0 && scale === 1) {
+          closePerfectLightbox();
         }
       }, 290);
     }
   });
 
-  // 键盘快捷键支持
-  document.addEventListener('keydown', e => {
+  document.addEventListener('keydown', (e) => {
     if (lb.style.display !== 'flex') return;
+
     if (e.key === 'Escape') closePerfectLightbox();
-    if (scale === 1) {
-      if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
-      if (e.key === 'ArrowLeft') document.getElementById('lb-prev').click();
-    }
+    if (scale !== 1) return;
+
+    if (e.key === 'ArrowRight') showNext();
+    if (e.key === 'ArrowLeft') showPrev();
   });
+
+  window.openPerfectLightbox = openPerfectLightbox;
+  window.closePerfectLightbox = closePerfectLightbox;
 }
 
 // 辅助工具函数
