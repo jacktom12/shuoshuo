@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+挣大钱是要命的，，，拿不住挣不到，拿得住也挣不到！！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780830120051_459.png&n=-1)
+@2026-06-07 19:02
+
 迁徙dc03后，这机子好不稳定，时而断连，时而高速！准备到期后扔了
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780822043349_10.png&n=-1)
 @2026-06-07 16:47
