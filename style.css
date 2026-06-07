@@ -505,3 +505,11 @@ main {
     align-items: flex-end;
   }
 }
+/* 修复移动端点击输入框自动放大的问题 */
+@media (max-width: 768px) {
+  .search-inline input,
+  .publish-input,
+  .publish-textarea {
+    font-size: 16px !important;
+  }
+}
