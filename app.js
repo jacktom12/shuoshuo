@@ -305,17 +305,18 @@ function bindImages() {
       return e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
     }
 
-    function updateDots() {
+     function updateDots() {
       dots.forEach(d => d.classList.remove('active'));
       if (dots[curIdx]) dots[curIdx].classList.add('active');
     }
 
-    function goToIndex(index, animate = true) {
+     function goToIndex(index, animate = true) {
       curIdx = Math.max(0, Math.min(total - 1, index));
       currentTranslate = -imgs[curIdx].offsetLeft;
       prevTranslate = currentTranslate;
+      // 简化过渡：完全扁平，快速平滑
       slide.style.transition = animate
-        ? 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)'
+        ? 'transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)' 
         : 'none';
       setSliderPosition();
       updateDots();
