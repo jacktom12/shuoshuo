@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+死活注册不上
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780796067383_324.png&n=-1)
+@2026-06-07 09:34
+
 重温了下诺顿的《面纱》，张爱玲的《倾城之恋》一场突然爆发的战争，一座城市的颠覆让白流苏和范柳原这对现实庸俗的男女的情感得到了升华，面纱呢，一场霍乱也让女主见识到了男主的其他魅力，电影里几乎让女主爱上了他，小说里似乎直到男主死去，女主似乎还是没有爱上他，这样一对比，电影导演还是给与了更多的善良哈哈。普通人是没有机会有这种极端经历来展现自我的。普通人似乎也没多少高贵的品质被埋没了。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780791871247_897.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780791872833_347.png&n=-1)
