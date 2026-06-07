@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+迁徙dc03后，这机子好不稳定，时而断连，时而高速！准备到期后扔了
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780822043349_10.png&n=-1)
+@2026-06-07 16:47
+
 法轮功现在的渗透率还挺高的！随便一个小区都能看到啊！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780819811038_17.jpeg&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780819812954_427.jpeg&n=-1)
