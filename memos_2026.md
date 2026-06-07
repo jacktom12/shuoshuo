@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+韭菜三大共性素质，贪婪，焦虑，缺乏耐心。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780875434403_312.webp&n=-1)
+@2026-06-08 07:37
+
 悲哀啊，谁垄断暴利，谁才有资格讲话！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780872074461_994.png&n=-1)
 @2026-06-08 06:41
