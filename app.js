@@ -727,7 +727,7 @@ function setupPerfectLightbox() {
     }
   });
 
-  lbImg.addEventListener('pointermove', (e) => {
+   lbImg.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
     updatePointerCache(e);
 
@@ -737,7 +737,16 @@ function setupPerfectLightbox() {
         translateY = e.clientY - dragStartY;
         applyTransform();
       } else {
-        const deltaX = e.clientX - pointerStartClientX;
+        // 将原先的 const deltaX 改为 let deltaX，方便我们修改它的值
+        let deltaX = e.clientX - pointerStartClientX;
+        
+        // 🌟 新增：卡住第一张和最后一张的越界滑动
+        if (currentIndex === 0 && deltaX > 0) {
+          deltaX = 0; // 第一张禁止向右拉
+        } else if (currentIndex === currentGallery.length - 1 && deltaX < 0) {
+          deltaX = 0; // 最后一张禁止向左拉
+        }
+
         lbImg.style.transform = `translateX(${deltaX}px) scale(1)`;
       }
     } else if (pointerCache.length === 2) {
@@ -753,7 +762,7 @@ function setupPerfectLightbox() {
     }
   });
 
-  function handlePointerUp(e) {
+   function handlePointerUp(e) {
     if (!isDragging) {
       removePointerCache(e);
       return;
@@ -764,6 +773,13 @@ function setupPerfectLightbox() {
 
     if (hadSinglePointer) {
       finalDeltaX = e.clientX - pointerStartClientX;
+      
+      // 🌟 新增：松手时也同步限制逻辑，防止触发 swipe 判定
+      if (currentIndex === 0 && finalDeltaX > 0) {
+        finalDeltaX = 0;
+      } else if (currentIndex === currentGallery.length - 1 && finalDeltaX < 0) {
+        finalDeltaX = 0;
+      }
     }
 
     removePointerCache(e);
@@ -794,7 +810,6 @@ function setupPerfectLightbox() {
       lastPinchDist = 0;
     }
   }
-
   lbImg.addEventListener('pointerup', handlePointerUp);
   lbImg.addEventListener('pointercancel', handlePointerUp);
   lbImg.addEventListener('pointerleave', handlePointerUp);
