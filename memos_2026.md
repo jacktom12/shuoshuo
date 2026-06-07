@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+更确切地说，银行真正在意的，是打工人持续还债所产生的现金流。
+@2026-06-08 06:35
+
 挣大钱是要命的，，，拿不住挣不到，拿得住也挣不到！！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780830120051_459.png&n=-1)
 @2026-06-07 19:02
