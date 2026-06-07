@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+悲哀啊，谁垄断暴利，谁才有资格讲话！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780872074461_994.png&n=-1)
+@2026-06-08 06:41
+
 更确切地说，银行真正在意的，是打工人持续还债所产生的现金流。
 @2026-06-08 06:35
 
