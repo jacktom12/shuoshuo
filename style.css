@@ -4,33 +4,58 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
-  --bg: #f5f5f3;
-  --paper: #ffffff;
-  --text: #101010;
-  --accent: #000000;
-  --border: #e1ded8;
-  --secondary-text: #7d7a74;
+  /* 🤍 P5T 革命白晝主題（高對比拼貼） */
+  --bg: #f4f4f6;            
+  --paper: #ffffff;          
+  --text: #050505;           
+  --accent: #ff3333;         /* 戰術純赤紅 */
+  --accent-dark: #990000;    
+  --border: #050505;         
+  --secondary-text: #52525b; 
   
-  /* 重新引入“微圆角”变量 */
-  --radius-lg: 20px;
-  --radius-md: 12px; /* 照片的主要圆角，12px 非常舒适 */
-  --radius-sm: 8px;
+  --radius-lg: 0px;          
+  --radius-md: 0px;          
+  --radius-sm: 0px;          
   
   --img-brightness: 1.0;
-  --dot-normal: #cccccc;
-  --dot-active: #222222;
+  --dot-normal: #d4d4d8;
+  --dot-active: #ff3333;
+  
+  /* ⚡ 燈箱專屬變數 */
+  --lightbox-bg: rgba(244, 244, 246, 0.99); 
+  --lightbox-btn-bg: #ffffff;
+  --lightbox-btn-color: #050505;
+  --lightbox-shadow: 1px 4px 0px #ff3333; 
+  
+  /* ✂️ P5T 靈魂：微旋轉 + 斜切的複合非對稱變形，營造粗暴的手工剪紙感 */
+  --p-skew: rotate(-0.5deg) skewX(-2deg);    
+  --p-skew-anti: skewX(2deg) rotate(0.5deg); 
+  --p-shadow: 0px 0px 0px #050505;
 }
 
 body.dark {
-  --bg: #0f0f10;
-  --paper: #181819;
-  --text: #f5f5f5;
-  --accent: #ffffff;
-  --border: #323236;
-  --secondary-text: #a5a5ab;
-  --img-brightness: 0.88;
-  --dot-normal: #57575c;
-  --dot-active: #ffffff;
+  /* 🖤 P5T 革命反叛暗夜（極致純黑） */
+  --bg: #050505;            
+  --paper: #121212;          
+  --text: #ffffff;           
+  --accent: #ff3333;         
+  --accent-dark: #cc0000;    
+  --border: #ffffff;         
+  --secondary-text: #a1a1aa; 
+  
+  --img-brightness: 0.85;
+  --dot-normal: #27272a;
+  --dot-active: #ff3333;
+  
+  /* ⚡ 燈箱專屬變數 */
+  --lightbox-bg: rgba(5, 5, 5, 0.99); 
+  --lightbox-btn-bg: #ffffff;
+  --lightbox-btn-color: #050505;
+  --lightbox-shadow: 1px 4px 0px #ff3333; 
+  
+  --p-skew: rotate(-0.5deg) skewX(-2deg);    
+  --p-skew-anti: skewX(2deg) rotate(0.5deg); 
+  --p-shadow: 0px 0px 0px #ff3333; /* 暗色模式下改用耀眼的赤紅投影 */
 }
 
 * {
@@ -45,35 +70,33 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "LXGW WenKai Screen", sans-serif;
+  /* 採用極具衝擊力的粗體字體 */
+    font-family: "LXGW WenKai Screen", sans-serif;
   display: flex;
   justify-content: center;
   overscroll-behavior: contain;
-  /* 取消 body 的顶部 padding，让内容真正紧贴浏览器头部 */
+  -webkit-font-smoothing: antialiased;
   padding: 0 calc(12px + var(--safe-right)) var(--safe-bottom) calc(12px + var(--safe-left));
 }
 
+/* === 🎭 主容器 === */
 .app-container {
   width: 100%;
-  max-width: 680px;
+  max-width: 660px;
   min-height: 100vh;
-  background: var(--paper);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  /* 关键修复：使用 clip 替代 hidden，保证导航栏能吸顶！ */
-  overflow: clip; 
+  background: var(--bg);
+  border-left: 4px solid var(--border);
+  border-right: 4px solid var(--border);
+  position: relative;
 }
 
-/* === 固定的导航栏 === */
+/* === 🔺 頂吧（Top Bar） === */
 .topbar {
   position: sticky;
-  top: 0; /* 紧贴顶部 */
+  top: 0;
   z-index: 20;
-  /* 稍微加一点半透明和毛玻璃，这样向上滑动时背后的文字透过去会很好看 */
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  /* 处理手机刘海屏 */
+  background: var(--bg);
+  border-bottom: 4px solid var(--border);
   padding-top: var(--safe-top); 
 }
 
@@ -82,434 +105,462 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 16px;
+  padding: 16px 20px;
+}
+
+/* 🎯 P5T 特色：恐嚇信拼貼風格 Logo，帶著叛逆的旋轉角度 */
+.blog-brand {
+  color: #ffffff !important;
+  background: var(--accent);
+  padding: 8px 18px;
+  font-weight: 900;
+  font-size: 1.35rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transform: rotate(-3deg) skewX(-4deg); /* 模擬街頭隨手貼上的標籤 */
+  display: inline-block;
+  border: 3px solid var(--border);
+  box-shadow: -4px 4px 0px var(--border);
+}
+body.dark .blog-brand {
+  color: #ffffff !important;
+  background: var(--accent);
+  box-shadow: -4px 4px 0px #ffffff;
 }
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   min-width: 0;
 }
 
 .topbar-icon {
-  background: none;
-  border: none;
+  background: var(--paper);
+  border: 3px solid var(--border);
   font-size: 1.1rem;
   cursor: pointer;
   color: var(--text);
-  padding: 8px;
-  border-radius: 50%; /* 恢复圆形按钮，更温和 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
+  padding: 6px 10px;
+  transform: rotate(2deg) skewX(-4deg);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
 }
+.topbar-icon > * { transform: skewX(4deg) rotate(-2deg); } 
 
 .topbar-icon:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-body.dark .topbar-icon:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.search-inline {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  min-width: 0;
-}
-
-.search-inline input {
-  width: 0;
-  opacity: 0;
-  pointer-events: none;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  border-radius: 999px; /* 胶囊搜索框 */
-  font-size: 0.94rem;
-  min-width: 0;
-  transition: width .2s ease, opacity .2s ease, padding .2s ease;
-}
-
-.search-inline.open input {
-  width: 160px;
-  opacity: 1;
-  pointer-events: auto;
-  padding: 8px 14px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-}
-
-.search-inline input:focus {
-  outline: none;
+  background: var(--text);
+  color: var(--paper);
   border-color: var(--text);
+  transform: rotate(0deg) scale(1.05);
 }
 
+.search-inline { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
+.search-inline input {
+  width: 0; opacity: 0; pointer-events: none; padding: 0; border: 0; 
+  background: var(--paper); color: var(--text); font-size: 0.9rem;
+  transform: skewX(-6deg); font-family: inherit;
+}
+.search-inline.open input {
+  width: 130px; opacity: 1; pointer-events: auto; 
+  padding: 6px 10px; border: 3px solid var(--border);
+}
+.search-inline input:focus { outline: none; border-color: var(--accent); }
+
+/* 發布按鈕：狂放的剪紙標籤 */
 .publish-pill {
-  background: none;
-  border: none;
-  color: var(--text);
-  padding: 8px;
-  border-radius: 50%;
-  font-size: 1.1rem;
+  background: #ffffff;
+  border: 3px solid var(--border);
+  color: #050505 !important;
+  padding: 6px 18px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  transform: rotate(2deg) skewX(-6deg);
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease;
+  box-shadow: 3px 3px 0px var(--accent);
+  transition: all 0.1s ease;
 }
-
+body.dark .publish-pill { background: #121212; color: #fff !important; }
 .publish-pill:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-body.dark .publish-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-main {
-  padding: 0 16px;
+  background: var(--accent);
+  color: #ffffff !important;
+  box-shadow: none;
+  transform: rotate(0deg) translate(3px, 3px);
 }
 
-#posts {
-  padding-top: 4px;
-}
+main { padding: 0 16px; }
+#posts { padding-top: 16px; }
 
+/* === 🃏 核心：卡片（P5T 虛線剪紙風格） === */
 .post {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border);
+  margin: 28px 0;
+  padding: 24px;
+  background: var(--paper);
+  /* 🛠️ 採用粗虛線（dashed），高度模擬「沿虛線剪開」的報紙剪紙手工質感 */
+  border: 4px dashed var(--border); 
+  border-radius: var(--radius-lg);
+  box-shadow: var(--p-shadow); 
+  transform: var(--p-skew);   
   display: flex;
   flex-direction: column;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .post-right {
+  transform: var(--p-skew-anti); 
   flex-grow: 1;
   overflow: hidden;
   min-width: 0;
 }
 
+.post:hover {
+  transform: var(--p-skew) translate(-2px, -2px);
+  border-style: solid; /* 懸浮時轉為實線，增加動態視覺衝擊 */
+}
+
 .post-header {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 14px;
+  border-bottom: 3px solid var(--border);
+  padding-bottom: 8px;
 }
 
 .post-time {
-  color: var(--secondary-text);
-  font-size: 0.85rem;
-  letter-spacing: 0.3px;
+  color: #fff;
+  background: var(--accent);
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  transform: rotate(-1deg) skewX(-6deg);
+  border: 2px solid var(--border);
 }
+.post-time::before { content: "⚔️ REBEL_TACTICS // "; color: #ffffff; }
 
 .post-content {
-  font-size: 0.98rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
   word-wrap: break-word;
+  font-family: -apple-system, sans-serif; 
+  font-weight: 500;
 }
-
-.post-content p {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
+.post-content p { margin-top: 0; margin-bottom: 8px; }
 
 .post-content blockquote {
-  margin: 0;
-  padding-left: 10px;
-  border-left: 2px solid var(--border);
+  margin: 16px 0;
+  padding: 12px 16px;
+  background: var(--border);
+  color: var(--paper);
+  border-left: 6px solid var(--accent);
+  font-style: normal;
+  font-weight: 900;
+  transform: rotate(0.5deg);
 }
 
 .post-content code {
-  background: var(--bg);
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #ffffff;
+  padding: 3px 7px;
+  font-size: 0.88rem;
+  font-weight: bold;
 }
 
-.post-images {
-  overflow: hidden;
-  padding: 5px 0 12px;
-  cursor: grab;
-  contain: layout;
-}
-
-.post-images.dragging {
-  cursor: grabbing;
-}
-
-.img-slide {
-  display: flex;
-  position: relative;
-  gap: 8px;
-  will-change: transform;
-}
-
-.post-images.single-image img {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 420px;
-  display: block;
-  flex-shrink: 0;
-}
+/* === 🔺 相簿區 === */
+.post-images { overflow: hidden; padding: 12px 0 4px; cursor: grab; contain: layout; }
+.img-slide { display: flex; position: relative; gap: 12px; will-change: transform; }
+.post-images.single-image img { width: auto; max-width: 100%; height: auto; max-height: 380px; display: block; }
 
 .post-images img {
-  height: 240px;
-  width: auto;
-  max-width: 85%;
-  flex-shrink: 0;
-  object-fit: cover;
-  /* 图片微圆角 */
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  user-select: none;
-  -webkit-user-drag: none;
-  touch-action: pan-y;
+  height: 190px; width: auto; max-width: 85%; object-fit: cover;
+  border: 3px solid var(--border);
+  padding: 0;
   filter: brightness(var(--img-brightness));
-  transition: filter 0.2s ease;
+  transition: transform 0.2s;
 }
+.post-images img:hover { border-color: var(--accent); transform: scale(1.02); }
 
-.img-dots {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 6px;
-}
-
+/* 幾何平行四邊形指示點 */
+.img-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
 .img-dots .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%; /* 恢复圆点导航 */
+  width: 12px; height: 6px;
   background: var(--dot-normal);
+  transform: skewX(-20deg);
   transition: all 0.15s ease;
   cursor: pointer;
 }
+.img-dots .dot.active { background: var(--dot-active); width: 24px; }
 
-.img-dots .dot.active {
-  background: var(--dot-active);
-  transform: scale(1.2);
-}
+#loader { text-align: center; padding: 40px; color: var(--secondary-text); font-weight: 900; }
 
-#loader {
-  text-align: center;
-  padding: 30px;
-  color: var(--secondary-text);
-  font-size: 0.9rem;
-}
-
-/* 灯箱与发布弹窗保持微圆角匹配 */
+/* === 🪐 燈箱展示艙 === */
 .lightbox {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.95);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: var(--lightbox-bg); 
   z-index: 2000;
+  
   justify-content: center;
   align-items: center;
-  touch-action: none;
-  user-select: none;
 }
 
+/* 🎯 寬度收縮策略 + 低 z-index，完全杜絕任何陰影蓋到計數器 */
 .lightbox img {
-  max-width: 95%;
-  max-height: 95%;
+  max-width: 80%; 
+  max-height: 82%;
   object-fit: contain;
-  cursor: grab;
-  transform-origin: center center;
-  will-change: transform;
-  border-radius: var(--radius-sm); /* 大图稍微给一点点圆角 */
+  border: 4px solid var(--text); 
+  background: var(--paper);
+  padding: 0;
+  box-shadow: var(--p-shadow);
+  z-index: 2100; 
 }
 
-.lightbox img:active {
-  cursor: grabbing;
+/* 🌟 終極計數器：z-index 3000 高位碾壓，並帶有 P5T 的粗獷傾斜與外邊距防撞 */
+.lb-counter {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  margin-right: 12px; 
+  background: var(--accent); /* 使用亮眼的反叛紅作為底色 */     
+  color: #ffffff;           
+  border: 3px solid var(--border);
+  padding: 8px 20px; 
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  transform: rotate(2deg) skewX(-8deg); /* 故意往反方向轉 2 度，撕紙感極強 */
+  z-index: 3000; 
+  box-shadow: 4px 4px 0px var(--border);
+}
+.lb-counter::before { 
+  content: "STEAL // "; 
+  color: #ffffff; 
+  display: inline-block; 
+  margin-right: 6px;
+  text-decoration: underline;
+  transform: skewX(8deg) rotate(-2deg); 
 }
 
+/* 🌟 控制按鈕：保持不晃動死鎖狀態，僅更換為 P5T 革命對比色 */
 .lb-btn {
   position: absolute;
-  background: rgba(255,255,255,0.1);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  background: var(--lightbox-btn-bg);
+  color: var(--lightbox-btn-color) !important;
+  border: 3px solid var(--border);
+  width: 46px; height: 46px;
   font-size: 1.2rem;
+  font-weight: 900;
   cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--lightbox-shadow);
+  z-index: 3100;
+  /* 鎖死過渡：只允許顏色和陰影過渡，嚴禁 transform 移動 */
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
-.lb-btn:hover {
-  background: rgba(255,255,255,0.25);
+#lb-close { 
+  top: 24px; left: 24px; 
+  transform: rotate(-3deg) skewX(-6deg); 
+}
+#lb-close:hover { 
+  background: var(--accent); color: #ffffff !important; border-color: var(--border);
+  transform: rotate(-3deg) skewX(-6deg) !important; /* 強制留原位 */
 }
 
-#lb-close { top: 20px; left: 20px; }
-.nav-btn { top: 50%; transform: translateY(-50%); }
-#lb-prev { left: 20px; }
-#lb-next { right: 20px; }
-#lb-counter { position: absolute; top: 30px; right: 30px; color: white; font-size: 0.9rem; }
+/* 左右切換按鈕：核心置中機制死死鎖定 */
+.nav-btn { 
+  top: 50%; 
+  transform: translateY(-50%) rotate(3deg) skewX(-6deg); 
+}
+#lb-prev { left: 24px; }
+#lb-next { right: 24px; }
 
+/* 🛠️ 懸浮時：只允許顏色與陰影變化，嚴格執行 transform 鎖定，絕不允許抖動位移！ */
+.lb-btn:hover { 
+  background: var(--text);
+  color: var(--paper) !important; 
+  border-color: var(--text);
+  box-shadow: 0px 0px 0px transparent;
+}
+.nav-btn:hover {
+  transform: translateY(-50%) rotate(3deg) skewX(-6deg) !important; /* 死死咬住垂直置中 */
+}
+.lb-btn:active { transform: scale(0.95) !important; }
+.nav-btn:active { transform: translateY(-50%) rotate(3deg) skewX(-6deg) scale(0.95) !important; }
+
+/* === 📝 發布彈窗 === */
 .publish-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 99999;
+  position: fixed; inset: 0; background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 99999;
 }
-
 .publish-panel {
-  width: min(100%, 620px);
-  max-height: min(88vh, 900px);
-  overflow: auto;
-  background: var(--paper);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
+  width: min(100%, 600px); max-height: min(85vh, 850px); overflow: auto;
+  background: var(--paper); color: var(--text); border: 4px dashed var(--border);
+  box-shadow: var(--p-shadow); padding: 26px; transform: rotate(0.5deg);
 }
+.publish-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 3px solid var(--border); padding-bottom: 12px; }
+.publish-title { margin: 0; font-size: 1.25rem; font-weight: 900; text-transform: uppercase; transform: skewX(-6deg); color: var(--accent); }
+.publish-close { border: 2px solid var(--border); background: transparent; color: var(--text); width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.publish-close:hover { background: var(--accent); color: white; }
 
-.publish-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.publish-title { margin: 0; font-size: 1.08rem; font-weight: 700; color: var(--text); }
-.publish-close {
-  border: none;
-  background: var(--bg);
-  color: var(--text);
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.publish-field { margin-bottom: 14px; }
-.publish-label { display: block; font-size: .9rem; color: var(--secondary-text); margin-bottom: 8px; }
+.publish-field { margin-bottom: 18px; }
+.publish-label { display: block; font-size: .85rem; font-weight: 900; color: var(--text); margin-bottom: 6px; text-transform: uppercase; }
 
 .publish-input, .publish-textarea {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  border-radius: var(--radius-md);
-  outline: none;
-  transition: border-color .2s ease;
+  width: 100%; border: 3px solid var(--border); background: var(--bg);
+  color: var(--text); padding: 10px; outline: none; font-family: -apple-system, sans-serif; font-weight: bold; transition: all .2s;
 }
-
-.publish-input { padding: 12px 14px; font-size: .95rem; }
-.publish-textarea { min-height: 120px; resize: vertical; padding: 14px; font-size: .96rem; line-height: 1.6; }
-.publish-input:focus, .publish-textarea:focus { border-color: var(--text); }
+.publish-input:focus, .publish-textarea:focus { border-color: var(--accent); background: var(--paper); box-shadow: 5px 5px 0px var(--border); }
 
 .publish-tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-.pick-img-btn {
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-size: .92rem;
-}
+.pick-img-btn { border: 2px solid var(--border); background: var(--paper); color: var(--text); padding: 6px 14px; cursor: pointer; font-size: .82rem; font-weight: 900; transform: skewX(-4deg); }
+.pick-img-btn:hover { background: var(--accent); color: white; }
 
-.publish-tip { font-size: .86rem; color: var(--secondary-text); }
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; margin-top: 10px; }
-.preview-item {
-  position: relative;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  aspect-ratio: 1 / 1;
-}
-.preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.preview-del {
-  position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border: none;
-  border-radius: 50%; cursor: pointer; background: rgba(0,0,0,.6); color: #fff; font-size: 14px; line-height: 1;
-}
+.preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 8px; }
+.preview-item { position: relative; border: 2px solid var(--border); overflow: hidden; padding: 2px; background: var(--paper); aspect-ratio: 1 / 1; }
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.preview-del { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: none; cursor: pointer; background: var(--accent); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; }
 
-.publish-footer { display: flex; gap: 10px; margin-top: 18px; }
-.publish-submit, .publish-cancel { border: none; cursor: pointer; border-radius: var(--radius-md); padding: 12px 14px; font-size: .95rem; }
-.publish-submit { flex: 1; background: var(--text); color: var(--paper); font-weight: 700; }
-.publish-cancel { min-width: 96px; background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-.publish-submit:disabled { opacity: .6; cursor: not-allowed; }
-.publish-empty { padding: 12px 14px; border: 1px dashed var(--border); border-radius: var(--radius-md); color: var(--secondary-text); background: var(--bg); font-size: .9rem; }
+.publish-footer { display: flex; gap: 12px; margin-top: 24px; }
+.publish-submit, .publish-cancel { border: 3px solid var(--border); cursor: pointer; padding: 12px 20px; font-size: .95rem; font-weight: 900; transform: skewX(-6deg); }
+.publish-submit { flex: 1; background: var(--accent); color: white; box-shadow: 4px 4px 0px var(--border); }
+.publish-submit:hover:not(:disabled) { background: var(--text); color: var(--paper); box-shadow: none; transform: skewX(-6deg) translate(4px, 4px); }
+.publish-cancel { min-width: 90px; background: transparent; color: var(--secondary-text); }
+.publish-submit:disabled { opacity: .3; cursor: not-allowed; }
 
-.toast-wrap {
-  position: fixed;
-  top: calc(20px + var(--safe-top));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  pointer-events: none;
-}
+/* === 📢 Toast === */
+.toast-wrap { position: fixed; top: calc(28px + var(--safe-top)); left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
 .toast {
-  min-width: 160px; max-width: min(92vw, 360px);
-  padding: 12px 16px; border-radius: var(--radius-md); background: var(--paper); color: var(--text);
-  border: 1px solid var(--border); font-size: 0.92rem; opacity: 0; transform: translateY(-8px) scale(.98); animation: toastIn .2s ease forwards;
+  min-width: 270px; padding: 14px 24px; background: var(--text); color: var(--paper);
+  border: 3px solid var(--border); font-size: 0.95rem; font-weight: 900; text-align: center; 
+  transform: skewX(-12deg); box-shadow: var(--p-shadow);
+  opacity: 0; transform: translateX(-50%) translateY(-15px) skewX(-12deg);
+  animation: pToastIn .35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
 }
-.toast.success { border-color: color-mix(in srgb, var(--text) 18%, var(--border)); }
-.toast.error { border-color: rgba(220, 70, 70, .4); }
-.toast.hide { animation: toastOut .2s ease forwards; }
+.toast.success { color: var(--accent); }
+.toast.success::before { content: "💣 TACTICS TRIUMPH // "; }
+.toast.error { background: #ff3333; color: #ffffff; border-color: #000000; }
+.toast.hide { animation: pToastOut .2s ease forwards; }
 
-@keyframes toastIn { to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes toastOut { to { opacity: 0; transform: translateY(-8px) scale(.98); } }
+@keyframes pToastIn { to { opacity: 1; transform: translateX(0) translateY(0) skewX(-12deg); } }
+@keyframes pToastOut { to { opacity: 0; transform: translateY(-10px) skewX(-12deg); } }
 
-/* === 移动端适配 === */
+
+/* =======================================================
+   🌟 移動端 RWD 全介面響應式深層重構（P5T 特適配版）
+   ======================================================= */
 @media (max-width: 768px) {
-  body {
-    padding: 0; /* 移动端让白色背景完全铺满左右和顶部 */
+  body { 
+    padding: 0; 
+    background: var(--bg); 
   }
-
-  .app-container {
-    max-width: 100%;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-  }
-
-  .topbar-inner {
-    padding: 12px 14px;
-  }
-
-  .search-inline.open input { width: 132px; }
-  main { padding: 0 14px; }
-  .post-images img { height: 200px; }
-  .post-images.single-image img { max-height: 340px; }
-  .nav-btn { display: none; }
   
+  .app-container { 
+    max-width: 100%; 
+    border-left: none; 
+    border-right: none; 
+  }
+  
+  .topbar-inner { 
+    padding: 12px 14px; 
+  }
+  
+  .blog-brand {
+    font-size: 1.15rem;
+    padding: 6px 12px;
+  }
+  
+  main { 
+    padding: 0 10px; 
+  }
+  
+  /* 手機端卡片收緊，減少不必要的留白，虛線加粗增加剪紙感 */
+  .post { 
+    margin: 16px 0; 
+    padding: 16px; 
+    border-width: 3px;
+    box-shadow: 4px 4px 0px var(--border); 
+  }
+  body.dark .post { 
+    box-shadow: 4px 4px 0px var(--accent); 
+  }
+  
+  .post-content {
+    font-size: 0.95rem;
+  }
+  .post-content blockquote {
+    padding: 8px 12px;
+    margin: 12px 0;
+  }
+  
+  .post-images img { 
+    height: 150px; 
+    border-width: 2px;
+  }
+  
+  /* 📱 移動端燈箱：隱藏實體按鈕（改用手勢滑動），釋放極致視野 */
+  .nav-btn { 
+    display: none !important; 
+  }
+  
+  .lightbox img {
+    max-width: 95%; 
+    max-height: 75%;
+    border: 3px solid var(--text);
+  }
+  
+  /* 📱 移動端計數器：改為正上方絕對置中，完全防撞 */
+  .lb-counter {
+    top: calc(20px + var(--safe-top));
+    left: 50% !important;
+    right: auto !important;
+    margin-right: 0;
+    transform: translateX(-50%) rotate(2deg) skewX(-8deg); 
+  }
+  
+  #lb-close {
+    top: calc(18px + var(--safe-top));
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    transform: rotate(-3deg) skewX(-6deg);
+  }
+
+  /* 📱 手機端發布面板：底部滑出式終端卡片 */
+  .publish-mask { 
+    padding: 0; 
+    align-items: flex-end; 
+  }
   .publish-panel {
-    width: 100%;
-    max-height: 100vh;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    padding: 16px;
-    /* 紧贴底部弹出效果 */
+    width: 100%; 
+    max-height: 80vh;
+    padding: 20px 16px; 
     margin-top: auto; 
+    border-bottom: none; border-left: none; border-right: none;
+    border-style: solid; /* 手機彈出窗底邊使用實線 */
+    box-shadow: 0 -6px 0px var(--accent);
+    transform: none;
   }
-  
-  .publish-mask {
-    padding: 20px 0 0 0; /* 移动端发布弹窗贴底 */
-    align-items: flex-end;
+  .publish-top {
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+  }
+  .publish-footer {
+    margin-top: 16px;
+    padding-bottom: var(--safe-bottom);
   }
 }
-/* 修复移动端点击输入框自动放大的问题 */
-@media (max-width: 768px) {
-  .search-inline input,
-  .publish-input,
-  .publish-textarea {
-    font-size: 16px !important;
+
+@media (max-width: 480px) {
+  .search-inline input, .publish-input, .publish-textarea { 
+    font-size: 16px !important; /* 🛠️ 防止 iOS 瀏覽器惡性自動放大 */
+  }
+  .post-images img { 
+    height: 130px; 
   }
 }
