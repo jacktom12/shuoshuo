@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+儒以文乱法，侠以武犯禁，而人主兼礼之，此所以乱也。
+@2026-06-08 13:15
+
 除了爸爸、翁妈（妈妈）、妹子们，蔡皋最爱的是外婆。儿时的记忆里，外婆是一帧活的风景。外婆讲的故事“有腔有调，有栀子花、茉莉花的异香”，外婆的一手家务活也是有情有致，做甜酒、做坛子菜……到了不同的节气，更有花样繁多的物事要做，春节祭祖、办年饭；夏至吃“立夏它”（长沙人爱吃的糯米做的小吃）；秋至做秋至胡椒；端午包粽子、做雄黄酒、看龙船。如此，这一年就过得有声有色，四季分明。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780883141297_339.jpeg&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780883142375_475.jpeg&n=-1)
