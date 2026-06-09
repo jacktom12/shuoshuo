@@ -356,27 +356,118 @@ body.dark .post-images .img-wrapper.more-mask::after {
 #loader { text-align: center; padding: 40px; color: var(--secondary-text); font-weight: 900; }
 
 /* === 🪐 燈箱展示艙 === */
-.lightbox {
+ .lightbox {
   display: none;
   position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: var(--lightbox-bg); 
+  inset: 0;
   z-index: 2000;
-  justify-content: center;
+  background-color: var(--lightbox-bg); /* 自动同步你 root/dark 里的灯箱背景色 */
+   
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
-
+.lb-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0; /* 极其重要：防止大图溢出撑爆Flex容器 */
+}
 .lightbox img {
-  max-width: 85%; 
-  max-height: 82%;
+   max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  border: 4px solid var(--text); 
-  background: var(--paper);
-  padding: 0;
-  box-shadow: var(--p-shadow);
-  z-index: 2100; 
+  border: 3px solid var(--text); /* 浅色模式下为黑边，深色模式下自动变成白边/亮边 */
+  box-shadow: 6px 6px 0px var(--border); /* 阴影颜色完全跟随系统主题变色 */
+  background: var(--paper); /* 图片未加载完成时的卡片底色 */
+  transition: transform 0.1s ease-out;
+  cursor: grab;
+}
+.lightbox img:active {
+  cursor: grabbing;
 }
 
+/* 🌟 下方统一工具控制栏 */
+.lb-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;       /* 左右按钮和中间计数的间距 */
+  margin-top: 20px; /* 图片与工具栏的间距 */
+  margin-bottom: calc(10px + var(--safe-bottom)); /* 智能兼容手机全面屏底部黑条 */
+  width: 100%;
+}
+
+/* 控制栏内的独立切换按钮（延续 P5T 拼贴风格） */
+.lb-bar-btn {
+  background: var(--paper); /* 按钮底色自适应（白天白，深夜黑） */
+  color: var(--text);       /* 文字/箭头颜色自适应 */
+  border: 2px solid var(--border);
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0px var(--border); /* 战术方块投影自适应 */
+  transition: all 0.15s ease;
+}
+.lb-bar-btn:hover {
+  background: var(--text);
+  color: var(--paper);
+}
+.lb-bar-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--border);
+}
+.lb-bar-btn.hidden {
+  opacity: 0.15;
+  pointer-events: none; /* 翻到第一张或最后一张时按钮淡化且不可点击 */
+}
+
+/* 控制栏内部的计数文本（延续标志性的战术红色红边标牌） */
+.lb-bar-counter {
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: var(--accent); /* 无论白天黑夜，始终保持最亮眼的 P5T 战术赤红 */
+  color: #ffffff;            /* 文字强制保持纯白，保证暗色和浅色下均有最高清晰度 */
+  padding: 4px 14px;
+  transform: rotate(-1deg) skewX(-4deg); /* 独特的反叛倾斜视觉感 */
+  border: 2px solid var(--border);
+  box-shadow: 3px 3px 0px var(--border);
+  min-width: 80px;
+  text-align: center;
+}
+
+/* 独立悬浮在右上角的关闭按钮 */
+#lb-close {
+  position: absolute;
+  top: calc(15px + var(--safe-top)); /* 智能避让手机刘海屏/挖孔 */
+  right: 15px;
+  background: var(--accent); /* 统一保持战术红色 */
+  color: #ffffff;            /* 纯白叉号 */
+  border: 2px solid var(--border);
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--border);
+  z-index: 2010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+#lb-close:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--border);
+}
 /* 🌟 終極計數器 */
 .lb-counter {
   position: absolute;
@@ -532,27 +623,25 @@ body.dark .post-images .img-wrapper.more-mask::after {
   
   .nav-btn { display: flex !important; }
   
+   
+  
+   .lightbox {
+    padding: 12px;
+  }
+  .lb-controls-bar {
+    gap: 16px;       /* 手机端间距稍微缩小 */
+    margin-top: 15px;
+  }
+  .lb-bar-btn {
+    width: 40px;     /* 手机端物理按钮稍微缩小，防误触 */
+    height: 40px;
+  }
   .lightbox img {
-    max-width: 95%; 
-    max-height: 75%;
-    border: 3px solid var(--text);
+    border-width: 2px;
+    box-shadow: 4px 4px 0px var(--border);
   }
   
-  .lb-counter {
-    top: calc(20px + var(--safe-top));
-    left: 50% !important;
-    right: auto !important;
-    margin-right: 0;
-    transform: translateX(-50%) rotate(2deg) skewX(-8deg); 
-  }
-  
-  #lb-close {
-    top: calc(18px + var(--safe-top));
-    left: 16px;
-    width: 38px;
-    height: 38px;
-    transform: rotate(-3deg) skewX(-6deg);
-  }
+   
 
   .publish-mask { padding: 0; align-items: flex-end; }
   .publish-panel {
@@ -562,6 +651,10 @@ body.dark .post-images .img-wrapper.more-mask::after {
   }
   .publish-top { margin-bottom: 14px; padding-bottom: 8px; }
   .publish-footer { margin-top: 16px; padding-bottom: var(--safe-bottom); }
+  
+  
+  
+  
 }
 
 @media (max-width: 480px) {

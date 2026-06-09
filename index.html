@@ -40,12 +40,18 @@
     </main>
   </div>
 
-  <div id="lightbox" class="lightbox">
-    <button id="lb-close" class="lb-btn">✕</button>
-    <button id="lb-prev" class="lb-btn nav-btn">❮</button>
-    <img id="lb-img" src="" alt="preview" />
-    <button id="lb-next" class="lb-btn nav-btn">❯</button>
-    <div id="lb-counter">1 / 1</div>
+   <div id="lightbox" class="lightbox">
+    <button id="lb-close" class="lb-btn" aria-label="关闭灯箱">✕</button>
+    
+    <div class="lb-stage">
+      <img id="lb-img" src="" alt="灯箱大图" draggable="false" />
+    </div>
+
+    <div class="lb-controls-bar">
+      <button id="lb-prev" class="lb-bar-btn" aria-label="上一张">◀</button>
+      <span id="lb-counter" class="lb-bar-counter">0 / 0</span>
+      <button id="lb-next" class="lb-bar-btn" aria-label="下一张">▶</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
