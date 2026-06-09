@@ -417,35 +417,42 @@ if (Math.abs(dragMoved) > slideThreshold) {
     wrap.addEventListener('dragstart', (e) => e.preventDefault());
 
     window.addEventListener('blur', forceStopDrag);
+ // 引入一个锁，确保一次滚轮动作只触发一次切页，防止连跳
+    let wheelLocked = false;
 
     wrap.addEventListener('wheel', (e) => {
+      // 判定主导滚动方向（横向或纵向）
       const dominantDelta = Math.abs(e.deltaX) >= Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (Math.abs(dominantDelta) < 2) return;
+      
+      // 过滤掉极其微小的摩擦，防止触控板误触
+      if (Math.abs(dominantDelta) < 5) return;
 
       e.preventDefault();
-      forceStopDrag();
+      forceStopDrag(); // 终止可能存在的拖拽干扰
 
-      wheelDeltaX += dominantDelta;
-      slide.style.transition = 'none';
-      currentTranslate = prevTranslate - wheelDeltaX;
-      setSliderPosition();
+      // 如果当前滚动锁还在，说明上一次切页还没完全平息，直接拦截
+      if (wheelLocked) return;
 
-      clearTimeout(wheelTimeout);
-      wheelTimeout = setTimeout(() => {
-        const itemWidth = getItemWidth();
-        const movedSlides = Math.round(Math.abs(wheelDeltaX) / itemWidth);
+      // 只要滚轮滚动差值超过 15（无论轻滚还是重滚），就立即执行切图
+      if (Math.abs(dominantDelta) > 15) {
+        wheelLocked = true; // 立即上锁
 
-        if (movedSlides > 0) {
-          if (wheelDeltaX > 0) {
-            curIdx = Math.min(total - 1, curIdx + movedSlides);
-          } else {
-            curIdx = Math.max(0, curIdx - movedSlides);
-          }
+        if (dominantDelta > 0) {
+          // 顺滑滚向下一张
+          curIdx = Math.min(total - 1, curIdx + 1);
+        } else {
+          // 顺滑滚向上一张
+          curIdx = Math.max(0, curIdx - 1);
         }
 
-        wheelDeltaX = 0;
         goToIndex(curIdx);
-      }, 90);
+
+        // 300 毫秒后解锁。这个时间刚好契合 P5T 0.15s 的 transition 过渡动画，
+        // 既能保证切页跟手，又能有效防止大力滚动时引起的连续翻页。
+        setTimeout(() => {
+          wheelLocked = false;
+        }, 300);
+      }
     }, { passive: false });
 
     dots.forEach((dot, index) => {
