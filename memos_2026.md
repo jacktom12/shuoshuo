@@ -10,6 +10,10 @@ image: ""
 ---
 
 
+再度起飞
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1780982168520_302.jpeg&n=-1)
+@2026-06-09 13:16
+
 > 2025 年全国家庭户约51465 万户
 > 600 万净资产及以上富裕家庭：512.8 万户
 > 占比≈0.996%，差不多就是100 户里刚好 1 户。
