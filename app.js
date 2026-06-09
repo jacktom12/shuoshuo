@@ -351,7 +351,7 @@ lightboxDom.addEventListener('touchend', (e) => {
 
   // 🌟 核心手势：上滑退出灯箱
   // 当向上滑动距离超过 60 像素，且垂直滑动幅度明显大于水平滑动（防止误触翻页）
-  if (deltaY < -60 && Math.abs(deltaY) > Math.abs(deltaX)) {
+  if (scale === 1 && deltaY < -60 && Math.abs(deltaY) > Math.abs(deltaX)) {
     // 执行关闭灯箱的方法（请确保与你现有的关闭函数名一致，一般是 closeLightbox 或直接让 DOM 隐藏）
     if (typeof closePerfectLightbox === 'function') {
       closePerfectLightbox();
