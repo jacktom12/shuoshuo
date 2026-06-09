@@ -367,6 +367,8 @@ body.dark .post-images .img-wrapper.more-mask::after {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  /* 🌟 新增这一行：彻底禁止浏览器默认的滚动传递，锁死底层说说列表 */
+  touch-action: none;
 }
 .lb-stage {
   flex: 1;

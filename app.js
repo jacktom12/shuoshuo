@@ -317,6 +317,50 @@ function openPerfectLightbox() {
   lb.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   updateLightboxImage(false);
+  const lightboxDom = document.getElementById('lightbox');
+
+let touchStartY = 0;
+let touchStartX = 0;
+
+// 拦截并记录触摸起点
+lightboxDom.addEventListener('touchstart', (e) => {
+  // 如果是多指操作（比如双指放大图片），不触发单指手势
+  if (e.touches.length > 1) return; 
+  
+  touchStartY = e.touches[0].clientY;
+  touchStartX = e.touches[0].clientX;
+}, { passive: false });
+
+// 拦截滑动过程，阻止底层说说跟滚
+lightboxDom.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 1) {
+    // 阻止浏览器默认的滚动行为（彻底废除底层说说跟随滚动）
+    e.preventDefault(); 
+  }
+}, { passive: false });
+
+// 触摸结束，判定手势方向
+lightboxDom.addEventListener('touchend', (e) => {
+  if (e.changedTouches.length === 0) return;
+  
+  const touchEndY = e.changedTouches[0].clientY;
+  const touchEndX = e.changedTouches[0].clientX;
+  
+  const deltaY = touchEndY - touchStartY; // 负值代表向上滑，正值代表向下滑
+  const deltaX = touchEndX - touchStartX;
+
+  // 🌟 核心手势：上滑退出灯箱
+  // 当向上滑动距离超过 60 像素，且垂直滑动幅度明显大于水平滑动（防止误触翻页）
+  if (deltaY < -60 && Math.abs(deltaY) > Math.abs(deltaX)) {
+    // 执行关闭灯箱的方法（请确保与你现有的关闭函数名一致，一般是 closeLightbox 或直接让 DOM 隐藏）
+    if (typeof closePerfectLightbox === 'function') {
+      closePerfectLightbox();
+    } else {
+      lightboxDom.style.display = 'none';
+    }
+    return;
+  }
+}, { passive: true });
 }
 
 function closePerfectLightbox() {
