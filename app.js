@@ -13,7 +13,7 @@ let noMoreYearFile = false;
 const loaderDom = document.getElementById('loader');
 
 // ==============================================
-// 完美灯箱核心变量（支持全向平移与双击缩放）
+// 灯箱核心变量
 // ==============================================
 let currentGallery = [];
 let currentIndex = 0;
@@ -77,7 +77,7 @@ async function loadYearMd(year) {
     return;
   }
   isLoading = true;
-  loaderDom.textContent = `正在翻阅 ${year} 年的记忆...`;
+  loaderDom.textContent = `正在翻阅 ${year} 年的 memory...`;
   try {
     const res = await fetch(`memos_${year}.md?v=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) throw new Error('无文件');
@@ -173,7 +173,45 @@ function applyFilter() {
   render(true);
 }
 
-function render(reset = false) {
+// 🌟 精简且纯粹地计算 Grid 宫格排布属性
+function generateGridHtml(images) {
+  if (!images || images.length === 0) return '';
+  
+  const count = images.length;
+  let gridClass = 'grid-3'; 
+  
+  if (count === 1) gridClass = 'grid-1';
+  else if (count === 2) gridClass = 'grid-2';
+  else if (count === 3) gridClass = 'grid-3';
+  else if (count === 4) gridClass = 'grid-4';
+  else if (count >= 5) gridClass = 'grid-6'; 
+
+  const maxShow = 6;
+  let innerHtml = '';
+  
+  for (let i = 0; i < Math.min(count, maxShow); i++) {
+    const isLastVisible = (i === maxShow - 1) && (count > maxShow);
+    const moreCount = count - maxShow;
+    
+    if (isLastVisible) {
+      innerHtml += `
+        <div class="img-wrapper more-mask" data-more="+${moreCount}" data-index="${i}">
+          <img src="${images[i]}" alt="图片" loading="lazy" draggable="false">
+        </div>
+      `;
+    } else {
+      innerHtml += `
+        <div class="img-wrapper" data-index="${i}">
+          <img src="${images[i]}" alt="图片" loading="lazy" draggable="false">
+        </div>
+      `;
+    }
+  }
+  
+  return `<div class="post-images ${gridClass}">${innerHtml}</div>`;
+}
+
+ function render(reset = false) {
   if (!reset) isLoading = true;
   const box = document.getElementById('posts');
   if (reset) box.innerHTML = '';
@@ -186,18 +224,14 @@ function render(reset = false) {
     const textContent = Array.isArray(p.content) ? p.content.join('\n\n') : (p.content || '');
     const parsedText = marked.parse(textContent);
     const showTime = formatRelativeTime(p.date);
-    let imagesHtml = '';
-    if (p.images && p.images.length > 0) {
-      const imgsStr = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join('');
-      imagesHtml = `
-        <div class="post-images">
-          <div class="img-slide">${imgsStr}</div>
-          <div class="img-dots"></div>
-        </div>
-      `;
-    }
+    
+    const imagesHtml = generateGridHtml(p.images);
+    
+    // 🌟 核心修改 1：将完整的图片数组序列化并转义，安全地存入 data 属性
+    const allImagesAttr = encodeURIComponent(JSON.stringify(p.images || []));
+
     return `
-      <article class="post" id="post-${p.id}">
+      <article class="post" id="post-${p.id}" data-all-images="${allImagesAttr}">
         <div class="post-header">
           <span class="post-time">${showTime}</span>
         </div>
@@ -234,257 +268,45 @@ function setupInfinite() {
   });
 }
 
-// ==============================================
-// 优化版：极其顺滑的无抖动多图轮播
-// ==============================================
-let globalGalleryLock = false;
-function bindImages() {
-  document.querySelectorAll('.post-images').forEach(wrap => {
-    if (wrap.dataset.boundDrag) return;
-    wrap.dataset.boundDrag = 'true';
-
-    const slide = wrap.querySelector('.img-slide');
-    const dotsBox = wrap.querySelector('.img-dots');
-    const imgs = slide.querySelectorAll('img');
-    const total = imgs.length;
-
-    if (total <= 1) {
-      dotsBox.style.display = 'none';
-      wrap.classList.add('single-image');
-      return;
-    }
-
-    dotsBox.innerHTML = '';
-    for (let i = 0; i < total; i++) {
-      const dot = document.createElement('span');
-      dot.className = i === 0 ? 'dot active' : 'dot';
-      dotsBox.appendChild(dot);
-    }
-
-    const dots = dotsBox.querySelectorAll('.dot');
-
-    let startX = 0;
-    let startY = 0;
-    let isScrolling = null;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let animationId = 0;
-    let curIdx = 0;
-    let isDragging = false;
-    let dragMoved = 0;
-    let wheelTimeout = null;
-    let wheelDeltaX = 0;
-
-    function getItemWidth() {
-      if (!imgs[0]) return wrap.offsetWidth;
-      return imgs[0].offsetWidth + 8;
-    }
-
-    function setSliderPosition() {
-      slide.style.transform = `translateX(${currentTranslate}px)`;
-    }
-
-    function animation() {
-      if (!isDragging) return;
-      setSliderPosition();
-      animationId = requestAnimationFrame(animation);
-    }
-
-    function stopAnimation() {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = 0;
-      }
-    }
-
-    function getPositionX(e) {
-      return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-    }
-
-    function getPositionY(e) {
-      return e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
-    }
-
-     function updateDots() {
-      dots.forEach(d => d.classList.remove('active'));
-      if (dots[curIdx]) dots[curIdx].classList.add('active');
-    }
-
-     function goToIndex(index, animate = true) {
-      curIdx = Math.max(0, Math.min(total - 1, index));
-      currentTranslate = -imgs[curIdx].offsetLeft;
-      prevTranslate = currentTranslate;
-      // 简化过渡：完全扁平，快速平滑
-      slide.style.transition = animate
-        ? 'transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)' 
-        : 'none';
-      setSliderPosition();
-      updateDots();
-    }
-
-    function forceStopDrag() {
-      isDragging = false;
-      isScrolling = null;
-      dragMoved = 0;
-      wrap.classList.remove('dragging');
-      stopAnimation();
-      currentTranslate = prevTranslate;
-      setSliderPosition();
-    }
-
-    function touchStart(e) {
-      if (e.type === 'mousedown' && e.button !== 0) return;
-
-      isDragging = true;
-      isScrolling = null;
-      dragMoved = 0;
-      globalGalleryLock = false;
-
-      startX = getPositionX(e);
-      startY = getPositionY(e);
-
-      slide.style.transition = 'none';
-      wrap.classList.add('dragging');
-
-      stopAnimation();
-      animationId = requestAnimationFrame(animation);
-    }
-
-    function touchMove(e) {
-      if (!isDragging) return;
-
-      const currentX = getPositionX(e);
-      const currentY = getPositionY(e);
-      const diffX = currentX - startX;
-      const diffY = currentY - startY;
-
-      if (isScrolling === null) {
-        isScrolling = Math.abs(diffY) > Math.abs(diffX);
-      }
-
-      if (isScrolling) {
-        forceStopDrag();
-        return;
-      }
-
-      if (Math.abs(diffX) > 5) {
-        globalGalleryLock = true;
-      }
-
-      dragMoved = diffX;
-
-      if (e.cancelable) e.preventDefault();
-      currentTranslate = prevTranslate + diffX;
-    }
-
-    function touchEnd() {
-      if (!isDragging) return;
-
-      isDragging = false;
-      isScrolling = null;
-      wrap.classList.remove('dragging');
-      stopAnimation();
-
-      const itemWidth = getItemWidth();
-const slideThreshold = itemWidth * 0.22;
-
-if (Math.abs(dragMoved) > slideThreshold) {
-  const movedSlides = Math.max(1, Math.round(Math.abs(dragMoved) / itemWidth));
-  if (dragMoved < 0) {
-    curIdx = Math.min(total - 1, curIdx + movedSlides);
-  } else {
-    curIdx = Math.max(0, curIdx - movedSlides);
-  }
-}
-
-      goToIndex(curIdx);
-      dragMoved = 0;
-
-      setTimeout(() => {
-        globalGalleryLock = false;
-      }, 50);
-    }
-
-    wrap.addEventListener('touchstart', touchStart, { passive: true });
-    wrap.addEventListener('touchmove', touchMove, { passive: false });
-    wrap.addEventListener('touchend', touchEnd);
-    wrap.addEventListener('touchcancel', forceStopDrag);
-
-    wrap.addEventListener('mousedown', touchStart);
-    wrap.addEventListener('mousemove', touchMove);
-    wrap.addEventListener('mouseup', touchEnd);
-    wrap.addEventListener('mouseleave', forceStopDrag);
-    wrap.addEventListener('dragstart', (e) => e.preventDefault());
-
-    window.addEventListener('blur', forceStopDrag);
- // 引入一个锁，确保一次滚轮动作只触发一次切页，防止连跳
-    let wheelLocked = false;
-
-    wrap.addEventListener('wheel', (e) => {
-      // 判定主导滚动方向（横向或纵向）
-      const dominantDelta = Math.abs(e.deltaX) >= Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      
-      // 过滤掉极其微小的摩擦，防止触控板误触
-      if (Math.abs(dominantDelta) < 5) return;
-
-      e.preventDefault();
-      forceStopDrag(); // 终止可能存在的拖拽干扰
-
-      // 如果当前滚动锁还在，说明上一次切页还没完全平息，直接拦截
-      if (wheelLocked) return;
-
-      // 只要滚轮滚动差值超过 15（无论轻滚还是重滚），就立即执行切图
-      if (Math.abs(dominantDelta) > 15) {
-        wheelLocked = true; // 立即上锁
-
-        if (dominantDelta > 0) {
-          // 顺滑滚向下一张
-          curIdx = Math.min(total - 1, curIdx + 1);
-        } else {
-          // 顺滑滚向上一张
-          curIdx = Math.max(0, curIdx - 1);
-        }
-
-        goToIndex(curIdx);
-
-        // 300 毫秒后解锁。这个时间刚好契合 P5T 0.15s 的 transition 过渡动画，
-        // 既能保证切页跟手，又能有效防止大力滚动时引起的连续翻页。
-        setTimeout(() => {
-          wheelLocked = false;
-        }, 300);
-      }
-    }, { passive: false });
-
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => goToIndex(index));
-    });
-
-    goToIndex(0, false);
-  });
-
+ function bindImages() {
   document.querySelectorAll('.post').forEach(post => {
-    const imgs = Array.from(post.querySelectorAll('.post-right img'));
+    const wrappers = post.querySelectorAll('.post-images .img-wrapper');
+    if (wrappers.length === 0) return;
+    
+    // 🌟 核心修改 2：优先从父级属性提取完完整整的全部图片 URL
+    let fullImgsSrcList = [];
+    try {
+      if (post.dataset.allImages) {
+        fullImgsSrcList = JSON.parse(decodeURIComponent(post.dataset.allImages));
+      }
+    } catch (e) {
+      console.error("解析图片列表失败:", e);
+    }
+    
+    // 容错降级：如果属性里没拿到，再用之前的兜底办法
+    if (!fullImgsSrcList || fullImgsSrcList.length === 0) {
+      fullImgsSrcList = Array.from(post.querySelectorAll('.post-images .img-wrapper img')).map(img => img.src);
+    }
 
-    imgs.forEach((img, index) => {
-      if (img.dataset.boundClick) return;
-      img.dataset.boundClick = 'true';
+    wrappers.forEach(wrapper => {
+      if (wrapper.dataset.boundClick) return;
+      wrapper.dataset.boundClick = 'true';
 
-      img.onclick = (e) => {
-        if (globalGalleryLock) {
-          e.preventDefault();
-          return;
-        }
-        currentGallery = imgs.map(i => i.src);
-        currentIndex = index;
+      wrapper.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 🌟 将包含全部 11 张图片的完整数组赋给灯箱数据源
+        currentGallery = fullImgsSrcList;
+        currentIndex = parseInt(wrapper.dataset.index, 10) || 0;
         openPerfectLightbox();
       };
     });
   });
 }
 
-
 // ==============================================
-// 工业级终极完美大图灯箱控制（Pointer 统一事件流）
+// 灯箱控制器
 // ==============================================
 const lb = document.getElementById('lightbox');
 const lbImg = document.getElementById('lb-img');
@@ -523,29 +345,43 @@ function applyTransform() {
 
 function updateLightboxImage(animate = true) {
   if (!lbImg) return;
-  if (animate) {
-    lbImg.style.transition = 'opacity 0.2s ease';
-    lbImg.style.opacity = '0';
-    setTimeout(() => {
-      lbImg.src = currentGallery[currentIndex];
-      lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
-      resetTransform();
-      lbImg.style.opacity = '1';
-    }, 200);
-  } else {
+  const lbPrev = document.getElementById('lb-prev');
+  const lbNext = document.getElementById('lb-next');
+
+  const setImage = () => {
     lbImg.src = currentGallery[currentIndex];
     lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
     resetTransform();
+    
+    // 首张隐藏左按钮，末张隐藏右按钮
+    if (lbPrev && lbNext) {
+      if (currentIndex === 0) {
+        lbPrev.classList.add('hidden');
+      } else {
+        lbPrev.classList.remove('hidden');
+      }
+
+      if (currentIndex === currentGallery.length - 1) {
+        lbNext.classList.add('hidden');
+      } else {
+        lbNext.classList.remove('hidden');
+      }
+    }
+    
+    lbImg.style.opacity = '1';
+  };
+
+  if (!animate) {
+    setImage();
+    return;
   }
-  const showNav = currentGallery.length > 1 ? 'flex' : 'none';
-  document.getElementById('lb-prev').style.display = showNav;
-  document.getElementById('lb-next').style.display = showNav;
+
+  lbImg.style.transition = 'opacity 0.2s ease';
+  lbImg.style.opacity = '0';
+  setTimeout(setImage, 180);
 }
 
 function setupPerfectLightbox() {
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lb-img');
-  const lbCounter = document.getElementById('lb-counter');
   const lbPrev = document.getElementById('lb-prev');
   const lbNext = document.getElementById('lb-next');
   const lbClose = document.getElementById('lb-close');
@@ -560,63 +396,6 @@ function setupPerfectLightbox() {
   const SWIPE_THRESHOLD = 32;
   const LB_WHEEL_THRESHOLD = 70;
 
-  function resetTransform() {
-    scale = 1;
-    baseScale = 1;
-    translateX = 0;
-    translateY = 0;
-    pointerCache = [];
-    lastPinchDist = 0;
-    isPointerDown = false;
-    if (lbImg) {
-      lbImg.style.transition = 'none';
-      applyTransform();
-    }
-  }
-
-  function applyTransform() {
-    if (!lbImg) return;
-    lbImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-  }
-
-  function updateLightboxImage(animate = true) {
-    if (!lbImg) return;
-
-    const showNav = currentGallery.length > 1 ? 'flex' : 'none';
-    lbPrev.style.display = showNav;
-    lbNext.style.display = showNav;
-    lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
-
-    const setImage = () => {
-      lbImg.src = currentGallery[currentIndex];
-      lbCounter.textContent = `${currentIndex + 1} / ${currentGallery.length}`;
-      resetTransform();
-      lbImg.style.opacity = '1';
-    };
-
-    if (!animate) {
-      setImage();
-      return;
-    }
-
-    lbImg.style.transition = 'opacity 0.2s ease';
-    lbImg.style.opacity = '0';
-    setTimeout(setImage, 180);
-  }
-
-  function openPerfectLightbox() {
-    resetTransform();
-    lb.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    updateLightboxImage(false);
-  }
-
-  function closePerfectLightbox() {
-    lb.style.display = 'none';
-    document.body.style.overflow = '';
-    resetTransform();
-  }
-
   function showNext() {
     if (scale !== 1 || currentGallery.length <= 1) return;
     if (currentIndex < currentGallery.length - 1) {
@@ -630,30 +409,6 @@ function setupPerfectLightbox() {
     if (currentIndex > 0) {
       currentIndex -= 1;
       updateLightboxImage();
-    }
-  }
-
-  function getDistance(p1, p2) {
-    const dx = p1.clientX - p2.clientX;
-    const dy = p1.clientY - p2.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function updatePointerCache(e) {
-    for (let i = 0; i < pointerCache.length; i++) {
-      if (pointerCache[i].pointerId === e.pointerId) {
-        pointerCache[i] = e;
-        return;
-      }
-    }
-  }
-
-  function removePointerCache(e) {
-    for (let i = 0; i < pointerCache.length; i++) {
-      if (pointerCache[i].pointerId === e.pointerId) {
-        pointerCache.splice(i, 1);
-        break;
-      }
     }
   }
 
@@ -674,7 +429,6 @@ function setupPerfectLightbox() {
 
     if (scale === 1 && isHorizontal && currentGallery.length > 1) {
       e.preventDefault();
-
       lbWheelDeltaX += e.deltaX;
 
       clearTimeout(lbWheelTimer);
@@ -688,12 +442,10 @@ function setupPerfectLightbox() {
         }
         lbWheelDeltaX = 0;
       }, 60);
-
       return;
     }
 
     e.preventDefault();
-
     const delta = e.deltaY < 0 ? 0.15 : -0.15;
     const oldScale = scale;
     scale = Math.max(1, Math.min(5, scale + delta));
@@ -734,7 +486,7 @@ function setupPerfectLightbox() {
     }
   });
 
-   lbImg.addEventListener('pointermove', (e) => {
+  lbImg.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
     updatePointerCache(e);
 
@@ -744,14 +496,13 @@ function setupPerfectLightbox() {
         translateY = e.clientY - dragStartY;
         applyTransform();
       } else {
-        // 将原先的 const deltaX 改为 let deltaX，方便我们修改它的值
         let deltaX = e.clientX - pointerStartClientX;
         
-        // 🌟 新增：卡住第一张和最后一张的越界滑动
+        // 越界弹回阻断
         if (currentIndex === 0 && deltaX > 0) {
-          deltaX = 0; // 第一张禁止向右拉
+          deltaX = 0;
         } else if (currentIndex === currentGallery.length - 1 && deltaX < 0) {
-          deltaX = 0; // 最后一张禁止向左拉
+          deltaX = 0;
         }
 
         lbImg.style.transform = `translateX(${deltaX}px) scale(1)`;
@@ -769,7 +520,7 @@ function setupPerfectLightbox() {
     }
   });
 
-   function handlePointerUp(e) {
+  function handlePointerUp(e) {
     if (!isDragging) {
       removePointerCache(e);
       return;
@@ -780,8 +531,6 @@ function setupPerfectLightbox() {
 
     if (hadSinglePointer) {
       finalDeltaX = e.clientX - pointerStartClientX;
-      
-      // 🌟 新增：松手时也同步限制逻辑，防止触发 swipe 判定
       if (currentIndex === 0 && finalDeltaX > 0) {
         finalDeltaX = 0;
       } else if (currentIndex === currentGallery.length - 1 && finalDeltaX < 0) {
@@ -851,16 +600,13 @@ function setupPerfectLightbox() {
       lastClickTime = 0;
     } else {
       lastClickTime = now;
-      
     }
   });
 
   document.addEventListener('keydown', (e) => {
     if (lb.style.display !== 'flex') return;
-
     if (e.key === 'Escape') closePerfectLightbox();
     if (scale !== 1) return;
-
     if (e.key === 'ArrowRight') showNext();
     if (e.key === 'ArrowLeft') showPrev();
   });
@@ -869,7 +615,6 @@ function setupPerfectLightbox() {
   window.closePerfectLightbox = closePerfectLightbox;
 }
 
-// 辅助工具函数
 function getDistance(p1, p2) {
   const dx = p1.clientX - p2.clientX;
   const dy = p1.clientY - p2.clientY;
@@ -892,11 +637,10 @@ function removePointerCache(e) {
   }
 }
 
-// 其他原逻辑保持不变
 document.getElementById('search').addEventListener('input', applyFilter);
 
-const SVG_SUN = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Lucide by Lucide Contributors - https://github.com/lucide-icons/lucide/blob/main/LICENSE --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></g></svg>`;
-const SVG_MOON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Lucide by Lucide Contributors - https://github.com/lucide-icons/lucide/blob/main/LICENSE --><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
+const SVG_SUN = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></g></svg>`;
+const SVG_MOON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
 
 const themeBtn = document.getElementById('themeBtn');
 themeBtn.onclick = () => {
@@ -915,9 +659,8 @@ if (localStorage.theme === 'dark') {
 init();
 
 // ==============================================
-// 发说说功能（不变）
+// 发说说功能
 // ==============================================
-const AVATAR_URL = "https://raw.githubusercontent.com/jacktom12/blogpic3/main/Muhteşem Whatsapp Profil Fotoğrafları [Full HD].jpg";
 const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
 const PUBLISH_PWD_KEY = "memo_publish_pwd";
 const PUBLISH_PWD_DAYS = 30;
@@ -957,16 +700,9 @@ function renderSinglePostHtml(p) {
   const textContent = Array.isArray(p.content) ? p.content.join('\n\n') : (p.content || '');
   const parsedText = marked.parse(textContent);
   const showTime = formatRelativeTime(p.date);
-  let imagesHtml = '';
-  if (p.images && p.images.length > 0) {
-    const imgsStr = p.images.map(url => `<img src="${url}" alt="post-image" loading="lazy" draggable="false" />`).join('');
-    imagesHtml = `
-      <div class="post-images">
-        <div class="img-slide">${imgsStr}</div>
-        <div class="img-dots"></div>
-      </div>
-    `;
-  }
+  
+  const imagesHtml = generateGridHtml(p.images);
+  
   return `
     <article class="post" id="post-${p.id}">
       <div class="post-header">

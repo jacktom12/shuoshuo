@@ -55,7 +55,7 @@ body.dark {
   
   --p-skew: rotate(-0.5deg) skewX(-2deg);    
   --p-skew-anti: skewX(2deg) rotate(0.5deg); 
-  --p-shadow: 0px 0px 0px #ff3333; /* 暗色模式下改用耀眼的赤紅投影 */
+  --p-shadow: 0px 0px 0px #ff3333; 
 }
 
 * {
@@ -70,8 +70,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  /* 採用極具衝擊力的粗體字體 */
-    font-family: "LXGW WenKai Screen", sans-serif;
+  font-family: "LXGW WenKai Screen", sans-serif;
   display: flex;
   justify-content: center;
   overscroll-behavior: contain;
@@ -108,7 +107,7 @@ body {
   padding: 16px 20px;
 }
 
-/* 🎯 P5T 特色：恐嚇信拼貼風格 Logo，帶著叛逆的旋轉角度 */
+/* 🎯 P5T 特色：恐嚇信拼貼風格 Logo */
 .blog-brand {
   color: #ffffff !important;
   background: var(--accent);
@@ -117,7 +116,7 @@ body {
   font-size: 1.35rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  transform: rotate(-3deg) skewX(-4deg); /* 模擬街頭隨手貼上的標籤 */
+  transform: rotate(-3deg) skewX(-4deg); 
   display: inline-block;
   border: 3px solid var(--border);
   box-shadow: -4px 4px 0px var(--border);
@@ -167,7 +166,7 @@ body.dark .blog-brand {
 }
 .search-inline input:focus { outline: none; border-color: var(--accent); }
 
-/* 發布按鈕：狂放的剪紙標籤 */
+/* 发布按钮 */
 .publish-pill {
   background: #ffffff;
   border: 3px solid var(--border);
@@ -192,12 +191,11 @@ body.dark .publish-pill { background: #121212; color: #fff !important; }
 main { padding: 0 16px; }
 #posts { padding-top: 16px; }
 
-/* === 🃏 核心：卡片（P5T 虛線剪紙風格） === */
+/* === 🃏 卡片 === */
 .post {
   margin: 28px 0;
   padding: 24px;
   background: var(--paper);
-  /* 🛠️ 採用粗虛線（dashed），高度模擬「沿虛線剪開」的報紙剪紙手工質感 */
   border: 4px dashed var(--border); 
   border-radius: var(--radius-lg);
   box-shadow: var(--p-shadow); 
@@ -217,7 +215,7 @@ main { padding: 0 16px; }
 
 .post:hover {
   transform: var(--p-skew) translate(-2px, -2px);
-  border-style: solid; /* 懸浮時轉為實線，增加動態視覺衝擊 */
+  border-style: solid; 
 }
 
 .post-header {
@@ -269,30 +267,91 @@ main { padding: 0 16px; }
   font-weight: bold;
 }
 
-/* === 🔺 相簿區 === */
-.post-images { overflow: hidden; padding: 12px 0 4px; cursor: grab; contain: layout; }
-.img-slide { display: flex; position: relative; gap: 12px; will-change: transform; }
-.post-images.single-image img { width: auto; max-width: 100%; height: auto; max-height: 380px; display: block; }
-
-.post-images img {
-  height: 190px; width: auto; max-width: 85%; object-fit: cover;
-  border: 3px solid var(--border);
-  padding: 0;
-  filter: brightness(var(--img-brightness));
-  transition: transform 0.2s;
+/* ==========================================================================
+   🖼️ 页面多图自适应网格布局（彻底清除单图多余空隙）
+   ========================================================================== */
+.post-images {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  width: 100%;
 }
-.post-images img:hover { border-color: var(--accent); transform: scale(1.02); }
 
-/* 幾何平行四邊形指示點 */
-.img-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
-.img-dots .dot {
-  width: 12px; height: 6px;
-  background: var(--dot-normal);
-  transform: skewX(-20deg);
-  transition: all 0.15s ease;
+/* 动态排布类 */
+.post-images.grid-1 { 
+  display: block; /* 核心修改：单图不使用 Grid 强行撑开，允许宽度自适应缩紧 */
+  width: 100%;
+}
+.post-images.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.post-images.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.post-images.grid-4 { grid-template-columns: repeat(2, 1fr); } 
+.post-images.grid-6 { grid-template-columns: repeat(3, 1fr); } 
+
+/* 多图通用 1:1 卡片样式 */
+.post-images .img-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; 
   cursor: pointer;
+  overflow: hidden;
+  border: 3px solid var(--border);
+  background: var(--paper);
 }
-.img-dots .dot.active { background: var(--dot-active); width: 24px; }
+
+/* 🎯 针对单图模式重新精准微调：剔除右拉空白死区 */
+.post-images.grid-1 .img-wrapper {
+  display: inline-block; /* 核心修改：让外层包裹容器自适应图片的真实宽度 */
+  padding-top: 0;
+  width: auto;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+.post-images.grid-1 .img-wrapper img {
+  position: static;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 360px; /* 控制单张大图在页面中的极限显示高度 */
+  display: block;
+}
+
+/* 恢复多图时的切片绝对定位 */
+.post-images:not(.grid-1) .img-wrapper img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; 
+}
+
+.post-images .img-wrapper img {
+  filter: brightness(var(--img-brightness));
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.post-images .img-wrapper:hover img {
+  transform: scale(1.02);
+}
+
+/* 超过 6 张时的第六张额外引流遮罩 (+X) */
+.post-images .img-wrapper.more-mask::after {
+  content: attr(data-more);
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.75);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  font-family: inherit;
+  letter-spacing: 1px;
+}
+body.dark .post-images .img-wrapper.more-mask::after {
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--accent);
+}
 
 #loader { text-align: center; padding: 40px; color: var(--secondary-text); font-weight: 900; }
 
@@ -303,14 +362,12 @@ main { padding: 0 16px; }
   top: 0; left: 0; width: 100vw; height: 100vh;
   background: var(--lightbox-bg); 
   z-index: 2000;
-  
   justify-content: center;
   align-items: center;
 }
 
-/* 🎯 寬度收縮策略 + 低 z-index，完全杜絕任何陰影蓋到計數器 */
 .lightbox img {
-  max-width: 80%; 
+  max-width: 85%; 
   max-height: 82%;
   object-fit: contain;
   border: 4px solid var(--text); 
@@ -320,20 +377,20 @@ main { padding: 0 16px; }
   z-index: 2100; 
 }
 
-/* 🌟 終極計數器：z-index 3000 高位碾壓，並帶有 P5T 的粗獷傾斜與外邊距防撞 */
+/* 🌟 終極計數器 */
 .lb-counter {
   position: absolute;
   top: 24px;
   right: 24px;
   margin-right: 12px; 
-  background: var(--accent); /* 使用亮眼的反叛紅作為底色 */     
+  background: var(--accent);     
   color: #ffffff;           
   border: 3px solid var(--border);
   padding: 8px 20px; 
   font-weight: 900;
   font-size: 1.05rem;
   letter-spacing: 0.5px;
-  transform: rotate(2deg) skewX(-8deg); /* 故意往反方向轉 2 度，撕紙感極強 */
+  transform: rotate(2deg) skewX(-8deg); 
   z-index: 3000; 
   box-shadow: 4px 4px 0px var(--border);
 }
@@ -346,7 +403,7 @@ main { padding: 0 16px; }
   transform: skewX(8deg) rotate(-2deg); 
 }
 
-/* 🌟 控制按鈕：保持不晃動死鎖狀態，僅更換為 P5T 革命對比色 */
+/* 🌟 控制按鈕 */
 .lb-btn {
   position: absolute;
   background: var(--lightbox-btn-bg);
@@ -359,7 +416,6 @@ main { padding: 0 16px; }
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--lightbox-shadow);
   z-index: 3100;
-  /* 鎖死過渡：只允許顏色和陰影過渡，嚴禁 transform 移動 */
   transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -369,10 +425,10 @@ main { padding: 0 16px; }
 }
 #lb-close:hover { 
   background: var(--accent); color: #ffffff !important; border-color: var(--border);
-  transform: rotate(-3deg) skewX(-6deg) !important; /* 強制留原位 */
+  transform: rotate(-3deg) skewX(-6deg) !important;
 }
 
-/* 左右切換按鈕：核心置中機制死死鎖定 */
+/* 左右切換按鈕 */
 .nav-btn { 
   top: 50%; 
   transform: translateY(-50%) rotate(3deg) skewX(-6deg); 
@@ -380,7 +436,11 @@ main { padding: 0 16px; }
 #lb-prev { left: 24px; }
 #lb-next { right: 24px; }
 
-/* 🛠️ 懸浮時：只允許顏色與陰影變化，嚴格執行 transform 鎖定，絕不允許抖動位移！ */
+/* 核心：首张隐藏左按钮，末张隐藏右按钮 */
+#lb-prev.hidden, #lb-next.hidden {
+  display: none !important;
+}
+
 .lb-btn:hover { 
   background: var(--text);
   color: var(--paper) !important; 
@@ -388,7 +448,7 @@ main { padding: 0 16px; }
   box-shadow: 0px 0px 0px transparent;
 }
 .nav-btn:hover {
-  transform: translateY(-50%) rotate(3deg) skewX(-6deg) !important; /* 死死咬住垂直置中 */
+  transform: translateY(-50%) rotate(3deg) skewX(-6deg) !important; 
 }
 .lb-btn:active { transform: scale(0.95) !important; }
 .nav-btn:active { transform: translateY(-50%) rotate(3deg) skewX(-6deg) scale(0.95) !important; }
@@ -450,63 +510,27 @@ main { padding: 0 16px; }
 @keyframes pToastIn { to { opacity: 1; transform: translateX(0) translateY(0) skewX(-12deg); } }
 @keyframes pToastOut { to { opacity: 0; transform: translateY(-10px) skewX(-12deg); } }
 
-
 /* =======================================================
-   🌟 移動端 RWD 全介面響應式深層重構（P5T 特適配版）
+   🌟 行動端 RWD
    ======================================================= */
 @media (max-width: 768px) {
-  body { 
-    padding: 0; 
-    background: var(--bg); 
-  }
+  body { padding: 0; background: var(--bg); }
+  .app-container { max-width: 100%; border-left: none; border-right: none; }
+  .topbar-inner { padding: 12px 14px; }
+  .blog-brand { font-size: 1.15rem; padding: 6px 12px; }
+  main { padding: 0 10px; }
   
-  .app-container { 
-    max-width: 100%; 
-    border-left: none; 
-    border-right: none; 
-  }
-  
-  .topbar-inner { 
-    padding: 12px 14px; 
-  }
-  
-  .blog-brand {
-    font-size: 1.15rem;
-    padding: 6px 12px;
-  }
-  
-  main { 
-    padding: 0 10px; 
-  }
-  
-  /* 手機端卡片收緊，減少不必要的留白，虛線加粗增加剪紙感 */
   .post { 
     margin: 16px 0; 
     padding: 16px; 
     border-width: 3px;
     box-shadow: 4px 4px 0px var(--border); 
   }
-  body.dark .post { 
-    box-shadow: 4px 4px 0px var(--accent); 
-  }
+  body.dark .post { box-shadow: 4px 4px 0px var(--accent); }
+  .post-content { font-size: 0.95rem; }
+  .post-content blockquote { padding: 8px 12px; margin: 12px 0; }
   
-  .post-content {
-    font-size: 0.95rem;
-  }
-  .post-content blockquote {
-    padding: 8px 12px;
-    margin: 12px 0;
-  }
-  
-  .post-images img { 
-    height: 150px; 
-    border-width: 2px;
-  }
-  
-  /* 📱 移動端燈箱：隱藏實體按鈕（改用手勢滑動），釋放極致視野 */
-  .nav-btn { 
-    display: none !important; 
-  }
+  .nav-btn { display: flex !important; }
   
   .lightbox img {
     max-width: 95%; 
@@ -514,7 +538,6 @@ main { padding: 0 16px; }
     border: 3px solid var(--text);
   }
   
-  /* 📱 移動端計數器：改為正上方絕對置中，完全防撞 */
   .lb-counter {
     top: calc(20px + var(--safe-top));
     left: 50% !important;
@@ -531,36 +554,16 @@ main { padding: 0 16px; }
     transform: rotate(-3deg) skewX(-6deg);
   }
 
-  /* 📱 手機端發布面板：底部滑出式終端卡片 */
-  .publish-mask { 
-    padding: 0; 
-    align-items: flex-end; 
-  }
+  .publish-mask { padding: 0; align-items: flex-end; }
   .publish-panel {
-    width: 100%; 
-    max-height: 80vh;
-    padding: 20px 16px; 
-    margin-top: auto; 
+    width: 100%; max-height: 80vh; padding: 20px 16px; margin-top: auto; 
     border-bottom: none; border-left: none; border-right: none;
-    border-style: solid; /* 手機彈出窗底邊使用實線 */
-    box-shadow: 0 -6px 0px var(--accent);
-    transform: none;
+    border-style: solid; box-shadow: 0 -6px 0px var(--accent); transform: none;
   }
-  .publish-top {
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-  }
-  .publish-footer {
-    margin-top: 16px;
-    padding-bottom: var(--safe-bottom);
-  }
+  .publish-top { margin-bottom: 14px; padding-bottom: 8px; }
+  .publish-footer { margin-top: 16px; padding-bottom: var(--safe-bottom); }
 }
 
 @media (max-width: 480px) {
-  .search-inline input, .publish-input, .publish-textarea { 
-    font-size: 16px !important; /* 🛠️ 防止 iOS 瀏覽器惡性自動放大 */
-  }
-  .post-images img { 
-    height: 130px; 
-  }
+  .search-inline input, .publish-input, .publish-textarea { font-size: 16px !important; }
 }
