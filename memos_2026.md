@@ -9,11 +9,6 @@ draft: false
 image: ""
 ---
 
-234
-![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781092762314_642.webp&n=-1)
-![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781092763534_534.jpeg&n=-1)
-@2026-06-10 19:59
-
 要笑死我了，这个学历鄙视链
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781007325204_798.jpeg&n=-1)
 @2026-06-09 20:15
