@@ -9,6 +9,12 @@ draft: false
 image: ""
 ---
 
+坤哥有点迷人啊！都国际范了！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781100015039_684.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781100017362_332.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781100019140_960.png&n=-1)
+@2026-06-10 22:00
+
 第二季后就没看，也不知道为啥就弃剧了，今天又出新的短剧了，评论里说只有前三季值得一看，嗯正好只看了2季，看样子这第三季是要看看了。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781097058610_316.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781097061731_740.png&n=-1)
