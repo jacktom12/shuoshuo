@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+四杀团灭，下次还有机会玩喷射战士吗？
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781147829478_827.png&n=-1)
+@2026-06-11 11:17
+
 五代十国
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781147652664_618.webp&n=-1)
 @2026-06-11 11:14
