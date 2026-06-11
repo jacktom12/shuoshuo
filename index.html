@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>碎碎念 · 暗喻幻境</title>
+  <title>碎碎念</title>
   <link rel="stylesheet" href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.7.0/style.min.css">
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚔️</text></svg>'>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -15,6 +15,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --bg: #f4f4f6; --paper: #ffffff; --text: #050505;
   --accent: #ff3333; --accent-dark: #990000; --border: #050505;
+  --gold-glow: rgba(255,180,60,.45);
   --secondary-text: #52525b;
   --radius-lg: 0px; --radius-md: 0px; --radius-sm: 0px;
   --img-brightness: 1; --dot-normal: #d4d4d8; --dot-active: #ff3333;
@@ -30,6 +31,7 @@
   --paper: #241a0e;
   --text: #f0e6d3;
   --accent: #c8813a;
+  --gold-glow: rgba(200,129,58,.55);
   --accent-dark: #a0612a;
   --border: #c8a97a;
   --secondary-text: #a08060;
@@ -43,6 +45,12 @@
   --p-skew: rotate(-0.5deg) skewX(-2deg);
   --p-skew-anti: skewX(2deg) rotate(0.5deg);
   --p-shadow: 0px 0px 0px #c8813a;
+}
+body.dark .post:hover{
+
+  box-shadow:
+      0 0 18px rgba(200,129,58,.25),
+      0 0 36px rgba(200,129,58,.12);
 }
 * { box-sizing: border-box; }
  html, body { 
@@ -110,15 +118,113 @@ main { padding: 0 16px;
 /* 修复：确保主内容区域底部有足够的空白溢出带 */
   padding-bottom: 60px;}
 #postsContainer { padding-top: 16px; }
+ /* =========================
+   METAPHOR CARD V3
+   ========================= */
+
 .post {
-  margin: 28px 0; padding: 24px; background: var(--paper);
-  border: 4px dashed var(--border); border-radius: var(--radius-lg);
-  box-shadow: var(--p-shadow); transform: var(--p-skew);
-  display: flex; flex-direction: column; position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin: 28px 0;
+  padding: 24px;
+  background: var(--paper);
+
+  border: 3px dashed var(--border);
+
+  border-radius: 0;
+
+  transform: var(--p-skew);
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+
+  overflow: visible;
+
+  transition:
+      transform .22s cubic-bezier(.175,.885,.32,1.275),
+      box-shadow .22s ease,
+      border-color .22s ease;
+}
+
+/* 金色底层阴影 */
+
+.post::before{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:0;
+
+  z-index:-1;
+
+  box-shadow:
+      0 0 0 2px transparent,
+      10px 10px 0px var(--gold-glow);
+
+  transition:
+      opacity .22s ease,
+      transform .22s ease;
+}
+
+/* 断裂边角 */
+
+.post::after{
+  content:"";
+
+  position:absolute;
+
+  width:42px;
+  height:42px;
+
+  right:-3px;
+  bottom:-3px;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 45%,
+      var(--accent) 45% 55%,
+      transparent 55%
+    );
+
+  transition:
+      opacity .22s ease,
+      transform .22s ease;
+}
+.post:hover {
+
+  transform:
+      rotate(-1.5deg)
+      skewX(-2deg)
+      translate(-4px,-4px);
+
+  border-color: var(--accent);
+}
+
+.post:hover::before{
+
+  opacity:1;
+
+  transform:
+      translate(4px,4px);
+}
+
+.post:hover::after{
+
+  opacity:1;
+
+  transform:
+      rotate(8deg);
 }
 .post-right { transform: var(--p-skew-anti); flex-grow: 1; overflow: hidden; min-width: 0; }
-.post:hover { transform: var(--p-skew) translate(-2px,-2px); border-style: solid; }
 .post-header { display: flex; align-items: center; margin-bottom: 14px; border-bottom: 3px solid var(--border); padding-bottom: 8px; }
 .post-time {
   color: #fff; background: var(--accent); padding: 3px 10px;
@@ -289,6 +395,9 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
 .toast.success { color: var(--accent); }
 .toast.success::before { content: "💣 TACTICS TRIUMPH // "; }
 .toast.error { background: #ff3333; color: #ffffff; border-color: #000000; }
+.toast.error::before {
+  content: "⚠ MISSION FAILED // ";
+}
 .toast.hide { animation: pToastOut .2s ease forwards; }
 @keyframes pToastIn { to { opacity: 1; transform: skewX(-12deg); } }
 @keyframes pToastOut { to { opacity: 0; transform: translateY(-10px) skewX(-12deg); } }
@@ -299,7 +408,14 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
   .topbar-inner { padding: 12px 14px; }
   .blog-brand { font-size: 1.15rem; padding: 6px 12px; }
   main { padding: 0 10px; }
-  .post { margin: 16px 0; padding: 16px; border-width: 3px; box-shadow: 4px 4px 0px var(--border); }
+  .post { margin: 16px 0; padding: 16px; border-width: 2px; box-shadow: 4px 4px 0px var(--border); }
+  .post:hover{
+
+  transform:
+      rotate(-0.8deg)
+      skewX(-2deg)
+      translate(-2px,-2px);
+}
   body.dark .post { box-shadow: 4px 4px 0px var(--accent); }
   .post-content { font-size: 0.95rem; }
   .post-images img { height: 150px; border-width: 2px; }
@@ -345,7 +461,7 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
     </header>
     <main>
       <div id="postsContainer"></div>
-      <div id="loader">正在全量穿透检索所有年份记忆碎片...</div>
+      <div id="loader">正在检索记忆碎片...</div>
     </main>
   </div>
 
@@ -885,7 +1001,18 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
       const json=await res.json();
       if (json.code===200) {
         setPublishPassword(pwd);
-        insertNewPostToTop({id:`local_${Date.now()}`,date:getNowBeijingString(),content:[content],images:localUrls});
+        //insertNewPostToTop({id:`local_${Date.now()}`,date:getNowBeijingString(),content:[content],image//s:localUrls});
+        // ==================== 核心修改：静默写入内存，不再操作 DOM 置顶 ====================
+        // 创建一个真实的数据对象塞进内存数组，确保如果你在不刷新页面的情况下进行搜索，也能搜到刚发的这条
+        const newPostItem = {
+          id: `local_${Date.now()}`,
+          date: getNowBeijingString(),
+          content: [content],
+          images: localUrls // 注意：这里用的是本地临时图，刷新后会变成线上的真实图片
+        };
+        allPosts.unshift(newPostItem);
+        filtered.unshift(newPostItem);
+        
         if(publishModal){publishModal.remove();publishModal=null;} selectedPublishFiles=[];
         showToast("发布成功","success");
       } else { if(json.code===403)clearPublishPassword(); showToast(json.msg||"发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
