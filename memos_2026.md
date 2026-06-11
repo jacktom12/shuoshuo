@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+这几个桌面环境不错
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781145078127_465.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781145079665_866.jpeg&n=-1)
+@2026-06-11 10:31
+
 曾经看了好多电影啊
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781144939821_929.jpeg&n=-1)
 @2026-06-11 10:28
