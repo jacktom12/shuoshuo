@@ -48,6 +48,7 @@
  html, body { 
   height: 100%;
   overflow: hidden;
+  height: 100dvh; /* 修复：同步使用动态视口 */
 }
 
 body {
@@ -60,12 +61,15 @@ body {
 .app-container {
   width: 100%; max-width: 660px; 
   height: 100vh;
+  height: 100dvh; /* 修复：同步使用动态视口 */
   overflow-y: auto;
   background: var(--bg);
   border-left: 4px solid var(--border); border-right: 4px solid var(--border);
   position: relative;
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
+  /* 核心修复：为容器底部增加安全区域和足够的内边距，防止最后一条被吞 */
+  padding-bottom: calc(40px + var(--safe-bottom));
 }
 .topbar {
   position: sticky; top: 0; z-index: 20;
@@ -102,7 +106,9 @@ body.dark .blog-brand { box-shadow: -4px 4px 0px #ffffff; }
 }
 body.dark .publish-pill { background: #241a0e;  color: var(--text) !important; }
 .publish-pill:hover { background: var(--accent); color: #ffffff !important; box-shadow: none; transform: rotate(0deg) translate(3px,3px); }
-main { padding: 0 16px; }
+main { padding: 0 16px; 
+/* 修复：确保主内容区域底部有足够的空白溢出带 */
+  padding-bottom: 60px;}
 #postsContainer { padding-top: 16px; }
 .post {
   margin: 28px 0; padding: 24px; background: var(--paper);
