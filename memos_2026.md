@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+光头要难过了，还能追上马斯克嘛！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781141662438_418.gif&n=-1)
+@2026-06-11 09:34
+
 坤哥有点迷人啊！都国际范了！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781100015039_684.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781100017362_332.png&n=-1)
