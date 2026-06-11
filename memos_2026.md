@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+这个女仆很聪明
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781156366514_205.jpeg&n=-1)
+@2026-06-11 13:39
+
 人就像是音符，只有一个确实显得单调，人在数量上确实很大，但是在人性底色上似乎也分不出太多种类，但是表现出的品质却似乎可以跟繁多的音色媲美！也许不同后天环境，教育方式，人生处境，会把人跟人变得区别特别大！
 @2026-06-11 12:59
 
