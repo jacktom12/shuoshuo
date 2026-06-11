@@ -817,21 +817,53 @@ if (localStorage.getItem('theme') === 'dark') {
     function updatePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache[i]=e; break; } } }
     function removePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache.splice(i,1); break; } } }
 
+
+// ════════════════════════════════════
+    // 搜索（完全过滤 Markdown 语法标记版）
     // ════════════════════════════════════
-    // 搜索
-    // ════════════════════════════════════
+    
+    // 核心改进：不仅删掉 ```，还要把紧跟在后面的语言声明（比如 bash, html）彻底连根拔除
+    function getCleanTextForSearch(rawContent) {
+      let text = Array.isArray(rawContent) ? rawContent.join("\n\n") : (rawContent || "");
+      
+      // 1. 彻底移除 ```bash 或 ```html 等代码块开始标记（匹配到行尾或空格，连带后面的语言名一起删掉）
+      text = text.replace(/```[a-zA-Z0-9_-]*/g, "");
+      
+      // 2. 移除行内代码标记 `
+      text = text.replace(/`/g, "");
+      
+      return text;
+    }
+
     function renderSearchResults(resetPage=true) {
       if (resetPage) searchPage=1;
       const start=(searchPage-1)*searchPerPage, end=start+searchPerPage;
       const pageR = currentSearchResults.slice(start,end);
       if (resetPage && searchPage===1) searchResultsDiv.innerHTML="";
+      
       pageR.forEach(post => {
         const div = document.createElement("article");
         div.className = "post";
-        const raw = Array.isArray(post.content)?post.content.join("\n\n"):(post.content||"");
-        const regex = currentSearchKeyword ? new RegExp(`(${escapeRegExp(currentSearchKeyword)})`,"gi") : null;
-        const hl = regex ? raw.replace(regex,'<span style="background:var(--accent);color:#fff;padding:0 2px;font-weight:900;">$1</span>') : raw;
-        const parsed = typeof marked!=="undefined" ? marked.parse(hl) : hl;
+        
+        // 拿到最原始的、包含完整 ``` 标签的 Markdown 文本用于 marked 渲染
+        const raw = Array.isArray(post.content) ? post.content.join("\n\n") : (post.content || "");
+        
+        // 渲染成标准的 HTML 字符串（此时 ```bash 已经变成了 <pre><code class="language-bash">）
+        let parsed = typeof marked !== "undefined" ? marked.parse(raw) : raw;
+        
+        // 【终极改进】只对 HTML 里的“纯文本内容”进行高亮替换，绝对不碰 HTML 标签属性（比如 class="language-bash"）
+        if (currentSearchKeyword) {
+          const regex = new RegExp(`(${escapeRegExp(currentSearchKeyword)})`, "gi");
+          // 这个正则的含义是：只匹配 HTML 标签外部的文本，不破坏 HTML 标签内部的属性
+          parsed = parsed.replace(/(<[^>]+>)/g, (match) => {
+            // 如果是 HTML 标签本身，原样返回，不参与高亮
+            return match;
+          }).replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => {
+            // 如果是真正的标签文本内容，才进行高亮替换
+            return match.replace(regex, '<span style="background:var(--accent);color:#fff;padding:0 2px;font-weight:900;">$1</span>');
+          });
+        }
+        
         const showTime = formatRelativeTime(post.date);
         let imagesHtml="";
         if (post.images&&post.images.length) {
@@ -841,6 +873,7 @@ if (localStorage.getItem('theme') === 'dark') {
         div.innerHTML=`<div class="post-header"><span class="post-time">${showTime}</span></div><div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
         searchResultsDiv.appendChild(div);
       });
+      
       bindImagesInContainer(searchResultsDiv);
       const el = document.getElementById("searchLoader");
       if (el) el.remove();
@@ -860,10 +893,12 @@ if (localStorage.getItem('theme') === 'dark') {
       currentSearchKeyword = kw;
       if (!kw) { currentSearchResults=[]; searchResultsDiv.innerHTML='<div class="search-loader">✨ 输入关键词看看</div>'; return; }
       searchResultsDiv.innerHTML='<div class="search-loader">🔍 搜索中...</div>';
+      
       setTimeout(()=>{
         currentSearchResults = allPosts.filter(p=>{
-          const t=Array.isArray(p.content)?p.content.join(" "):(p.content||"");
-          return t.toLowerCase().includes(kw);
+          // 搜索匹配时，使用把 ```bash 剥离得一干二净的纯文本
+          const cleanText = getCleanTextForSearch(p.content);
+          return cleanText.toLowerCase().includes(kw);
         });
         if (!currentSearchResults.length) searchResultsDiv.innerHTML='<div class="search-loader">😢 没有找到相关碎念</div>';
         else { searchResultsDiv.innerHTML=""; renderSearchResults(true); }
