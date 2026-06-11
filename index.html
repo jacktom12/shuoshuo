@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>碎碎念</title>
+  <title>碎碎念 · 暗喻幻境</title>
   <link rel="stylesheet" href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.7.0/style.min.css">
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚔️</text></svg>'>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -45,19 +45,27 @@
   --p-shadow: 0px 0px 0px #c8813a;
 }
 * { box-sizing: border-box; }
-html, body { min-height: 100%; }
+ html, body { 
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   margin: 0; background: var(--bg); color: var(--text);
   font-family: "LXGW WenKai Screen", sans-serif;
   display: flex; justify-content: center;
   overscroll-behavior: contain; -webkit-font-smoothing: antialiased;
-  padding: 0 calc(12px + var(--safe-right)) var(--safe-bottom) calc(12px + var(--safe-left));
 }
+
 .app-container {
-  width: 100%; max-width: 660px; min-height: 100vh;
+  width: 100%; max-width: 660px; 
+  height: 100vh;
+  overflow-y: auto;
   background: var(--bg);
   border-left: 4px solid var(--border); border-right: 4px solid var(--border);
   position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
 }
 .topbar {
   position: sticky; top: 0; z-index: 20;
@@ -172,16 +180,42 @@ main { padding: 0 16px; }
 .lb-btn:hover { background: var(--text); color: var(--paper) !important; border-color: var(--text); box-shadow: 0 0 0 transparent; }
 .nav-btn:hover { transform: translateY(-50%) rotate(3deg) skewX(-6deg) !important; }
 
-/* 搜索全屏 */
+/* 搜索全屏 + 女神异闻录滚动条完全接管 */
 .search-modal {
   position: fixed; inset: 0;
   background: rgba(244,244,246,0.97); backdrop-filter: blur(18px);
   z-index: 200000; display: none; flex-direction: column;
   align-items: center; justify-content: flex-start;
-  padding: 60px 20px 20px; overflow-y: auto;
+  padding: 60px 20px 20px;
+  overflow-y: auto;
 }
 body.dark .search-modal { background: rgba(5,5,5,0.97); }
 .search-modal.open { display: flex; }
+
+.search-modal::-webkit-scrollbar,
+.search-results::-webkit-scrollbar {
+  width: 12px;
+  height: 10px;
+}
+.search-modal::-webkit-scrollbar-track,
+.search-results::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.search-modal::-webkit-scrollbar-thumb,
+.search-results::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 2px solid var(--bg);
+  border-radius: 0px !important;
+}
+.search-modal::-webkit-scrollbar-thumb:hover,
+.search-results::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+.search-modal {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
 .search-modal-header {
   width: 100%; max-width: 700px; margin-bottom: 30px;
   display: flex; gap: 12px; align-items: center;
@@ -199,7 +233,9 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
   font-weight: 900; color: #fff; font-size: 1rem;
   white-space: nowrap; user-select: none; flex-shrink: 0;
 }
-.search-results { width: 100%; max-width: 700px; margin: 0 auto; }
+.search-results { 
+  width: 100%; max-width: 700px; margin: 0 auto; 
+}
 .search-results .post { margin: 0 0 18px; transform: none; }
 .search-results .post:hover { transform: translate(-2px,-2px); }
 .search-results .post-right { transform: none; }
@@ -280,6 +316,13 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
   #modalSearchInput, .publish-input, .publish-textarea { font-size: 16px !important; }
   .post-images img { height: 130px; }
 }
+.app-container::-webkit-scrollbar { width: 12px; height: 10px; }
+.app-container::-webkit-scrollbar-track { background: var(--bg); }
+.app-container::-webkit-scrollbar-thumb { background: var(--border); border: 2px solid var(--bg); border-radius: 0px !important; }
+.app-container::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+.publish-panel::-webkit-scrollbar { width: 12px; }
+.publish-panel::-webkit-scrollbar-track { background: var(--paper); }
+.publish-panel::-webkit-scrollbar-thumb { background: var(--border); border: 2px solid var(--paper); border-radius: 0px; }
   </style>
 </head>
 <body>
@@ -322,700 +365,538 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
-  // 在 script 开头第一行加
-if (localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark');
-}
-    marked.setOptions({ breaks: true, gfm: true });
+  if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+  marked.setOptions({ breaks: true, gfm: true });
 
-    // ── 数据层 ──
-    let allPosts = [], filtered = [], page = 1;
-    const perPage = 10;
-    let isLoading = false;
-    const START_YEAR = new Date().getFullYear();
-    const MIN_YEAR = 2025;
+  // ---------- 数据层 ----------
+  let allPosts = [], filtered = [], page = 1;
+  const perPage = 10;
+  let isLoading = false;
+  const START_YEAR = new Date().getFullYear();
+  const MIN_YEAR = 2025;
 
-    // ── 灯箱状态（原版 p5t Pointer 引擎变量）──
-    let currentGallery = [], currentIndex = 0;
-    let scale = 1, baseScale = 1;
-    let translateX = 0, translateY = 0;
-    let isPointerDown = false;
-    let pointerCache = [];
-    let lastPinchDist = 0;
-    let lastClickTime = 0;
+  // ---------- 灯箱完整状态 ----------
+  let currentGallery = [], currentIndex = 0;
+  let scale = 1, baseScale = 1;
+  let translateX = 0, translateY = 0;
+  let isPointerDown = false;
+  let pointerCache = [];
+  let lastPinchDist = 0;
+  let lastClickTime = 0;
 
-    // ── 搜索状态 ──
-    let currentSearchResults = [], currentSearchKeyword = '';
-    let searchPage = 1;
-    const searchPerPage = 12;
-    let lastScrollY = 0;
+  // 搜索状态
+  let currentSearchResults = [], currentSearchKeyword = '';
+  let searchPage = 1;
+  const searchPerPage = 12;
+  let lastScrollY = 0;
 
-    // ── 发布状态 ──
-    let publishModal = null, selectedPublishFiles = [];
-    const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
-    const PUBLISH_PWD_KEY = "memo_publish_pwd";
-    const PUBLISH_PWD_DAYS = 30;
+  // 发布状态
+  let publishModal = null, selectedPublishFiles = [];
+  const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
+  const PUBLISH_PWD_KEY = "memo_publish_pwd";
+  const PUBLISH_PWD_DAYS = 30;
 
-    // ── DOM ──
-    const loaderDom = document.getElementById("loader");
-    const postsContainer = document.getElementById("postsContainer");
-    const lb = document.getElementById("p5Lightbox");
-    const lbImg = document.getElementById("lbImg");
-    const lbCounter = document.getElementById("lbCounter");
-    const searchModal = document.getElementById("searchModal");
-    const modalSearchInput = document.getElementById("modalSearchInput");
-    const searchResultsDiv = document.getElementById("searchResults");
+  const loaderDom = document.getElementById("loader");
+  const postsContainer = document.getElementById("postsContainer");
+  const lb = document.getElementById("p5Lightbox");
+  const lbImg = document.getElementById("lbImg");
+  const lbCounter = document.getElementById("lbCounter");
+  const searchModal = document.getElementById("searchModal");
+  const modalSearchInput = document.getElementById("modalSearchInput");
+  const searchResultsDiv = document.getElementById("searchResults");
 
-    // ════════════════════════════════════
-    // 工具函数
-    // ════════════════════════════════════
-    function escapeRegExp(s) {
-  // 完整需要转义的正则元字符：. * + ? ^ $ { } ( ) | \ [ ]
-  return s.replace(/[.*+?^${}()|\\[\]]/g, '\\$&');
-}
+  // ---------- 工具函数 ----------
+  function escapeRegExp(s) { return s.replace(/[.*+?^${}()|\\[\]]/g, '\\$&'); }
+  function formatRelativeTime(dateStr) {
+    const target = new Date(dateStr.replace(/-/g, "/"));
+    if (isNaN(target.getTime())) return dateStr;
+    const now = new Date(), diffMs = now - target;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+    if (diffDay < 3) {
+      if (diffMin < 1) return "刚刚";
+      if (diffMin < 60) return diffMin + "分钟前";
+      if (diffHour < 24) return diffHour + "小时前";
+    }
+    const y = target.getFullYear();
+    const m = String(target.getMonth()+1).padStart(2,"0");
+    const d = String(target.getDate()).padStart(2,"0");
+    return y+"-"+m+"-"+d;
+  }
 
-    function formatRelativeTime(dateStr) {
-      const target = new Date(dateStr.replace(/-/g, "/"));
-      if (isNaN(target.getTime())) return dateStr;
-      const now = new Date(), diffMs = now - target;
-      const diffMin = Math.floor(diffMs / 60000);
-      const diffHour = Math.floor(diffMin / 60);
-      const diffDay = Math.floor(diffHour / 24);
-      if (diffDay < 3) {
-        if (diffMin < 1) return "刚刚";
-        if (diffMin < 60) return diffMin + "分钟前";
-        if (diffHour < 24) return diffHour + "小时前";
+  function parseMdToPosts(mdContent, fileYear) {
+    const fi = mdContent.indexOf("---", 3);
+    const raw = fi > -1 ? mdContent.slice(fi + 3).trim() : mdContent.trim();
+    return raw.split(/\n\n+/).filter(s => s.trim()).map((item, idx) => {
+      let text = item.trim();
+      let date = "";
+      let images = [];
+      const imgR = /!\[.*?\]\((https?:\/\/.+?)\)/g;
+      const imgM = [...text.matchAll(imgR)];
+      if (imgM.length) {
+        images = imgM.map(m => m[1]);
+        text = text.replace(imgR, "");
       }
-      const y = target.getFullYear();
-      const m = String(target.getMonth()+1).padStart(2,"0");
-      const d = String(target.getDate()).padStart(2,"0");
-      return y+"-"+m+"-"+d;
-    }
-
-     function parseMdToPosts(mdContent, fileYear) {
-  const fi = mdContent.indexOf("---", 3);
-  const raw = fi > -1 ? mdContent.slice(fi + 3).trim() : mdContent.trim();
-
-  return raw.split(/\n\n+/).filter(s => s.trim()).map((item, idx) => {
-    let text = item.trim();
-    let date = "";
-    let images = [];
-
-    const imgR = /!\[.*?\]\((https?:\/\/.+?)\)/g;
-    const imgM = [...text.matchAll(imgR)];
-    if (imgM.length) {
-      images = imgM.map(m => m[1]);
-      text = text.replace(imgR, "");
-    }
-
-    const dm = text.match(/@(\d{4}-\d{2}-\d{2}\s+\d{2}(?::|::)\d{2})/);
-    if (dm) {
-      date = dm[1].replace(/::/g, ":");
-      text = text.replace(dm[0], "").trim();
-    } else {
-      date = fileYear + "-01-01 00:00";
-    }
-
-    if (text || images.length) {
-      return {
-        id: fileYear + "_" + idx + "_" + Math.random().toString(36).slice(2, 5),
-        date,
-        content: [text],
-        images
-      };
-    }
-    return null;
-  }).filter(Boolean);
-}
-
-    function buildPostHTML(p) {
-      const text = Array.isArray(p.content) ? p.content.join("\n\n") : (p.content||"");
-      const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
-      const showTime = formatRelativeTime(p.date);
-      let imagesHtml = "";
-      if (p.images && p.images.length) {
-        const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
-        imagesHtml = `<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
+      const dm = text.match(/@(\d{4}-\d{2}-\d{2}\s+\d{2}(?::|::)\d{2})/);
+      if (dm) {
+        date = dm[1].replace(/::/g, ":");
+        text = text.replace(dm[0], "").trim();
+      } else {
+        date = fileYear + "-01-01 00:00";
       }
-      return `<article class="post" id="post-${p.id}">
-        <div class="post-header"><span class="post-time">${showTime}</span></div>
-        <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
-      </article>`;
-    }
+      if (text || images.length) {
+        return { id: fileYear + "_" + idx + "_" + Math.random().toString(36).slice(2, 5), date, content: [text], images };
+      }
+      return null;
+    }).filter(Boolean);
+  }
 
-    // ════════════════════════════════════
-    // 数据加载
-    // ════════════════════════════════════
-    async function init() {
+  function buildPostHTML(p) {
+    const text = Array.isArray(p.content) ? p.content.join("\n\n") : (p.content||"");
+    const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
+    const showTime = formatRelativeTime(p.date);
+    let imagesHtml = "";
+    if (p.images && p.images.length) {
+      const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
+      imagesHtml = `<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
+    }
+    return `<article class="post" id="post-${p.id}">
+      <div class="post-header"><span class="post-time">${showTime}</span></div>
+      <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
+    </article>`;
+  }
+
+  // ---------- 数据加载 ----------
+  async function init() {
+    if (isLoading) return;
+    isLoading = true;
+    loaderDom.style.display = "block";
+    loaderDom.textContent = "正在全量穿透检索所有年份记忆碎片...";
+    const years = [];
+    for (let y = START_YEAR; y >= MIN_YEAR; y--) years.push(y);
+    const results = await Promise.all(years.map(y =>
+      fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache:"no-store" })
+        .then(r => { if (!r.ok) throw 0; return r.text(); })
+        .then(text => ({ year:y, text, ok:true }))
+        .catch(() => ({ year:y, ok:false }))
+    ));
+    allPosts = [];
+    results.forEach(r => { if (r.ok && r.text) allPosts.push(...parseMdToPosts(r.text, r.year)); });
+    allPosts.sort((a,b) => new Date(b.date.replace(/-/g,"/")) - new Date(a.date.replace(/-/g,"/")));
+    isLoading = false;
+    filtered = [...allPosts];
+    page = 1;
+    render(true);
+    if (allPosts.length) loaderDom.style.display = "none";
+    else { loaderDom.style.display = "block"; loaderDom.textContent = "暂无备忘录数据"; }
+    setupInfiniteScroll();
+    setupLightbox();  // 完整灯箱初始化
+  }
+
+  function render(reset = false) {
+    if (!postsContainer) return;
+    if (reset) postsContainer.innerHTML = "";
+    const start = reset ? 0 : (page-1)*perPage;
+    const end = page*perPage;
+    const show = filtered.slice(start, end);
+    if (!show.length && reset) { postsContainer.innerHTML = '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>'; return; }
+    const html = show.map(buildPostHTML).join("");
+    if (reset) postsContainer.innerHTML = html;
+    else { const t = document.createElement("div"); t.innerHTML = html; while (t.firstChild) postsContainer.appendChild(t.firstChild); }
+    bindImagesInContainer(postsContainer);
+  }
+
+  // 核心修复：监听正确的滚动容器
+  function setupInfiniteScroll() {
+    const scrollContainer = document.querySelector('.app-container');
+    if (!scrollContainer) return;
+    const handleScroll = () => {
       if (isLoading) return;
-      isLoading = true;
-      loaderDom.style.display = "block";
-      loaderDom.textContent = "正在全量穿透检索所有年份记忆碎片...";
-
-      const years = [];
-      for (let y = START_YEAR; y >= MIN_YEAR; y--) years.push(y);
-
-      const results = await Promise.all(years.map(y =>
-        fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache:"no-store" })
-          .then(r => { if (!r.ok) throw 0; return r.text(); })
-          .then(text => ({ year:y, text, ok:true }))
-          .catch(() => ({ year:y, ok:false }))
-      ));
-
-      allPosts = [];
-      results.forEach(r => { if (r.ok && r.text) allPosts.push(...parseMdToPosts(r.text, r.year)); });
-      allPosts.sort((a,b) => new Date(b.date.replace(/-/g,"/")) - new Date(a.date.replace(/-/g,"/")));
-
-      isLoading = false;
-      filtered = [...allPosts];
-      page = 1;
-      render(true);
-      setupInfinite();
-      setupLightbox();
-
-      if (allPosts.length) loaderDom.style.display = "none";
-      else { loaderDom.style.display = "block"; loaderDom.textContent = "暂无备忘录数据"; }
-    }
-
-    function render(reset = false) {
-      if (!postsContainer) return;
-      if (reset) postsContainer.innerHTML = "";
-      const start = reset ? 0 : (page-1)*perPage;
-      const end = page*perPage;
-      const show = filtered.slice(start, end);
-      if (!show.length && reset) { postsContainer.innerHTML = '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>'; return; }
-      const html = show.map(buildPostHTML).join("");
-      if (reset) postsContainer.innerHTML = html;
-      else { const t = document.createElement("div"); t.innerHTML = html; while (t.firstChild) postsContainer.appendChild(t.firstChild); }
-      bindImagesInContainer(postsContainer);
-    }
-
-    function setupInfinite() {
-      window.addEventListener("scroll", () => {
-        if (isLoading) return;
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 150) {
-          if (page * perPage < filtered.length) {
-            page++;
-            if (loaderDom) loaderDom.style.display = "block";
-            render(false);
-            if (loaderDom) loaderDom.style.display = "none";
-          } else if (loaderDom && filtered.length) {
-            loaderDom.style.display = "block";
-            loaderDom.textContent = "已经没有更多备忘录了";
-          }
+      const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
+      if (scrollTop + clientHeight >= scrollHeight - 150) {
+        if (page * perPage < filtered.length) {
+          page++;
+          if (loaderDom) loaderDom.style.display = "block";
+          render(false);
+          if (loaderDom) loaderDom.style.display = "none";
+        } else if (loaderDom && filtered.length) {
+          loaderDom.style.display = "block";
+          loaderDom.textContent = "已经没有更多备忘录了";
+          setTimeout(() => { if (loaderDom && filtered.length) loaderDom.style.display = "none"; }, 800);
         }
-      });
-    }
+      }
+    };
+    scrollContainer.addEventListener('scroll', handleScroll);
+  }
 
-    // ════════════════════════════════════
-    // 图片轮播绑定
-    // ════════════════════════════════════
-    let globalGalleryLock = false;
+  // ---------- 图片轮播 + 灯箱绑定 ----------
+  let globalGalleryLock = false;
+  function bindImagesInContainer(container) {
+    container.querySelectorAll(".post-images").forEach(wrap => {
+      if (wrap.dataset.boundDrag) return;
+      wrap.dataset.boundDrag = "true";
+      const slide = wrap.querySelector(".img-slide");
+      const dotsBox = wrap.querySelector(".img-dots");
+      const imgs = slide.querySelectorAll("img");
+      const total = imgs.length;
+      if (total <= 1) { if (dotsBox) dotsBox.style.display = "none"; wrap.classList.add("single-image"); }
+      else {
+        if (dotsBox) { dotsBox.innerHTML = ""; for (let i = 0; i < total; i++) { const dot = document.createElement("span"); dot.className = i===0 ? "dot active" : "dot"; dotsBox.appendChild(dot); } }
+        const dots = dotsBox ? dotsBox.querySelectorAll(".dot") : [];
+        let sX=0,sY=0,isScrolling=null,cur=0,isDrag=false,moved=0,prevTrans=0,curTrans=0,animId=0;
+        function setPos() { slide.style.transform = `translateX(${curTrans}px)`; }
+        function anim() { if (!isDrag) return; setPos(); animId = requestAnimationFrame(anim); }
+        function stopAnim() { if (animId) { cancelAnimationFrame(animId); animId=0; } }
+        function gx(e) { return e.type.includes("mouse") ? e.pageX : e.touches[0].clientX; }
+        function gy(e) { return e.type.includes("mouse") ? e.pageY : e.touches[0].clientY; }
+        function updateDots() { dots.forEach(d=>d.classList.remove("active")); if(dots[cur]) dots[cur].classList.add("active"); }
+        function goTo(idx, animate=true) { cur = Math.max(0,Math.min(total-1,idx)); curTrans = -imgs[cur].offsetLeft; prevTrans = curTrans; slide.style.transition = animate ? "transform 0.15s cubic-bezier(0.25,1,0.5,1)" : "none"; setPos(); updateDots(); }
+        function forceStop() { isDrag=false; isScrolling=null; moved=0; wrap.classList.remove("dragging"); stopAnim(); curTrans=prevTrans; setPos(); }
+        function tStart(e) { if (e.type==="mousedown" && e.button!==0) return; isDrag=true; isScrolling=null; moved=0; sX=gx(e); sY=gy(e); slide.style.transition="none"; wrap.classList.add("dragging"); stopAnim(); animId=requestAnimationFrame(anim); }
+        function tMove(e) { if (!isDrag) return; const dx=gx(e)-sX, dy=gy(e)-sY; if (isScrolling===null) isScrolling = Math.abs(dy)>Math.abs(dx); if (isScrolling) { forceStop(); return; } if (Math.abs(dx)>5) e.preventDefault(); moved=dx; curTrans=prevTrans+dx; }
+        function tEnd() { if (!isDrag) return; isDrag=false; isScrolling=null; wrap.classList.remove("dragging"); stopAnim(); const iw = imgs[0] ? imgs[0].offsetWidth+8 : wrap.offsetWidth; if (Math.abs(moved) > iw*0.22) { const ms = Math.max(1,Math.round(Math.abs(moved)/iw)); cur = moved<0 ? Math.min(total-1,cur+ms) : Math.max(0,cur-ms); } goTo(cur); moved=0; }
+        wrap.addEventListener("touchstart",tStart,{passive:true}); wrap.addEventListener("touchmove",tMove,{passive:false}); wrap.addEventListener("touchend",tEnd); wrap.addEventListener("touchcancel",forceStop);
+        wrap.addEventListener("mousedown",tStart); wrap.addEventListener("mousemove",tMove); wrap.addEventListener("mouseup",tEnd); wrap.addEventListener("mouseleave",forceStop);
+        wrap.addEventListener("dragstart",e=>e.preventDefault());
+        let wLocked=false; wrap.addEventListener("wheel",e=>{ const dd = Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY; if (Math.abs(dd)<5) return; e.preventDefault(); forceStop(); if (wLocked) return; if (Math.abs(dd)>15) { wLocked=true; cur=dd>0?Math.min(total-1,cur+1):Math.max(0,cur-1); goTo(cur); setTimeout(()=>{wLocked=false;},300); } },{passive:false});
+        dots.forEach((dot,i) => dot.addEventListener("click",()=>goTo(i)));
+        goTo(0,false);
+      }
+    });
+    container.querySelectorAll(".post").forEach(post => {
+      const imgs = Array.from(post.querySelectorAll(".post-right img"));
+      imgs.forEach((img, idx) => { if (img.dataset.boundClick) return; img.dataset.boundClick = "true"; img.onclick = e => { if (globalGalleryLock) { e.preventDefault(); return; } currentGallery = imgs.map(i => i.src); currentIndex = idx; openLightbox(); }; });
+    });
+  }
 
-    function bindImagesInContainer(container) {
-      container.querySelectorAll(".post-images").forEach(wrap => {
-        if (wrap.dataset.boundDrag) return;
-        wrap.dataset.boundDrag = "true";
-        const slide = wrap.querySelector(".img-slide");
-        const dotsBox = wrap.querySelector(".img-dots");
-        const imgs = slide.querySelectorAll("img");
-        const total = imgs.length;
-        if (total <= 1) { if (dotsBox) dotsBox.style.display = "none"; wrap.classList.add("single-image"); }
-        else {
-          if (dotsBox) {
-            dotsBox.innerHTML = "";
-            for (let i = 0; i < total; i++) {
-              const dot = document.createElement("span");
-              dot.className = i===0 ? "dot active" : "dot";
-              dotsBox.appendChild(dot);
-            }
-          }
-          const dots = dotsBox ? dotsBox.querySelectorAll(".dot") : [];
-          let sX=0,sY=0,isScrolling=null,cur=0,isDrag=false,moved=0,prevTrans=0,curTrans=0,animId=0;
-          function setPos() { slide.style.transform = `translateX(${curTrans}px)`; }
-          function anim() { if (!isDrag) return; setPos(); animId = requestAnimationFrame(anim); }
-          function stopAnim() { if (animId) { cancelAnimationFrame(animId); animId=0; } }
-          function gx(e) { return e.type.includes("mouse") ? e.pageX : e.touches[0].clientX; }
-          function gy(e) { return e.type.includes("mouse") ? e.pageY : e.touches[0].clientY; }
-          function updateDots() { dots.forEach(d=>d.classList.remove("active")); if(dots[cur]) dots[cur].classList.add("active"); }
-          function goTo(idx, animate=true) {
-            cur = Math.max(0,Math.min(total-1,idx));
-            curTrans = -imgs[cur].offsetLeft; prevTrans = curTrans;
-            slide.style.transition = animate ? "transform 0.15s cubic-bezier(0.25,1,0.5,1)" : "none";
-            setPos(); updateDots();
-          }
-          function forceStop() { isDrag=false; isScrolling=null; moved=0; wrap.classList.remove("dragging"); stopAnim(); curTrans=prevTrans; setPos(); }
-          function tStart(e) {
-            if (e.type==="mousedown" && e.button!==0) return;
-            isDrag=true; isScrolling=null; moved=0; globalGalleryLock=false;
-            sX=gx(e); sY=gy(e); slide.style.transition="none";
-            wrap.classList.add("dragging"); stopAnim(); animId=requestAnimationFrame(anim);
-          }
-          function tMove(e) {
-            if (!isDrag) return;
-            const dx=gx(e)-sX, dy=gy(e)-sY;
-            if (isScrolling===null) isScrolling = Math.abs(dy)>Math.abs(dx);
-            if (isScrolling) { forceStop(); return; }
-            if (Math.abs(dx)>5) globalGalleryLock=true;
-            moved=dx; if (e.cancelable) e.preventDefault();
-            curTrans=prevTrans+dx;
-          }
-          function tEnd() {
-            if (!isDrag) return;
-            isDrag=false; isScrolling=null; wrap.classList.remove("dragging"); stopAnim();
-            const iw = imgs[0] ? imgs[0].offsetWidth+8 : wrap.offsetWidth;
-            if (Math.abs(moved) > iw*0.22) {
-              const ms = Math.max(1,Math.round(Math.abs(moved)/iw));
-              cur = moved<0 ? Math.min(total-1,cur+ms) : Math.max(0,cur-ms);
-            }
-            goTo(cur); moved=0; setTimeout(()=>{globalGalleryLock=false;},50);
-          }
-          wrap.addEventListener("touchstart",tStart,{passive:true});
-          wrap.addEventListener("touchmove",tMove,{passive:false});
-          wrap.addEventListener("touchend",tEnd);
-          wrap.addEventListener("touchcancel",forceStop);
-          wrap.addEventListener("mousedown",tStart);
-          wrap.addEventListener("mousemove",tMove);
-          wrap.addEventListener("mouseup",tEnd);
-          wrap.addEventListener("mouseleave",forceStop);
-          wrap.addEventListener("dragstart",e=>e.preventDefault());
-          let wLocked=false;
-          wrap.addEventListener("wheel",e=>{
-            const dd = Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY;
-            if (Math.abs(dd)<5) return; e.preventDefault(); forceStop();
-            if (wLocked) return;
-            if (Math.abs(dd)>15) { wLocked=true; cur=dd>0?Math.min(total-1,cur+1):Math.max(0,cur-1); goTo(cur); setTimeout(()=>{wLocked=false;},300); }
-          },{passive:false});
-          dots.forEach((dot,i) => dot.addEventListener("click",()=>goTo(i)));
-          goTo(0,false);
-        }
-      });
-
-      container.querySelectorAll(".post").forEach(post => {
-        const imgs = Array.from(post.querySelectorAll(".post-right img"));
-        imgs.forEach((img, idx) => {
-          if (img.dataset.boundClick) return;
-          img.dataset.boundClick = "true";
-          img.onclick = e => {
-            if (globalGalleryLock) { e.preventDefault(); return; }
-            currentGallery = imgs.map(i => i.src);
-            currentIndex = idx;
-            openLightbox();
-          };
-        });
-      });
-    }
-
-    // ════════════════════════════════════
-    // 灯箱 ── 完整 Pointer 引擎 + 上滑退出动画 + 左右切图动画
-    // ════════════════════════════════════
-    function applyTransform() {
-      if (lbImg) lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`;
-    }
-    function resetTransform() {
-      scale=1; baseScale=1; translateX=0; translateY=0; pointerCache=[];
-      if (lbImg) { lbImg.style.transition="none"; applyTransform(); }
-    }
-    function updateLightboxImage(animate=true) {
-      if (!lbImg) return;
-      document.getElementById("lbPrevBtn").style.display = currentIndex>0 ? "flex" : "none";
-      document.getElementById("lbNextBtn").style.display = currentIndex<currentGallery.length-1 ? "flex" : "none";
-      lbCounter.textContent = (currentIndex+1)+" / "+currentGallery.length;
-      if (!animate) { lbImg.src = currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; return; }
-      lbImg.style.transition = "opacity 0.18s ease";
-      lbImg.style.opacity = "0";
-      setTimeout(() => { lbImg.src=currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; }, 160);
-    }
-    function openLightbox() {
+  // ---------- 完整灯箱逻辑（滚轮缩放、双指、双击、上滑退出等） ----------
+  function applyTransform() { if (lbImg) lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`; }
+  function resetTransform() { scale=1; baseScale=1; translateX=0; translateY=0; pointerCache=[]; if (lbImg) { lbImg.style.transition="none"; applyTransform(); } }
+  function updateLightboxImage(animate=true) {
+    if (!lbImg) return;
+    document.getElementById("lbPrevBtn").style.display = currentIndex>0 ? "flex" : "none";
+    document.getElementById("lbNextBtn").style.display = currentIndex<currentGallery.length-1 ? "flex" : "none";
+    lbCounter.textContent = (currentIndex+1)+" / "+currentGallery.length;
+    if (!animate) { lbImg.src = currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; return; }
+    lbImg.style.transition = "opacity 0.18s ease";
+    lbImg.style.opacity = "0";
+    setTimeout(() => { lbImg.src=currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; }, 160);
+  }
+  function openLightbox() {
+    resetTransform();
+    lb.style.display = "flex"; lb.style.opacity = "0";
+    lb.style.transition = "opacity 0.2s ease";
+    requestAnimationFrame(() => { lb.style.opacity = "1"; });
+    document.body.style.overflow = "hidden";
+    updateLightboxImage(false);
+  }
+  function closeLightbox() {
+    lb.style.transition = "opacity 0.22s ease";
+    lb.style.opacity = "0";
+    setTimeout(() => {
+      lb.style.display = "none"; lb.style.opacity = "";
+      if (!searchModal.classList.contains('open')) document.body.style.overflow = '';
       resetTransform();
-      lb.style.display = "flex"; lb.style.opacity = "0";
-      lb.style.transition = "opacity 0.2s ease";
-      requestAnimationFrame(() => { lb.style.opacity = "1"; });
-      document.body.style.overflow = "hidden";
-      updateLightboxImage(false);
-    }
-    function closeLightbox() {
-      lb.style.transition = "opacity 0.22s ease";
-      lb.style.opacity = "0";
-      setTimeout(() => {
-        lb.style.display = "none"; lb.style.opacity = "";
-        lb.style.transition = ""; lb.style.transform = "";
-         // 只在搜索弹窗未开启时才恢复 body 滚动
-    if (!searchModal.classList.contains('open')) {
-      document.body.style.overflow = '';
-    }
-        resetTransform();
-      }, 230);
-    }
-    function showNext() {
-      if (scale!==1 || currentGallery.length<=1) return;
-      if (currentIndex < currentGallery.length-1) { currentIndex++; updateLightboxImage(); }
-    }
-    function showPrev() {
-      if (scale!==1 || currentGallery.length<=1) return;
-      if (currentIndex > 0) { currentIndex--; updateLightboxImage(); }
-    }
+    }, 230);
+  }
+  function showNext() { if (scale!==1 || currentGallery.length<=1) return; if (currentIndex < currentGallery.length-1) { currentIndex++; updateLightboxImage(); } }
+  function showPrev() { if (scale!==1 || currentGallery.length<=1) return; if (currentIndex > 0) { currentIndex--; updateLightboxImage(); } }
 
-    function setupLightbox() {
-      document.getElementById("lbCloseBtn").onclick = closeLightbox;
-      document.getElementById("lbPrevBtn").onclick = e => { e.stopPropagation(); showPrev(); };
-      document.getElementById("lbNextBtn").onclick = e => { e.stopPropagation(); showNext(); };
+  function ptDist(p1,p2) { return Math.hypot(p1.clientX-p2.clientX,p1.clientY-p2.clientY); }
+  function updatePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache[i]=e; break; } } }
+  function removePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache.splice(i,1); break; } } }
 
-      // 滚轮缩放 + 横向滚动切图
-      let lbWheelDX = 0, lbWheelTimer = null;
-      lb.addEventListener("wheel", e => {
-        e.preventDefault();
-        const isH = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
-        if (scale===1 && isH && currentGallery.length>1) {
-          lbWheelDX += e.deltaX;
-          clearTimeout(lbWheelTimer);
-          lbWheelTimer = setTimeout(() => {
-            if (Math.abs(lbWheelDX) >= 70) { lbWheelDX>0 ? showNext() : showPrev(); }
-            lbWheelDX = 0;
-          }, 60);
-          return;
-        }
-        const delta = e.deltaY<0 ? 0.15 : -0.15;
-        const oldScale = scale;
-        scale = Math.max(1, Math.min(5, scale+delta));
+  function setupLightbox() {
+    document.getElementById("lbCloseBtn").onclick = closeLightbox;
+    document.getElementById("lbPrevBtn").onclick = e => { e.stopPropagation(); showPrev(); };
+    document.getElementById("lbNextBtn").onclick = e => { e.stopPropagation(); showNext(); };
+
+    // 滚轮缩放 + 横向滚动切图
+    let lbWheelDX = 0, lbWheelTimer = null;
+    lb.addEventListener("wheel", e => {
+      e.preventDefault();
+      const isH = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
+      if (scale===1 && isH && currentGallery.length>1) {
+        lbWheelDX += e.deltaX;
+        clearTimeout(lbWheelTimer);
+        lbWheelTimer = setTimeout(() => {
+          if (Math.abs(lbWheelDX) >= 70) { lbWheelDX>0 ? showNext() : showPrev(); }
+          lbWheelDX = 0;
+        }, 60);
+        return;
+      }
+      const delta = e.deltaY<0 ? 0.15 : -0.15;
+      const oldScale = scale;
+      scale = Math.max(1, Math.min(5, scale+delta));
+      if (scale>1) {
+        const rect = lbImg.getBoundingClientRect();
+        translateX += -(e.clientX-rect.left-rect.width/2)*(scale/oldScale-1);
+        translateY += -(e.clientY-rect.top-rect.height/2)*(scale/oldScale-1);
+      } else { translateX=0; translateY=0; }
+      lbImg.style.transition = "transform 0.1s ease-out";
+      applyTransform();
+    }, { passive:false });
+
+    // Pointer 事件：平移/捏合/上滑退出
+    let dragStartX=0, dragStartY=0, pointerStartX=0, pointerStartY=0;
+    let isDragging=false;
+    const SWIPE_TH = 32;
+
+    lbImg.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      lbImg.setPointerCapture?.(e.pointerId);
+      pointerCache.push(e);
+      lbImg.style.transition = "none";
+      isDragging = true;
+      if (pointerCache.length===1) {
+        isPointerDown = true;
+        pointerStartX = e.clientX; pointerStartY = e.clientY;
+        dragStartX = e.clientX - translateX;
+        dragStartY = e.clientY - translateY;
+      } else if (pointerCache.length===2) {
+        isPointerDown = false;
+        lastPinchDist = ptDist(pointerCache[0], pointerCache[1]);
+        baseScale = scale;
+      }
+    });
+    lbImg.addEventListener("pointermove", e => {
+      if (!isDragging) return;
+      updatePtrCache(e);
+      if (pointerCache.length===1 && isPointerDown) {
         if (scale>1) {
-          const rect = lbImg.getBoundingClientRect();
-          translateX += -(e.clientX-rect.left-rect.width/2)*(scale/oldScale-1);
-          translateY += -(e.clientY-rect.top-rect.height/2)*(scale/oldScale-1);
-        } else { translateX=0; translateY=0; }
-        lbImg.style.transition = "transform 0.1s ease-out";
-        applyTransform();
-      }, { passive:false });
-
-      // ── Pointer 事件：平移/捏合/上滑退出 ──
-      let dragStartX=0, dragStartY=0, pointerStartX=0, pointerStartY=0;
-      let isDragging=false;
-      const SWIPE_TH = 32;
-
-      lbImg.addEventListener("pointerdown", e => {
-        e.preventDefault();
-        lbImg.setPointerCapture?.(e.pointerId);
-        pointerCache.push(e);
-        lbImg.style.transition = "none";
-        isDragging = true;
-        if (pointerCache.length===1) {
-          isPointerDown = true;
-          pointerStartX = e.clientX; pointerStartY = e.clientY;
-          dragStartX = e.clientX - translateX;
-          dragStartY = e.clientY - translateY;
-        } else if (pointerCache.length===2) {
-          isPointerDown = false;
-          lastPinchDist = ptDist(pointerCache[0], pointerCache[1]);
-          baseScale = scale;
-        }
-      });
-
-      lbImg.addEventListener("pointermove", e => {
-        if (!isDragging) return;
-        updatePtrCache(e);
-        if (pointerCache.length===1 && isPointerDown) {
-          if (scale>1) {
-            translateX = e.clientX - dragStartX;
-            translateY = e.clientY - dragStartY;
-            applyTransform();
+          translateX = e.clientX - dragStartX;
+          translateY = e.clientY - dragStartY;
+          applyTransform();
+        } else {
+          const dx = e.clientX - pointerStartX;
+          const dy = e.clientY - pointerStartY;
+          if (Math.abs(dy) > Math.abs(dx) && dy < 0) {
+            const op = Math.max(0.15, 1 - Math.abs(dy)/280);
+            lb.style.opacity = op;
+            lb.style.transition = "none";
           } else {
-            const dx = e.clientX - pointerStartX;
-            const dy = e.clientY - pointerStartY;
-            // 上滑 → 透明度跟手
-            if (Math.abs(dy) > Math.abs(dx) && dy < 0) {
-              const op = Math.max(0.15, 1 - Math.abs(dy)/280);
-              lb.style.opacity = op;
-              lb.style.transition = "none";
-            } else {
-              lb.style.opacity = "1";
-            }
-            // 左右跟手偏移
-            let finalDx = dx;
-            if (currentIndex===0 && dx>0) finalDx=0;
-            else if (currentIndex===currentGallery.length-1 && dx<0) finalDx=0;
-            lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
+            lb.style.opacity = "1";
           }
-        } else if (pointerCache.length===2) {
-          const d = ptDist(pointerCache[0], pointerCache[1]);
-          scale = Math.max(1, Math.min(5, baseScale*(d/lastPinchDist)));
-          if (scale===1) { translateX=0; translateY=0; }
+          let finalDx = dx;
+          if (currentIndex===0 && dx>0) finalDx=0;
+          else if (currentIndex===currentGallery.length-1 && dx<0) finalDx=0;
+          lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
+        }
+      } else if (pointerCache.length===2) {
+        const d = ptDist(pointerCache[0], pointerCache[1]);
+        scale = Math.max(1, Math.min(5, baseScale*(d/lastPinchDist)));
+        if (scale===1) { translateX=0; translateY=0; }
+        applyTransform();
+      }
+    });
+    function handlePointerUp(e) {
+      if (!isDragging) { removePtrCache(e); return; }
+      const wasSingle = pointerCache.length===1 && scale===1 && isPointerDown;
+      let finalDx = 0, finalDy = 0;
+      if (wasSingle) {
+        finalDx = e.clientX - pointerStartX;
+        finalDy = e.clientY - pointerStartY;
+        if (currentIndex===0 && finalDx>0) finalDx=0;
+        else if (currentIndex===currentGallery.length-1 && finalDx<0) finalDx=0;
+      }
+      removePtrCache(e);
+      if (pointerCache.length===0) {
+        isDragging=false; isPointerDown=false;
+        if (scale>1) {
+          lbImg.style.transition="transform 0.2s ease-out"; applyTransform(); return;
+        }
+        lb.style.transition="opacity 0.2s ease"; lb.style.opacity="1";
+        if (Math.abs(finalDy) > Math.abs(finalDx) && finalDy < -60) {
+          closeLightbox(); return;
+        }
+        lbImg.style.transition = "transform 0.22s cubic-bezier(0.25,1,0.5,1)";
+        if (Math.abs(finalDx) > SWIPE_TH) {
+          finalDx>0 ? showPrev() : showNext();
+        } else {
+          lbImg.style.transform = "translateX(0) scale(1)";
+        }
+      } else if (pointerCache.length===1) {
+        isPointerDown=false; lastPinchDist=0;
+      }
+    }
+    lbImg.addEventListener("pointerup", handlePointerUp);
+    lbImg.addEventListener("pointercancel", handlePointerUp);
+    lbImg.addEventListener("pointerleave", handlePointerUp);
+
+    lb.onclick = e => { if (e.target===lb && scale===1) closeLightbox(); };
+
+    // 双击放大/恢复
+    lbImg.addEventListener("click", e => {
+      const now = Date.now();
+      const movedX = Math.abs(e.clientX-pointerStartX), movedY = Math.abs(e.clientY-pointerStartY);
+      if (movedX>6 || movedY>6) return;
+      if (now-lastClickTime < 280) {
+        if (scale>1) {
+          lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
+          resetTransform();
+        } else {
+          scale=2.5;
+          const rect=lbImg.getBoundingClientRect();
+          const cx=e.clientX-rect.left-rect.width/2;
+          const cy=e.clientY-rect.top-rect.height/2;
+          translateX=-cx*1.5; translateY=-cy*1.5;
+          lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
           applyTransform();
         }
-      });
+        lastClickTime=0;
+      } else { lastClickTime=now; }
+    });
 
-      function handlePointerUp(e) {
-        if (!isDragging) { removePtrCache(e); return; }
-        const wasSingle = pointerCache.length===1 && scale===1 && isPointerDown;
-        let finalDx = 0, finalDy = 0;
-        if (wasSingle) {
-          finalDx = e.clientX - pointerStartX;
-          finalDy = e.clientY - pointerStartY;
-          if (currentIndex===0 && finalDx>0) finalDx=0;
-          else if (currentIndex===currentGallery.length-1 && finalDx<0) finalDx=0;
-        }
-        removePtrCache(e);
-        if (pointerCache.length===0) {
-          isDragging=false; isPointerDown=false;
-          if (scale>1) {
-            lbImg.style.transition="transform 0.2s ease-out"; applyTransform(); return;
-          }
-          lb.style.transition="opacity 0.2s ease"; lb.style.opacity="1";
-          // 上滑退出
-          if (Math.abs(finalDy) > Math.abs(finalDx) && finalDy < -60) {
-            closeLightbox(); return;
-          }
-          lbImg.style.transition = "transform 0.22s cubic-bezier(0.25,1,0.5,1)";
-          if (Math.abs(finalDx) > SWIPE_TH) {
-            finalDx>0 ? showPrev() : showNext();
-          } else {
-            lbImg.style.transform = "translateX(0) scale(1)";
-          }
-        } else if (pointerCache.length===1) {
-          isPointerDown=false; lastPinchDist=0;
-        }
+    document.addEventListener("keydown", e => {
+      if (lb.style.display!=="flex") return;
+      if (e.key==="Escape") closeLightbox();
+      if (scale!==1) return;
+      if (e.key==="ArrowRight") showNext();
+      if (e.key==="ArrowLeft") showPrev();
+    });
+  }
+
+  // ---------- 搜索逻辑 ----------
+  function getCleanTextForSearch(rawContent) {
+    let text = Array.isArray(rawContent) ? rawContent.join("\n\n") : (rawContent || "");
+    text = text.replace(/```[a-zA-Z0-9_-]*/g, "").replace(/`/g, "");
+    return text;
+  }
+  function renderSearchResults(resetPage=true) {
+    if (resetPage) searchPage=1;
+    const start=(searchPage-1)*searchPerPage, end=start+searchPerPage;
+    const pageR = currentSearchResults.slice(start,end);
+    if (resetPage && searchPage===1) searchResultsDiv.innerHTML="";
+    pageR.forEach(post => {
+      const div = document.createElement("article");
+      div.className = "post";
+      const raw = Array.isArray(post.content) ? post.content.join("\n\n") : (post.content || "");
+      let parsed = marked.parse(raw);
+      if (currentSearchKeyword) {
+        const regex = new RegExp(`(${escapeRegExp(currentSearchKeyword)})`, "gi");
+        parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => match.replace(regex, '<span style="background:var(--accent);color:#fff;padding:0 2px;font-weight:900;">$1</span>'));
       }
-      lbImg.addEventListener("pointerup", handlePointerUp);
-      lbImg.addEventListener("pointercancel", handlePointerUp);
-      lbImg.addEventListener("pointerleave", handlePointerUp);
-
-      // 点击背景关闭
-      lb.onclick = e => { if (e.target===lb && scale===1) closeLightbox(); };
-
-      // 双击放大/恢复
-      lbImg.addEventListener("click", e => {
-        const now = Date.now();
-        const movedX = Math.abs(e.clientX-pointerStartX), movedY = Math.abs(e.clientY-pointerStartY);
-        if (movedX>6 || movedY>6) return;
-        if (now-lastClickTime < 280) {
-          if (scale>1) {
-            lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
-            resetTransform();
-          } else {
-            scale=2.5;
-            const rect=lbImg.getBoundingClientRect();
-            const cx=e.clientX-rect.left-rect.width/2;
-            const cy=e.clientY-rect.top-rect.height/2;
-            translateX=-cx*1.5; translateY=-cy*1.5;
-            lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
-            applyTransform();
-          }
-          lastClickTime=0;
-        } else { lastClickTime=now; }
-      });
-
-      // 键盘
-      document.addEventListener("keydown", e => {
-        if (lb.style.display!=="flex") return;
-        if (e.key==="Escape") closeLightbox();
-        if (scale!==1) return;
-        if (e.key==="ArrowRight") showNext();
-        if (e.key==="ArrowLeft") showPrev();
-      });
-    }
-
-    function ptDist(p1,p2) { return Math.hypot(p1.clientX-p2.clientX,p1.clientY-p2.clientY); }
-    function updatePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache[i]=e; break; } } }
-    function removePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache.splice(i,1); break; } } }
-
-
-// ════════════════════════════════════
-    // 搜索（完全过滤 Markdown 语法标记版）
-    // ════════════════════════════════════
-    
-    // 核心改进：不仅删掉 ```，还要把紧跟在后面的语言声明（比如 bash, html）彻底连根拔除
-    function getCleanTextForSearch(rawContent) {
-      let text = Array.isArray(rawContent) ? rawContent.join("\n\n") : (rawContent || "");
-      
-      // 1. 彻底移除 ```bash 或 ```html 等代码块开始标记（匹配到行尾或空格，连带后面的语言名一起删掉）
-      text = text.replace(/```[a-zA-Z0-9_-]*/g, "");
-      
-      // 2. 移除行内代码标记 `
-      text = text.replace(/`/g, "");
-      
-      return text;
-    }
-
-    function renderSearchResults(resetPage=true) {
-      if (resetPage) searchPage=1;
-      const start=(searchPage-1)*searchPerPage, end=start+searchPerPage;
-      const pageR = currentSearchResults.slice(start,end);
-      if (resetPage && searchPage===1) searchResultsDiv.innerHTML="";
-      
-      pageR.forEach(post => {
-        const div = document.createElement("article");
-        div.className = "post";
-        
-        // 拿到最原始的、包含完整 ``` 标签的 Markdown 文本用于 marked 渲染
-        const raw = Array.isArray(post.content) ? post.content.join("\n\n") : (post.content || "");
-        
-        // 渲染成标准的 HTML 字符串（此时 ```bash 已经变成了 <pre><code class="language-bash">）
-        let parsed = typeof marked !== "undefined" ? marked.parse(raw) : raw;
-        
-        // 【终极改进】只对 HTML 里的“纯文本内容”进行高亮替换，绝对不碰 HTML 标签属性（比如 class="language-bash"）
-        if (currentSearchKeyword) {
-          const regex = new RegExp(`(${escapeRegExp(currentSearchKeyword)})`, "gi");
-          // 这个正则的含义是：只匹配 HTML 标签外部的文本，不破坏 HTML 标签内部的属性
-          parsed = parsed.replace(/(<[^>]+>)/g, (match) => {
-            // 如果是 HTML 标签本身，原样返回，不参与高亮
-            return match;
-          }).replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => {
-            // 如果是真正的标签文本内容，才进行高亮替换
-            return match.replace(regex, '<span style="background:var(--accent);color:#fff;padding:0 2px;font-weight:900;">$1</span>');
-          });
-        }
-        
-        const showTime = formatRelativeTime(post.date);
-        let imagesHtml="";
-        if (post.images&&post.images.length) {
-          const imgs = post.images.map(url=>`<img src="${url}" alt="" draggable="false">`).join("");
-          imagesHtml=`<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
-        }
-        div.innerHTML=`<div class="post-header"><span class="post-time">${showTime}</span></div><div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
-        searchResultsDiv.appendChild(div);
-      });
-      
-      bindImagesInContainer(searchResultsDiv);
-      const el = document.getElementById("searchLoader");
-      if (el) el.remove();
-      if (end<currentSearchResults.length) {
-        const ldr=document.createElement("div");
-        ldr.id="searchLoader"; ldr.className="search-loader"; ldr.textContent="向下滚动加载更多...";
-        searchResultsDiv.appendChild(ldr);
-        const obs = new IntersectionObserver(entries=>{
-          if (entries[0].isIntersecting) { searchPage++; renderSearchResults(false); obs.unobserve(ldr); }
-        },{root:searchModal,rootMargin:"200px"});
-        obs.observe(ldr);
+      const showTime = formatRelativeTime(post.date);
+      let imagesHtml="";
+      if (post.images&&post.images.length) {
+        const imgs = post.images.map(url=>`<img src="${url}" alt="" draggable="false">`).join("");
+        imagesHtml=`<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
       }
+      div.innerHTML=`<div class="post-header"><span class="post-time">${showTime}</span></div><div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
+      searchResultsDiv.appendChild(div);
+    });
+    bindImagesInContainer(searchResultsDiv);
+    const el = document.getElementById("searchLoader");
+    if (el) el.remove();
+    if (end<currentSearchResults.length) {
+      const ldr=document.createElement("div");
+      ldr.id="searchLoader"; ldr.className="search-loader"; ldr.textContent="向下滚动加载更多...";
+      searchResultsDiv.appendChild(ldr);
+      const obs = new IntersectionObserver(entries=>{
+        if (entries[0].isIntersecting) { searchPage++; renderSearchResults(false); obs.unobserve(ldr); }
+      },{root:searchModal,rootMargin:"200px"});
+      obs.observe(ldr);
     }
+  }
+  function performSearch() {
+    const kw = modalSearchInput.value.trim().toLowerCase();
+    currentSearchKeyword = kw;
+    if (!kw) { currentSearchResults=[]; searchResultsDiv.innerHTML='<div class="search-loader">✨ 输入关键词看看</div>'; return; }
+    searchResultsDiv.innerHTML='<div class="search-loader">🔍 搜索中...</div>';
+    setTimeout(()=>{
+      currentSearchResults = allPosts.filter(p=>getCleanTextForSearch(p.content).toLowerCase().includes(kw));
+      if (!currentSearchResults.length) searchResultsDiv.innerHTML='<div class="search-loader">😢 没有找到相关碎念</div>';
+      else { searchResultsDiv.innerHTML=""; renderSearchResults(true); }
+    },50);
+  }
+  function openSearchModal() {
+    lastScrollY = window.scrollY;
+    searchModal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    modalSearchInput.value = "";
+    modalSearchInput.focus();
+    performSearch();
+  }
+  function closeSearchModalFunc() {
+    searchModal.classList.remove("open");
+    document.body.style.overflow = "";
+    window.scrollTo(0, lastScrollY);
+  }
 
-    function performSearch() {
-      const kw = modalSearchInput.value.trim().toLowerCase();
-      currentSearchKeyword = kw;
-      if (!kw) { currentSearchResults=[]; searchResultsDiv.innerHTML='<div class="search-loader">✨ 输入关键词看看</div>'; return; }
-      searchResultsDiv.innerHTML='<div class="search-loader">🔍 搜索中...</div>';
-      
-      setTimeout(()=>{
-        currentSearchResults = allPosts.filter(p=>{
-          // 搜索匹配时，使用把 ```bash 剥离得一干二净的纯文本
-          const cleanText = getCleanTextForSearch(p.content);
-          return cleanText.toLowerCase().includes(kw);
-        });
-        if (!currentSearchResults.length) searchResultsDiv.innerHTML='<div class="search-loader">😢 没有找到相关碎念</div>';
-        else { searchResultsDiv.innerHTML=""; renderSearchResults(true); }
-      },50);
-    }
+  // ---------- 发布功能 (完整保留) ----------
+  function setPublishPassword(p) { const e=new Date(Date.now()+PUBLISH_PWD_DAYS*86400000).toUTCString(); document.cookie=`${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`; }
+  function getPublishPassword() { const m=document.cookie.match(new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`)); return m?decodeURIComponent(m[1]):""; }
+  function clearPublishPassword() { document.cookie=`${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`; }
+  function getNowBeijingString() { const d=new Date(Date.now()+8*3600000); const p=n=>String(n).padStart(2,"0"); return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; }
+  function insertNewPostToTop(post) { allPosts.unshift(post); filtered.unshift(post); const t=document.createElement("div"); t.innerHTML=buildPostHTML(post); if (postsContainer) { postsContainer.firstChild ? postsContainer.insertBefore(t.firstElementChild,postsContainer.firstChild) : postsContainer.appendChild(t.firstElementChild); bindImagesInContainer(postsContainer); } }
+  function openPublishEditor() {
+    if (publishModal) publishModal.remove();
+    selectedPublishFiles=[];
+    const savedPwd=getPublishPassword();
+    publishModal=document.createElement("div");
+    publishModal.className="publish-mask";
+    publishModal.innerHTML=`<div class="publish-panel" onclick="event.stopPropagation()">
+      <div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>
+      ${savedPwd?'<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>':`<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}
+      <div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div>
+      <div class="publish-field"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">未选择图片</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可重复补选。</div></div></div>
+      <div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div>
+    </div>`;
+    document.body.appendChild(publishModal);
+    const close=()=>{ if(publishModal){publishModal.remove();publishModal=null;selectedPublishFiles.forEach(i=>URL.revokeObjectURL(i.previewUrl));selectedPublishFiles=[];} };
+    publishModal.onclick=()=>close();
+    document.getElementById("closeMemo").onclick=close;
+    document.getElementById("closeMemo2").onclick=close;
+    document.getElementById("selectImg").onclick=()=>document.getElementById("imgFile").click();
+    document.getElementById("imgFile").addEventListener("change",e=>{
+      Array.from(e.target.files||[]).forEach(f=>selectedPublishFiles.push({file:f,previewUrl:URL.createObjectURL(f)}));
+      e.target.value=""; renderSelectedImages();
+    });
+    document.getElementById("submitMemo").onclick=submitMemo;
+    renderSelectedImages();
+  }
+  function renderSelectedImages() {
+    const wrap=document.getElementById("previewWrap"), ct=document.getElementById("imgCountText");
+    if (!wrap||!ct) return;
+    ct.textContent=selectedPublishFiles.length?`已选择${selectedPublishFiles.length}张图片`:"未选择图片";
+    if (!selectedPublishFiles.length){wrap.innerHTML='<div class="publish-empty">支持多张，可重复补选。</div>';return;}
+    wrap.innerHTML=`<div class="preview-grid">${selectedPublishFiles.map((i,idx)=>`<div class="preview-item"><img src="${i.previewUrl}"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
+    wrap.querySelectorAll(".preview-del").forEach(btn=>{ btn.onclick=()=>{ const i=Number(btn.dataset.idx); URL.revokeObjectURL(selectedPublishFiles[i].previewUrl); selectedPublishFiles.splice(i,1); renderSelectedImages(); }; });
+  }
+  async function submitMemo() {
+    const savedPwd=getPublishPassword();
+    const pwdInput=document.getElementById("publishPwd");
+    const pwd=savedPwd||(pwdInput?pwdInput.value.trim():"");
+    const content=document.getElementById("memoContent").value.trim();
+    if (!pwd||(!content&&!selectedPublishFiles.length)) return showToast("请填写完整内容","error");
+    const btn=document.getElementById("submitMemo");
+    btn.textContent="发布中..."; btn.disabled=true;
+    try {
+      const imgs=[]; for(const item of selectedPublishFiles){imgs.push(await toBase64(item.file));}
+      const localUrls=selectedPublishFiles.map(i=>i.previewUrl);
+      const res=await fetch(WORKER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({publishPassword:pwd,content,imgList:imgs})});
+      const json=await res.json();
+      if (json.code===200) {
+        setPublishPassword(pwd);
+        insertNewPostToTop({id:`local_${Date.now()}`,date:getNowBeijingString(),content:[content],images:localUrls});
+        if(publishModal){publishModal.remove();publishModal=null;} selectedPublishFiles=[];
+        showToast("发布成功","success");
+      } else { if(json.code===403)clearPublishPassword(); showToast(json.msg||"发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
+    } catch(e){ showToast("网络错误，发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
+  }
+  function toBase64(file){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);}); }
+  function showToast(m,t="success",d=2200) { let w=document.getElementById("toastWrap"); const toast=document.createElement("div"); toast.className=`toast ${t}`; toast.textContent=m; w.appendChild(toast); setTimeout(()=>{toast.classList.add("hide");setTimeout(()=>{toast.remove();},220);},d); }
 
-    function openSearchModal() {
-      lastScrollY = window.scrollY;
-      searchModal.classList.add("open");
-      document.body.style.overflow = "hidden";
-      modalSearchInput.value = "";
-      modalSearchInput.focus();
-      performSearch();
-    }
-
-    function closeSearchModalFunc() {
-      searchModal.classList.remove("open");
-      document.body.style.overflow = "";
-      window.scrollTo(0, lastScrollY);
-    }
-
-    // ════════════════════════════════════
-    // 发布
-    // ════════════════════════════════════
-    function setPublishPassword(p) { const e=new Date(Date.now()+PUBLISH_PWD_DAYS*86400000).toUTCString(); document.cookie=`${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`; }
-    function getPublishPassword() { const m=document.cookie.match(new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`)); return m?decodeURIComponent(m[1]):""; }
-    function clearPublishPassword() { document.cookie=`${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`; }
-    function getNowBeijingString() { const d=new Date(Date.now()+8*3600000); const p=n=>String(n).padStart(2,"0"); return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; }
-
-    function insertNewPostToTop(post) {
-      allPosts.unshift(post); filtered.unshift(post);
-      const t=document.createElement("div"); t.innerHTML=buildPostHTML(post);
-      if (postsContainer) {
-        postsContainer.firstChild ? postsContainer.insertBefore(t.firstElementChild,postsContainer.firstChild) : postsContainer.appendChild(t.firstElementChild);
-        bindImagesInContainer(postsContainer);
-      }
-    }
-
-    function openPublishEditor() {
-      if (publishModal) publishModal.remove();
-      selectedPublishFiles=[];
-      const savedPwd=getPublishPassword();
-      publishModal=document.createElement("div");
-      publishModal.className="publish-mask";
-      publishModal.innerHTML=`<div class="publish-panel" onclick="event.stopPropagation()">
-        <div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>
-        ${savedPwd?'<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>':`<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}
-        <div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div>
-        <div class="publish-field"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">未选择图片</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可重复补选。</div></div></div>
-        <div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div>
-      </div>`;
-      document.body.appendChild(publishModal);
-      const close=()=>{ if(publishModal){publishModal.remove();publishModal=null;selectedPublishFiles.forEach(i=>URL.revokeObjectURL(i.previewUrl));selectedPublishFiles=[];} };
-      publishModal.onclick=()=>close();
-      document.getElementById("closeMemo").onclick=close;
-      document.getElementById("closeMemo2").onclick=close;
-      document.getElementById("selectImg").onclick=()=>document.getElementById("imgFile").click();
-      document.getElementById("imgFile").addEventListener("change",e=>{
-        Array.from(e.target.files||[]).forEach(f=>selectedPublishFiles.push({file:f,previewUrl:URL.createObjectURL(f)}));
-        e.target.value=""; renderSelectedImages();
-      });
-      document.getElementById("submitMemo").onclick=submitMemo;
-      renderSelectedImages();
-    }
-
-    function renderSelectedImages() {
-      const wrap=document.getElementById("previewWrap"), ct=document.getElementById("imgCountText");
-      if (!wrap||!ct) return;
-      ct.textContent=selectedPublishFiles.length?`已选择${selectedPublishFiles.length}张图片`:"未选择图片";
-      if (!selectedPublishFiles.length){wrap.innerHTML='<div class="publish-empty">支持多张，可重复补选。</div>';return;}
-      wrap.innerHTML=`<div class="preview-grid">${selectedPublishFiles.map((i,idx)=>`<div class="preview-item"><img src="${i.previewUrl}"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
-      wrap.querySelectorAll(".preview-del").forEach(btn=>{ btn.onclick=()=>{ const i=Number(btn.dataset.idx); URL.revokeObjectURL(selectedPublishFiles[i].previewUrl); selectedPublishFiles.splice(i,1); renderSelectedImages(); }; });
-    }
-
-    async function submitMemo() {
-      const savedPwd=getPublishPassword();
-      const pwdInput=document.getElementById("publishPwd");
-      const pwd=savedPwd||(pwdInput?pwdInput.value.trim():"");
-      const content=document.getElementById("memoContent").value.trim();
-      if (!pwd||(!content&&!selectedPublishFiles.length)) return showToast("请填写完整内容","error");
-      const btn=document.getElementById("submitMemo");
-      btn.textContent="发布中..."; btn.disabled=true;
-      try {
-        const imgs=[]; for(const item of selectedPublishFiles){imgs.push(await toBase64(item.file));}
-        const localUrls=selectedPublishFiles.map(i=>i.previewUrl);
-        const res=await fetch(WORKER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({publishPassword:pwd,content,imgList:imgs})});
-        const json=await res.json();
-        if (json.code===200) {
-          setPublishPassword(pwd);
-          insertNewPostToTop({id:`local_${Date.now()}`,date:getNowBeijingString(),content:[content],images:localUrls});
-          if(publishModal){publishModal.remove();publishModal=null;} selectedPublishFiles=[];
-          showToast("发布成功","success");
-        } else { if(json.code===403)clearPublishPassword(); showToast(json.msg||"发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
-      } catch(e){ showToast("网络错误，发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
-    }
-
-    function toBase64(file){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);}); }
-
-    function showToast(m,t="success",d=2200) {
-      let w=document.getElementById("toastWrap");
-      const toast=document.createElement("div"); toast.className=`toast ${t}`; toast.textContent=m; w.appendChild(toast);
-      setTimeout(()=>{toast.classList.add("hide");setTimeout(()=>{toast.remove();},220);},d);
-    }
-
-    // ── 事件绑定 ──
-    document.getElementById("openSearchBtn").onclick = openSearchModal;
-    document.getElementById("closeSearchModal").onclick = closeSearchModalFunc;
-    document.getElementById("modalSearchBtn").onclick = performSearch;
-    document.getElementById("modalSearchInput").addEventListener("keypress",e=>{ if(e.key==="Enter")performSearch(); });
-    document.getElementById("modalSearchInput").addEventListener("input",performSearch);
-    document.getElementById('themeToggleBtn').onclick = () => {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-};
-    document.getElementById("openPublishBtn").onclick=openPublishEditor;
-
-    document.addEventListener("DOMContentLoaded",()=>{ init(); });
+  // 事件绑定
+  document.getElementById("openSearchBtn").onclick = openSearchModal;
+  document.getElementById("closeSearchModal").onclick = closeSearchModalFunc;
+  document.getElementById("modalSearchBtn").onclick = performSearch;
+  document.getElementById("modalSearchInput").addEventListener("keypress",e=>{ if(e.key==="Enter")performSearch(); });
+  document.getElementById("modalSearchInput").addEventListener("input",performSearch);
+  document.getElementById('themeToggleBtn').onclick = () => { document.body.classList.toggle('dark'); localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light'); };
+  document.getElementById("openPublishBtn").onclick=openPublishEditor;
+  document.addEventListener("DOMContentLoaded",()=>{ init(); });
   </script>
 </body>
 </html>
