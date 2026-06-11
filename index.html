@@ -18,24 +18,31 @@
   --secondary-text: #52525b;
   --radius-lg: 0px; --radius-md: 0px; --radius-sm: 0px;
   --img-brightness: 1; --dot-normal: #d4d4d8; --dot-active: #ff3333;
-  --lightbox-bg: rgba(244,244,246,0.99);
+  --lightbox-bg: rgba(240, 232, 220, 0.98);
   --lightbox-btn-bg: #ffffff; --lightbox-btn-color: #050505;
   --lightbox-shadow: 1px 4px 0px #ff3333;
   --p-skew: rotate(-0.5deg) skewX(-2deg);
   --p-skew-anti: skewX(2deg) rotate(0.5deg);
   --p-shadow: 0px 0px 0px #050505;
 }
-body.dark {
-  --bg: #050505; --paper: #121212; --text: #ffffff;
-  --accent: #ff3333; --accent-dark: #cc0000; --border: #ffffff;
-  --secondary-text: #a1a1aa;
-  --img-brightness: 0.85; --dot-normal: #27272a; --dot-active: #ff3333;
-  --lightbox-bg: rgba(5,5,5,0.99);
-  --lightbox-btn-bg: #ffffff; --lightbox-btn-color: #050505;
-  --lightbox-shadow: 1px 4px 0px #ff3333;
+ body.dark {
+  --bg: #1a1209;
+  --paper: #241a0e;
+  --text: #f0e6d3;
+  --accent: #c8813a;
+  --accent-dark: #a0612a;
+  --border: #c8a97a;
+  --secondary-text: #a08060;
+  --img-brightness: 0.85;
+  --dot-normal: #3d2e1a;
+  --dot-active: #c8813a;
+  --lightbox-bg: rgba(20, 14, 6, 0.99);
+  --lightbox-btn-bg: #f0e6d3;
+  --lightbox-btn-color: #1a1209;
+  --lightbox-shadow: 1px 4px 0px #c8813a;
   --p-skew: rotate(-0.5deg) skewX(-2deg);
   --p-skew-anti: skewX(2deg) rotate(0.5deg);
-  --p-shadow: 0px 0px 0px #ff3333;
+  --p-shadow: 0px 0px 0px #c8813a;
 }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
@@ -85,7 +92,7 @@ body.dark .blog-brand { box-shadow: -4px 4px 0px #ffffff; }
   transform: rotate(2deg) skewX(-6deg); cursor: pointer;
   box-shadow: 3px 3px 0px var(--accent); transition: all 0.1s ease;
 }
-body.dark .publish-pill { background: #121212; color: #fff !important; }
+body.dark .publish-pill { background: #241a0e;  color: var(--text) !important; }
 .publish-pill:hover { background: var(--accent); color: #ffffff !important; box-shadow: none; transform: rotate(0deg) translate(3px,3px); }
 main { padding: 0 16px; }
 #postsContainer { padding-top: 16px; }
@@ -315,6 +322,10 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
+  // 在 script 开头第一行加
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+}
     marked.setOptions({ breaks: true, gfm: true });
 
     // ── 数据层 ──
@@ -629,7 +640,10 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
       setTimeout(() => {
         lb.style.display = "none"; lb.style.opacity = "";
         lb.style.transition = ""; lb.style.transform = "";
-        document.body.style.overflow = "";
+         // 只在搜索弹窗未开启时才恢复 body 滚动
+    if (!searchModal.classList.contains('open')) {
+      document.body.style.overflow = '';
+    }
         resetTransform();
       }, 230);
     }
@@ -960,7 +974,10 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
     document.getElementById("modalSearchBtn").onclick = performSearch;
     document.getElementById("modalSearchInput").addEventListener("keypress",e=>{ if(e.key==="Enter")performSearch(); });
     document.getElementById("modalSearchInput").addEventListener("input",performSearch);
-    document.getElementById("themeToggleBtn").onclick=()=>document.body.classList.toggle("dark");
+    document.getElementById('themeToggleBtn').onclick = () => {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+};
     document.getElementById("openPublishBtn").onclick=openPublishEditor;
 
     document.addEventListener("DOMContentLoaded",()=>{ init(); });
