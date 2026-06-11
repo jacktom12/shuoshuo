@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+罗马帝国的灭亡伴随着古典文明（古希腊、古罗马文化）在西欧的暂时衰退：
+随着世俗学校和行政体系的消失，拉丁语的系统教育中断，社会识字率急剧下降。
+知识的保存和垄断转移到了基督教会手中。中世纪早期的欧洲文化从古典的多样性、世俗性，转向了高度凝聚于基督教神学的单一文化状态。
+@2026-06-11 19:34
+
 中国地图，世界地图，中国风景图
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781175427641_29.jpeg&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781175430276_374.jpeg&n=-1)
