@@ -9,6 +9,17 @@ draft: false
 image: ""
 ---
 
+今天看到鸭肉当鹅肉卖的新闻，重看了下随即编程博客里的医疗行业过度治疗博客。年年报道，年年有。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225125790_393.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225127032_593.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225128201_612.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225129446_986.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225130491_40.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225131592_596.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225133641_719.jpeg&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225134423_620.jpeg&n=-1)
+@2026-06-12 08:45
+
 - 自卑不是对别人绝对的肯定、而是彻底的否认自己在这个“别人”面前的价值。加之既想超越又无能无力、服从而又不甘心。
 - 首先需要澄清一点是，觉得别人比自己优秀，不是自卑的充分条件和体现。自卑是感到自己在别人面前显得没有价值，没有长处，毫无存在意义。问题不在于肯定了别人，问题在于否定了自己
 `当你面对一个比你更优秀的人，而且是在同一个组织里面的时候。如果那个人是你的领导，你的 " 自卑”容易转化为 “服从”。这个过程中，你接受了自己比领导差的“现实”，选择了一个角色（忠实的下属）和态度（服从）去面对。“自卑” 感就被转化了。人觉得自己作为一个下属去服从的时候，自己很有价值。他找到了自己的 “价值”，他就把脱了“自卑” 中的焦虑状态，他的心理自我认识从自卑的 “我很差，比他差”。变成了为 “我是比他差，但是我服从他做事展现了自己的价值。`
