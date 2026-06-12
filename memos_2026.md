@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+https://www.vpngate.net/cn/region.aspx
+@2026-06-12 09:57
+
 今天看到鸭肉当鹅肉卖的新闻，重看了下随即编程博客里的医疗行业过度治疗博客。年年报道，年年有。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225125790_393.jpeg&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781225127032_593.jpeg&n=-1)
