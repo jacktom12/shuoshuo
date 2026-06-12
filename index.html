@@ -897,7 +897,7 @@ body.dark .search-modal { background: rgba(5,5,5,0.97); }
       let parsed = marked.parse(raw);
       if (currentSearchKeyword) {
         const regex = new RegExp(`(${escapeRegExp(currentSearchKeyword)})`, "gi");
-        parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => match.replace(regex, '<span style="background:var(--accent);color:#fff;padding:0 2px;font-weight:900;">$1</span>'));
+        parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => match.replace(regex, '<span style="border: 2px solid var(--accent); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg); color: var(--text);">$1</span>'));
       }
       const showTime = formatRelativeTime(post.date);
       let imagesHtml="";
