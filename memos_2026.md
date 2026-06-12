@@ -16,8 +16,6 @@ image: ""
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781232184036_232.png&n=-1)
 @2026-06-12 10:43
 
-https://www.vpngate.net/cn/region.aspx
-@2026-06-12 09:57
 
 - 自卑不是对别人绝对的肯定、而是彻底的否认自己在这个“别人”面前的价值。加之既想超越又无能无力、服从而又不甘心。
 - 首先需要澄清一点是，觉得别人比自己优秀，不是自卑的充分条件和体现。自卑是感到自己在别人面前显得没有价值，没有长处，毫无存在意义。问题不在于肯定了别人，问题在于否定了自己
