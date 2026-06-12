@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+截图软件
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781249028640_983.png&n=-1)
+@2026-06-12 15:23
+
 `Get-AuthenticodeSignature E:\ss\psiphon3.exe | Format-List *`
 `.\sigcheck.exe -h E:\ss\psiphon3.exe` 
 验证签名
