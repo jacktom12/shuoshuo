@@ -9,6 +9,13 @@ draft: false
 image: ""
 ---
 
+`Get-AuthenticodeSignature E:\ss\psiphon3.exe | Format-List *`
+`.\sigcheck.exe -h E:\ss\psiphon3.exe` 
+验证签名
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781232182987_235.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781232184036_232.png&n=-1)
+@2026-06-12 10:43
+
 https://www.vpngate.net/cn/region.aspx
 @2026-06-12 09:57
 
