@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+这工具不错png转svg
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781312086018_275.png&n=-1)
+@2026-06-13 08:54
+
 spacex上市，马斯克成为全球首个万亿富豪！
 - 财富总额是后面4位总和！
 - SpaceX 此次 IPO 的发行价定为每股 135 美元，共发行约 5.556 亿股股票，筹集了 750 亿美元，超越了沙特阿美在 2019 年上市时创下的 249 亿美元融资记录，成为史上最大规模的 IPO。
