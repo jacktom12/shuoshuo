@@ -9,6 +9,12 @@ draft: false
 image: ""
 ---
 
+花自己的钱 办自己的事——既讲节约 又讲效果
+花自己的钱 办别人的事——只讲节约 不讲效果
+花别人的钱 办自己的事——不讲节约 只讲效果
+花别人的钱 办别人的事——不讲节约 不讲效果
+@2026-06-13 13:50
+
 当今中国所谓独立女性
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781328629701_471.webp&n=-1)
 @2026-06-13 13:30
