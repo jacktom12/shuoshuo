@@ -9,6 +9,19 @@ draft: false
 image: ""
 ---
 
+朱迪好像小李子，记得前目的地的女主也很像！这电影我以为看过，居然没看过！97年的电影，现在看一点不过时！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356433015_411.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356436494_153.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356438213_461.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356440097_707.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356444756_730.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356446505_328.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356450494_583.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356453796_2.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356456840_13.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356459648_696.png&n=-1)
+@2026-06-13 21:13
+
 当代诗人臧克家写过一首诗：“块块荒田水和泥，深翻细作走东西。老牛亦解韶光贵，不待扬鞭自奋蹄。”老牛尚且知道时间如白驹过隙，不等主人挥舞鞭子催促，自己便发奋努力干活。做牛马也要有觉悟吗？
 @2026-06-13 15:39
 
