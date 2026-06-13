@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+抓住幸福其实比忍耐痛苦更需要勇气
+@2026-06-13 13:28
+
 这工具不错png转svg
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781312086018_275.png&n=-1)
 @2026-06-13 08:54
