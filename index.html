@@ -1,1035 +1,2792 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>碎碎念</title>
-  <link rel="stylesheet" href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.7.0/style.min.css">
-  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚔️</text></svg>'>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <style>
-:root {
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --bg: #f4f4f6; --paper: #ffffff; --text: #050505;
-  --accent: #ff3333; --accent-dark: #990000; --border: #050505;
-  --gold-glow: rgba(255,180,60,.45);
-  --secondary-text: #52525b;
-  --radius-lg: 0px; --radius-md: 0px; --radius-sm: 0px;
-  --img-brightness: 1; --dot-normal: #d4d4d8; --dot-active: #ff3333;
-  --lightbox-bg: rgba(240, 232, 220, 0.98);
-  --lightbox-btn-bg: #ffffff; --lightbox-btn-color: #050505;
-  --lightbox-shadow: 1px 4px 0px #ff3333;
-  --p-skew: rotate(-0.5deg) skewX(-2deg);
-  --p-skew-anti: skewX(2deg) rotate(0.5deg);
-  --p-shadow: 0px 0px 0px #050505;
-}
- body.dark {
-  --bg: #1a1209;
-  --paper: #241a0e;
-  --text: #f0e6d3;
-  --accent: #c8813a;
-  --gold-glow: rgba(200,129,58,.55);
-  --accent-dark: #a0612a;
-  --border: #c8a97a;
-  --secondary-text: #a08060;
-  --img-brightness: 0.85;
-  --dot-normal: #3d2e1a;
-  --dot-active: #c8813a;
-  --lightbox-bg: rgba(20, 14, 6, 0.99);
-  --lightbox-btn-bg: #f0e6d3;
-  --lightbox-btn-color: #1a1209;
-  --lightbox-shadow: 1px 4px 0px #c8813a;
-  --p-skew: rotate(-0.5deg) skewX(-2deg);
-  --p-skew-anti: skewX(2deg) rotate(0.5deg);
-  --p-shadow: 0px 0px 0px #c8813a;
-}
-body.dark .post:hover{
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>手账</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.7.0/style.min.css"
+    />
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="20" width="70" height="60" rx="6" fill="%23fff9e6" stroke="%23323232" stroke-width="3"/><line x1="25" y1="35" x2="75" y2="35" stroke="%23323232" stroke-width="2"/><line x1="25" y1="45" x2="70" y2="45" stroke="%23323232" stroke-width="2"/><line x1="25" y1="55" x2="65" y2="55" stroke="%23323232" stroke-width="2"/><line x1="25" y1="65" x2="75" y2="65" stroke="%23323232" stroke-width="2"/><path d="M80 15 L85 20 L75 30 L70 25 Z" fill="%23E5AA70" stroke="%23323232" stroke-width="2"/></svg>'
+    />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+      :root {
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-left: env(safe-area-inset-left, 0px);
+        --safe-right: env(safe-area-inset-right, 0px);
 
-  box-shadow:
-      0 0 18px rgba(200,129,58,.25),
-      0 0 36px rgba(200,129,58,.12);
-}
-* { box-sizing: border-box; }
- html, body { 
-  height: 100%;
-  overflow: hidden;
-  height: 100dvh; /* 修复：同步使用动态视口 */
-}
+        /* 完美同步登录页面的 P5 涂鸦风格配色体系 */
+        --ink: #323232;
+        --bg: #f3e9dd; /* 奶黄色底色 */
+        --paper: #fff9e6; /* 手绘米白纸张感 */
+        --text: #323232;
+        --accent: #e5aa70; /* 标志性暖橙色 */
+        --accent-dark: #d4924f;
+        --border: #323232;
+        --gold-glow: rgba(229, 170, 112, 0.4);
+        --secondary-text: #666666;
 
-body {
-  margin: 0; background: var(--bg); color: var(--text);
-  font-family: "LXGW WenKai Screen", sans-serif;
-  display: flex; justify-content: center;
-  overscroll-behavior: contain; -webkit-font-smoothing: antialiased;
-}
+        --img-brightness: 1;
+        --dot-normal: #cccccc;
+        --dot-active: #e5aa70;
+        --lightbox-bg: rgba(243, 233, 221, 0.98);
+        --lightbox-btn-bg: #fff9e6;
+        --lightbox-btn-color: #323232;
+        --lightbox-shadow: 3px 3px 0px #323232;
 
-.app-container {
-  width: 100%; max-width: 660px; 
-  height: 100vh;
-  height: 100dvh; /* 修复：同步使用动态视口 */
-  overflow-y: auto;
-  background: var(--bg);
-  border-left: 4px solid var(--border); border-right: 4px solid var(--border);
-  position: relative;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg);
-  /* 核心修复：为容器底部增加安全区域和足够的内边距，防止最后一条被吞 */
-  padding-bottom: calc(40px + var(--safe-bottom));
-}
-.topbar {
-  position: sticky; top: 0; z-index: 20;
-  background: var(--bg); border-bottom: 4px solid var(--border);
-  padding-top: var(--safe-top);
-}
-.topbar-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 14px; padding: 16px 20px;
-}
-.blog-brand {
-  color: #ffffff !important; background: var(--accent);
-  padding: 8px 18px; font-weight: 900; font-size: 1.35rem;
-  letter-spacing: 1px; text-transform: uppercase;
-  transform: rotate(-3deg) skewX(-4deg); display: inline-block;
-  border: 3px solid var(--border); box-shadow: -4px 4px 0px var(--border);
-}
-body.dark .blog-brand { box-shadow: -4px 4px 0px #ffffff; }
-.topbar-right { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.topbar-icon {
-  background: var(--paper); border: 3px solid var(--border);
-  font-size: 1.1rem; cursor: pointer; color: var(--text);
-  padding: 6px 10px; transform: rotate(2deg) skewX(-4deg);
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s ease;
-}
-.topbar-icon > * { transform: skewX(4deg) rotate(-2deg); }
-.topbar-icon:hover { background: var(--text); color: var(--paper); border-color: var(--text); transform: rotate(0deg) scale(1.05); }
-.publish-pill {
-  background: #ffffff; border: 3px solid var(--border); color: #050505 !important;
-  padding: 6px 18px; font-size: 0.9rem; font-weight: 900; text-transform: uppercase;
-  transform: rotate(2deg) skewX(-6deg); cursor: pointer;
-  box-shadow: 3px 3px 0px var(--accent); transition: all 0.1s ease;
-}
-body.dark .publish-pill { background: #241a0e;  color: var(--text) !important; }
-.publish-pill:hover { background: var(--accent); color: #ffffff !important; box-shadow: none; transform: rotate(0deg) translate(3px,3px); }
-main { padding: 0 16px; 
-/* 修复：确保主内容区域底部有足够的空白溢出带 */
-  padding-bottom: 60px;}
-#postsContainer { padding-top: 16px; }
- /* =========================
-   METAPHOR CARD V3
-   ========================= */
+        /* P5 倾斜与不规则手绘风骨架 */
+        --p-skew: rotate(-0.5deg) skewX(-1deg);
+        --p-skew-anti: skewX(1deg) rotate(0.5deg);
+        --p-shadow: 4px 4px 0px #323232;
 
-.post {
-  margin: 28px 0;
-  padding: 24px;
-  background: var(--paper);
+        /* 手绘不规则圆角微调 */
+        --sketch-radius-1: 8px 24px 8px 24px / 24px 8px 24px 8px;
+        --sketch-radius-2: 24px 8px 24px 8px / 8px 24px 8px 24px;
+        --sketch-radius-btn: 16px 5px 16px 5px / 5px 16px 5px 16px;
+      }
 
-  border: 3px dashed var(--border);
+      /* 暗黑模式适配 - 保持P5反色涂鸦质感 */
+      body.dark {
+        --bg: #1a1917;
+        --paper: #2d2a26;
+        --text: #f3e9dd;
+        --ink: #f3e9dd;
+        --accent: #daa06d;
+        --accent-dark: #e5aa70;
+        --border: #f3e9dd;
+        --gold-glow: rgba(218, 160, 109, 0.25);
+        --secondary-text: #a0988e;
+        --img-brightness: 0.85;
+        --dot-normal: #4a453f;
+        --dot-active: #daa06d;
+        --lightbox-bg: rgba(26, 25, 23, 0.99);
+        --lightbox-btn-bg: #2d2a26;
+        --lightbox-btn-color: #f3e9dd;
+        --lightbox-shadow: 3px 3px 0px #f3e9dd;
+        --p-shadow: 4px 4px 0px #f3e9dd;
+      }
 
-  border-radius: 0;
+      body.dark .post:hover {
+        box-shadow:
+          0 0 18px rgba(218, 160, 109, 0.25),
+          0 0 36px rgba(218, 160, 109, 0.12);
+      }
 
-  transform: var(--p-skew);
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        height: 100dvh;
+      }
 
-  display: flex;
-  flex-direction: column;
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Comic Sans MS", "Chalkboard SE", "LXGW WenKai Screen", sans-serif;
+        display: flex;
+        justify-content: center;
+        overscroll-behavior: contain;
+        -webkit-font-smoothing: antialiased;
+      }
 
-  position: relative;
+      .app-container {
+        width: 100%;
+        max-width: 660px;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        background: var(--bg);
+        border-left: 3px solid var(--border);
+        border-right: 3px solid var(--border);
+        position: relative;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) var(--bg);
+        padding-bottom: calc(40px + var(--safe-bottom));
+      }
 
-  overflow: visible;
+      /* 顶部导航条改造 */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: var(--bg);
+        border-bottom: 3px solid var(--border);
+        padding-top: var(--safe-top);
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 16px 20px;
+      }
 
-  transition:
-      transform .22s cubic-bezier(.175,.885,.32,1.275),
-      box-shadow .22s ease,
-      border-color .22s ease;
-}
+      .blog-brand {
+        color: var(--ink) !important;
+        background: var(--accent);
+        padding: 6px 16px;
+        font-weight: 900;
+        font-size: 1.35rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transform: rotate(-3deg) skewX(-4deg);
+        display: inline-block;
+        border: 2px solid var(--border);
+        box-shadow: -4px 4px 0px var(--border);
+        cursor: pointer;
+        text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+      }
+      .blog-brand:hover {
+        animation: doodle-wiggle 0.5s ease-in-out infinite;
+      }
 
-/* 金色底层阴影 */
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
 
-.post::before{
-  content:"";
+      /* 导航小图标按钮 */
+      .topbar-icon {
+        background: var(--paper);
+        border: 2px solid var(--border);
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--text);
+        padding: 6px 10px;
+        transform: rotate(2deg) skewX(-4deg);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 3px 3px 0px var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+      }
+      .topbar-icon > * {
+        transform: skewX(4deg) rotate(-2deg);
+      }
+      .topbar-icon:hover {
+        background: var(--accent);
+        transform: rotate(0deg) scale(1.05) translateY(-2px);
+        box-shadow: 4px 4px 0px var(--border);
+      }
+      .topbar-icon:active {
+        transform: translate(2px, 2px);
+        box-shadow: 0px 0px 0px var(--border);
+      }
 
-  position:absolute;
+      /* 发布按钮大胶囊 */
+      .publish-pill {
+        background: #ffffff;
+        border: 2px solid var(--border);
+        color: #323232 !important;
+        padding: 6px 18px;
+        font-size: 0.9rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        transform: rotate(-1deg) skewX(-6deg);
+        cursor: pointer;
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 3px 3px 0px var(--accent);
+        transition: all 0.15s ease;
+      }
+      body.dark .publish-pill {
+        background: #2d2a26;
+        color: var(--text) !important;
+      }
+      .publish-pill:hover {
+        background: var(--accent);
+        color: var(--ink) !important;
+        transform: rotate(-2deg) translateY(-2px);
+        box-shadow: 4px 4px 0px var(--border);
+      }
+      .publish-pill:active {
+        transform: translate(2px, 2px);
+        box-shadow: 0px 0px 0px var(--border);
+      }
 
-  inset:0;
+      main {
+        padding: 0 16px;
+        padding-bottom: 60px;
+      }
+      #postsContainer {
+        padding-top: 16px;
+      }
 
-  pointer-events:none;
+      /* ==========================================
+   METAPHOR CARD V3 - 核心不规则涂鸦卡片
+   ========================================== */
+      .post {
+        margin: 28px 0;
+        padding: 24px;
+        background: var(--paper);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-1);
+        transform: var(--p-skew);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: visible;
+        box-shadow: var(--p-shadow);
+        transition:
+          transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          box-shadow 0.22s ease,
+          border-color 0.22s ease;
+        /* 登录页同款米白信纸暗纹线效果 */
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 28px,
+          rgba(0, 0, 0, 0.03) 28px,
+          rgba(0, 0, 0, 0.05) 30px
+        );
+      }
 
-  opacity:0;
+      .post:nth-child(even) {
+        border-radius: var(--sketch-radius-2);
+        transform: rotate(0.6deg) skewX(0.5deg);
+      }
 
-  z-index:-1;
+      /* 底层趣味手绘阴影效果 */
+      .post::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        z-index: -1;
+        box-shadow:
+          0 0 0 2px transparent,
+          8px 8px 0px var(--gold-glow);
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s ease;
+      }
 
-  box-shadow:
-      0 0 0 2px transparent,
-      10px 10px 0px var(--gold-glow);
+      /* 右下角断裂撕纸点缀效果 */
+      .post::after {
+        content: "";
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        right: -2px;
+        bottom: -2px;
+        opacity: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          135deg,
+          transparent 0 45%,
+          var(--accent) 45% 55%,
+          transparent 55%
+        );
+        transition:
+          opacity 0.22s ease,
+          transform 0.22s ease;
+      }
 
-  transition:
-      opacity .22s ease,
-      transform .22s ease;
-}
+      .post:hover {
+        transform: rotate(-1.5deg) skewX(-1deg) translate(-4px, -4px);
+        border-color: var(--accent-dark);
+        box-shadow: 6px 6px 0px var(--border);
+      }
+      .post:hover::before {
+        opacity: 1;
+        transform: translate(4px, 4px);
+      }
+      .post:hover::after {
+        opacity: 1;
+        transform: rotate(8deg);
+      }
 
-/* 断裂边角 */
+      .post-right {
+        transform: var(--p-skew-anti);
+        flex-grow: 1;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 14px;
+        border-bottom: 2px dashed var(--border);
+        padding-bottom: 8px;
+      }
 
-.post::after{
-  content:"";
+      .post-time {
+        color: var(--ink);
+        background: var(--accent);
+        padding: 3px 12px;
+        font-size: 0.8rem;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        transform: rotate(-2deg) skewX(-4deg);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+      }
+      .post-time::before {
+        content: "📓 // ";
+        color: var(--ink);
+      }
 
-  position:absolute;
+      .post-content {
+        font-size: 1rem;
+        line-height: 1.7;
+        word-wrap: break-word;
+        font-family: -apple-system, sans-serif;
+        font-weight: 500;
+      }
+      .post-content p {
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+      .post-content blockquote {
+        margin: 16px 0;
+        padding: 12px 16px;
+        background: var(--border);
+        color: var(--paper);
+        border-left: 6px solid var(--accent);
+        font-style: normal;
+        font-weight: 900;
+        border-radius: var(--sketch-radius-btn);
+        transform: rotate(0.5deg);
+      }
+      .post-content code {
+        background: var(--accent);
+        color: var(--ink);
+        padding: 3px 7px;
+        font-size: 0.88rem;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+      .post-content ul,
+      .post-content ol {
+        padding-left: 0;
+        margin-bottom: 8px;
+        list-style: none;
+      }
+      .post-content li {
+        list-style: none !important;
+        margin-bottom: 4px;
+      }
+      .post-content input[type="checkbox"] {
+        margin-right: 6px;
+        vertical-align: middle;
+        cursor: not-allowed;
+      }
 
-  width:42px;
-  height:42px;
+      /* 图片多图拖拽容器外观 */
+      .post-images {
+        overflow: hidden;
+        padding: 12px 0 4px;
+        cursor: grab;
+        contain: layout;
+      }
+      .post-images.dragging {
+        cursor: grabbing;
+      }
+      .img-slide {
+        display: flex;
+        position: relative;
+        gap: 12px;
+        will-change: transform;
+      }
+      .post-images.single-image img {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        max-height: 380px;
+        display: block;
+      }
+      .post-images img {
+        height: 190px;
+        width: auto;
+        max-width: 85%;
+        object-fit: cover;
+        border: 2px solid var(--border);
+        filter: brightness(var(--img-brightness));
+        border-radius: var(--sketch-radius-1);
+        box-shadow: 3px 3px 0px var(--border);
+        transition: all 0.2s;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      .post-images img:hover {
+        border-color: var(--accent);
+        transform: scale(1.02) rotate(1deg);
+        box-shadow: 4px 4px 0px var(--border);
+      }
 
-  right:-3px;
-  bottom:-3px;
+      /* 斜切模块点 */
+      .img-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 14px;
+      }
+      .img-dots .dot {
+        width: 12px;
+        height: 6px;
+        background: var(--dot-normal);
+        transform: skewX(-20deg);
+        transition: all 0.15s ease;
+        cursor: pointer;
+        border: 1px solid var(--border);
+      }
+      .img-dots .dot.active {
+        background: var(--dot-active);
+        width: 24px;
+      }
+      #loader {
+        text-align: center;
+        padding: 40px;
+        color: var(--secondary-text);
+        font-weight: 900;
+        transform: rotate(-1deg);
+      }
 
-  opacity:0;
+      /* ==========================================
+   P5高级重型手绘灯箱
+   ========================================== */
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--lightbox-bg);
+        z-index: 300000;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.25s ease;
+      }
+      .lightbox.lb-closing {
+        opacity: 0;
+      }
+      #lbImg {
+        max-width: 80%;
+        max-height: 82%;
+        object-fit: contain;
+        border: 3px solid var(--border);
+        background: var(--paper);
+        box-shadow: var(--p-shadow);
+        z-index: 2100;
+        border-radius: var(--sketch-radius-1);
+        user-select: none;
+        -webkit-user-drag: none;
+        touch-action: none;
+        transform-origin: center center;
+        will-change: transform;
+      }
+      .lb-counter {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        margin-right: 12px;
+        background: var(--accent);
+        color: var(--ink);
+        border: 2px solid var(--border);
+        padding: 8px 20px;
+        font-weight: 900;
+        font-size: 1.05rem;
+        letter-spacing: 0.5px;
+        transform: rotate(2deg) skewX(-8deg);
+        z-index: 3000;
+        box-shadow: 4px 4px 0px var(--border);
+        border-radius: var(--sketch-radius-btn);
+      }
+      .lb-counter::before {
+        content: "👁️ ";
+        color: var(--ink);
+        display: inline-block;
+        margin-right: 6px;
+      }
 
-  pointer-events:none;
+      .lb-btn {
+        position: absolute;
+        background: var(--lightbox-btn-bg);
+        color: var(--lightbox-btn-color) !important;
+        border: 2px solid var(--border);
+        width: 46px;
+        height: 46px;
+        font-size: 1.2rem;
+        font-weight: 900;
+        border-radius: var(--sketch-radius-btn);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--lightbox-shadow);
+        z-index: 3100;
+        transition: all 0.15s ease;
+      }
+      #lbCloseBtn {
+        top: 24px;
+        left: 24px;
+        transform: rotate(-3deg) skewX(-6deg);
+      }
+      #lbCloseBtn:hover {
+        background: var(--accent);
+        color: var(--ink) !important;
+        transform: rotate(-5deg) scale(1.05) !important;
+      }
+      .nav-btn {
+        top: 50%;
+        transform: translateY(-50%) rotate(3deg) skewX(-6deg);
+      }
+      #lbPrevBtn {
+        left: 24px;
+      }
+      #lbNextBtn {
+        right: 24px;
+      }
+      .lb-btn:hover {
+        background: var(--text);
+        color: var(--paper) !important;
+        border-color: var(--text);
+        box-shadow: 0 0 0 transparent;
+      }
+      .nav-btn:hover {
+        transform: translateY(-50%) rotate(-3deg) scale(1.05) !important;
+      }
 
-  background:
-    linear-gradient(
-      135deg,
-      transparent 0 45%,
-      var(--accent) 45% 55%,
-      transparent 55%
-    );
+      /* ==========================================
+   全屏手绘搜素面板
+   ========================================== */
+      .search-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(243, 233, 221, 0.97);
+        backdrop-filter: blur(18px);
+        z-index: 200000;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 60px 20px 20px;
+        overflow-y: auto;
+      }
+      body.dark .search-modal {
+        background: rgba(26, 25, 23, 0.97);
+      }
+      .search-modal.open {
+        display: flex;
+      }
 
-  transition:
-      opacity .22s ease,
-      transform .22s ease;
-}
-.post:hover {
+      /* 涂鸦式滚动条定制 */
+      .search-modal::-webkit-scrollbar,
+      .search-results::-webkit-scrollbar,
+      .app-container::-webkit-scrollbar,
+      .publish-panel::-webkit-scrollbar {
+        width: 12px;
+        height: 10px;
+      }
+      .search-modal::-webkit-scrollbar-track,
+      .search-results::-webkit-scrollbar-track,
+      .app-container::-webkit-scrollbar-track,
+      .publish-panel::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      .search-modal::-webkit-scrollbar-thumb,
+      .search-results::-webkit-scrollbar-thumb,
+      .app-container::-webkit-scrollbar-thumb,
+      .publish-panel::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border: 2px solid var(--bg);
+        border-radius: 0px !important;
+      }
+      .search-modal::-webkit-scrollbar-thumb:hover,
+      .search-results::-webkit-scrollbar-thumb:hover,
+      .app-container::-webkit-scrollbar-thumb:hover,
+      .publish-panel::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+      }
 
-  transform:
-      rotate(-1.5deg)
-      skewX(-2deg)
-      translate(-4px,-4px);
+      .search-modal-header {
+        width: 100%;
+        max-width: 700px;
+        margin-bottom: 30px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: var(--paper);
+        border: 2px solid var(--border);
+        padding: 8px 12px 8px 18px;
+        box-shadow: 5px 5px 0 var(--border);
+        border-radius: var(--sketch-radius-1);
+      }
+      .search-modal-header input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        font-size: 1rem;
+        font-family: inherit;
+        padding: 10px 0;
+        outline: none;
+        color: var(--text);
+        font-weight: 700;
+      }
+      .search-modal-header button {
+        background: var(--accent);
+        border: 2px solid var(--border);
+        padding: 8px 20px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 900;
+        color: var(--ink);
+        font-size: 1rem;
+        border-radius: var(--sketch-radius-btn);
+        white-space: nowrap;
+        user-select: none;
+        flex-shrink: 0;
+        box-shadow: 3px 3px 0 var(--border);
+        transition: all 0.15s ease;
+      }
+      .search-modal-header button:hover {
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 var(--border);
+      }
 
-  border-color: var(--accent);
-}
+      .search-results {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      .search-results .post {
+        margin: 0 0 18px;
+        transform: none;
+      }
+      .search-results .post:hover {
+        transform: translate(-3px, -3px) rotate(-0.5deg);
+      }
+      .search-results .post-right {
+        transform: none;
+      }
+      .search-loader {
+        text-align: center;
+        padding: 30px;
+        color: var(--secondary-text);
+        font-weight: 900;
+      }
 
-.post:hover::before{
+      .close-search-btn {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        width: 44px;
+        height: 44px;
+        background: var(--paper);
+        border: 2px solid var(--border);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--text);
+        transition: all 0.2s;
+        border-radius: var(--sketch-radius-btn);
+        user-select: none;
+        box-shadow: 4px 4px 0 var(--accent);
+      }
+      .close-search-btn:hover {
+        transform: scale(1.05) rotate(5deg);
+        background: var(--accent);
+        color: var(--ink);
+      }
 
-  opacity:1;
+      /* ==========================================
+   重型涂鸦撕纸风发布面板
+   ========================================== */
+      .publish-mask {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 5, 5, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 99999;
+      }
+      .publish-panel {
+        width: min(100%, 600px);
+        max-height: min(85vh, 850px);
+        overflow: auto;
+        background: var(--paper);
+        color: var(--text);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-1);
+        box-shadow: var(--p-shadow);
+        padding: 26px;
+        transform: rotate(0.5deg);
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 28px,
+          rgba(0, 0, 0, 0.02) 28px,
+          rgba(0, 0, 0, 0.04) 30px
+        );
+      }
+      .publish-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 12px;
+      }
+      .publish-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        transform: skewX(-6deg) rotate(-1deg);
+        color: var(--accent-dark);
+      }
+      .publish-close {
+        border: 2px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        width: 28px;
+        height: 28px;
+        border-radius: var(--sketch-radius-btn);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+      }
+      .publish-close:hover {
+        background: var(--accent);
+        color: var(--ink);
+        transform: rotate(10deg);
+      }
+      .publish-field {
+        margin-bottom: 18px;
+      }
+      .publish-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 900;
+        color: var(--text);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        transform: rotate(-1deg);
+      }
 
-  transform:
-      translate(4px,4px);
-}
+      /* 发布表单输入框样式完美等同于登录页输入框 */
+      .publish-input,
+      .publish-textarea {
+        width: 100%;
+        border: 2px solid var(--border);
+        background: #ffffff;
+        color: #323232;
+        padding: 12px;
+        outline: none;
+        font-family: -apple-system, sans-serif;
+        font-weight: bold;
+        border-radius: var(--sketch-radius-1);
+        box-shadow: 3px 3px 0px var(--border);
+        transition: all 0.2s;
+      }
+      body.dark .publish-input,
+      body.dark .publish-textarea {
+        background: #2d2a26; /* 与卡片背景一致 */
+        color: #f3e9dd; /* 浅色文字 */
+        border-color: var(--border);
+      }
+      .publish-input:focus,
+      .publish-textarea:focus {
+        border-color: var(--accent);
+        border-radius: var(--sketch-radius-2);
+        box-shadow: 4px 4px 0px var(--border);
+        background: #fffef7; /* 极淡的奶油黄，手账纸质感 */
+      }
+      body.dark .publish-input:focus,
+      body.dark .publish-textarea:focus {
+        background: #3a3834; /* 聚焦时略亮 */
+      }
 
-.post:hover::after{
+      .publish-tools {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .pick-img-btn {
+        border: 2px solid var(--border);
+        background: var(--paper);
+        color: var(--text);
+        padding: 6px 14px;
+        border-radius: var(--sketch-radius-btn);
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 900;
+        transform: skewX(-4deg);
+        box-shadow: 2px 2px 0px var(--border);
+        transition: all 0.1s;
+      }
+      .pick-img-btn:hover {
+        background: var(--accent);
+        color: var(--ink);
+        transform: translateY(-1px);
+        box-shadow: 3px 3px 0px var(--border);
+      }
 
-  opacity:1;
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .preview-item {
+        position: relative;
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+        overflow: hidden;
+        padding: 2px;
+        background: var(--paper);
+        aspect-ratio: 1/1;
+      }
+      .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .preview-del {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        cursor: pointer;
+        background: var(--accent);
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-  transform:
-      rotate(8deg);
-}
-.post-right { transform: var(--p-skew-anti); flex-grow: 1; overflow: hidden; min-width: 0; }
-.post-header { display: flex; align-items: center; margin-bottom: 14px; border-bottom: 3px solid var(--border); padding-bottom: 8px; }
-.post-time {
-  color: #fff; background: var(--accent); padding: 3px 10px;
-  font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5px;
-  display: inline-block; transform: rotate(-1deg) skewX(-6deg); border: 2px solid var(--border);
-}
-.post-time::before { content: "⚔️ REBEL_TACTICS // "; color: #ffffff; }
-.post-content { font-size: 1rem; line-height: 1.6; word-wrap: break-word; font-family: -apple-system, sans-serif; font-weight: 500; }
-.post-content p { margin-top: 0; margin-bottom: 8px; }
-.post-content blockquote { margin: 16px 0; padding: 12px 16px; background: var(--border); color: var(--paper); border-left: 6px solid var(--accent); font-style: normal; font-weight: 900; transform: rotate(0.5deg); }
-.post-content code { background: var(--accent); color: #ffffff; padding: 3px 7px; font-size: 0.88rem; font-weight: bold; }
-.post-content ul, .post-content ol { padding-left: 0; margin-bottom: 8px; list-style: none; }
-.post-content li { list-style: none !important; margin-bottom: 4px; }
-.post-content input[type="checkbox"] { margin-right: 6px; vertical-align: middle; cursor: not-allowed; }
-.post-images { overflow: hidden; padding: 12px 0 4px; cursor: grab; contain: layout; }
-.post-images.dragging { cursor: grabbing; }
-.img-slide { display: flex; position: relative; gap: 12px; will-change: transform; }
-.post-images.single-image img { width: auto; max-width: 100%; height: auto; max-height: 380px; display: block; }
-.post-images img {
-  height: 190px; width: auto; max-width: 85%; object-fit: cover;
-  border: 3px solid var(--border); filter: brightness(var(--img-brightness));
-  transition: transform 0.2s; user-select: none; -webkit-user-drag: none;
-}
-.post-images img:hover { border-color: var(--accent); transform: scale(1.02); }
-.img-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
-.img-dots .dot { width: 12px; height: 6px; background: var(--dot-normal); transform: skewX(-20deg); transition: all 0.15s ease; cursor: pointer; }
-.img-dots .dot.active { background: var(--dot-active); width: 24px; }
-#loader { text-align: center; padding: 40px; color: var(--secondary-text); font-weight: 900; }
+      .publish-footer {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .publish-submit,
+      .publish-cancel {
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+        cursor: pointer;
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        font-weight: 900;
+        transform: skewX(-6deg);
+        transition: all 0.15s ease;
+      }
+      .publish-submit {
+        flex: 1;
+        background: var(--accent);
+        color: var(--ink);
+        box-shadow: 4px 4px 0px var(--border);
+      }
+      .publish-submit:hover:not(:disabled) {
+        background: var(--text);
+        color: var(--paper);
+        box-shadow: 0 0 0 transparent;
+        transform: skewX(-6deg) translate(3px, 3px);
+      }
+      .publish-cancel {
+        min-width: 90px;
+        background: transparent;
+        color: var(--secondary-text);
+      }
+      .publish-submit:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .publish-empty,
+      .publish-tip {
+        color: var(--secondary-text);
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .publish-textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
 
-/* 灯箱 */
-.lightbox {
-  display: none; position: fixed; inset: 0;
-  background: var(--lightbox-bg); z-index: 300000;
-  justify-content: center; align-items: center;
-  transition: opacity 0.25s ease;
-}
-.lightbox.lb-closing { opacity: 0; }
-#lbImg {
-  max-width: 80%; max-height: 82%; object-fit: contain;
-  border: 4px solid var(--text); background: var(--paper);
-  box-shadow: var(--p-shadow); z-index: 2100;
-  user-select: none; -webkit-user-drag: none; touch-action: none;
-  transform-origin: center center; will-change: transform;
-}
-.lb-counter {
-  position: absolute; top: 24px; right: 24px; margin-right: 12px;
-  background: var(--accent); color: #ffffff; border: 3px solid var(--border);
-  padding: 8px 20px; font-weight: 900; font-size: 1.05rem; letter-spacing: 0.5px;
-  transform: rotate(2deg) skewX(-8deg); z-index: 3000; box-shadow: 4px 4px 0px var(--border);
-}
-.lb-counter::before { content: "STEAL // "; color: #ffffff; display: inline-block; margin-right: 6px; text-decoration: underline; }
-.lb-btn {
-  position: absolute; background: var(--lightbox-btn-bg);
-  color: var(--lightbox-btn-color) !important; border: 3px solid var(--border);
-  width: 46px; height: 46px; font-size: 1.2rem; font-weight: 900;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: var(--lightbox-shadow); z-index: 3100;
-  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
-}
-#lbCloseBtn { top: 24px; left: 24px; transform: rotate(-3deg) skewX(-6deg); }
-#lbCloseBtn:hover { background: var(--accent); color: #ffffff !important; transform: rotate(-3deg) skewX(-6deg) !important; }
-.nav-btn { top: 50%; transform: translateY(-50%) rotate(3deg) skewX(-6deg); }
-#lbPrevBtn { left: 24px; }
-#lbNextBtn { right: 24px; }
-.lb-btn:hover { background: var(--text); color: var(--paper) !important; border-color: var(--text); box-shadow: 0 0 0 transparent; }
-.nav-btn:hover { transform: translateY(-50%) rotate(3deg) skewX(-6deg) !important; }
+      /* ==========================================
+   斜剪风格动态气泡 Toast
+   ========================================== */
+      .toast-wrap {
+        position: fixed;
+        top: calc(28px + var(--safe-top));
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        min-width: 270px;
+        padding: 14px 24px;
+        background: var(--paper);
+        color: var(--ink);
+        border: 2px solid var(--border);
+        font-size: 0.95rem;
+        font-weight: 900;
+        text-align: center;
+        border-radius: var(--sketch-radius-btn);
+        transform: skewX(-12deg) rotate(-1deg);
+        box-shadow: 4px 4px 0px var(--border);
+        opacity: 0;
+        animation: pToastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+          forwards;
+      }
+      .toast.success {
+        color: #d4924f;
+      }
+      .toast.success::before {
+        content: "✍️ 手账已收录 // ";
+      }
+      .toast.error {
+        background: #ffccd5;
+        color: #c0392b;
+      }
+      .toast.error::before {
+        content: "💔 这一页撕坏了 // ";
+      }
+      .toast.hide {
+        animation: pToastOut 0.2s ease forwards;
+      }
+      @keyframes pToastIn {
+        to {
+          opacity: 1;
+          transform: skewX(-12deg) rotate(-1deg);
+        }
+      }
+      @keyframes pToastOut {
+        to {
+          opacity: 0;
+          transform: translateY(-10px) skewX(-12deg);
+        }
+      }
 
-/* 搜索全屏 + 女神异闻录滚动条完全接管 */
-.search-modal {
-  position: fixed; inset: 0;
-  background: rgba(244,244,246,0.97); backdrop-filter: blur(18px);
-  z-index: 200000; display: none; flex-direction: column;
-  align-items: center; justify-content: flex-start;
-  padding: 60px 20px 20px;
-  overflow-y: auto;
-}
-body.dark .search-modal { background: rgba(5,5,5,0.97); }
-.search-modal.open { display: flex; }
+      /* Wiggle 摇晃动态核心库 */
+      @keyframes doodle-wiggle {
+        0%,
+        100% {
+          transform: rotate(-3deg) skewX(-4deg);
+        }
+        25% {
+          transform: rotate(1deg) skewX(-2deg);
+        }
+        50% {
+          transform: rotate(-4deg) skewX(-4deg);
+        }
+        75% {
+          transform: rotate(2deg) skewX(-3deg);
+        }
+      }
 
-.search-modal::-webkit-scrollbar,
-.search-results::-webkit-scrollbar {
-  width: 12px;
-  height: 10px;
-}
-.search-modal::-webkit-scrollbar-track,
-.search-results::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-.search-modal::-webkit-scrollbar-thumb,
-.search-results::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border: 2px solid var(--bg);
-  border-radius: 0px !important;
-}
-.search-modal::-webkit-scrollbar-thumb:hover,
-.search-results::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
-.search-modal {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg);
-}
+      @media (max-width: 768px) {
+        body {
+          padding: 0;
+        }
+        .app-container {
+          max-width: 100%;
+          border-left: none;
+          border-right: none;
+        }
+        .topbar-inner {
+          padding: 12px 14px;
+        }
+        .blog-brand {
+          font-size: 1.15rem;
+          padding: 6px 12px;
+        }
+        main {
+          padding: 0 10px;
+        }
+        .post {
+          margin: 16px 0;
+          padding: 16px;
+          border-width: 2px;
+          box-shadow: 4px 4px 0px var(--border);
+        }
+        .post:hover {
+          transform: rotate(-0.8deg) skewX(-1deg) translate(-2px, -2px);
+        }
+        body.dark .post {
+          box-shadow: 4px 4px 0px var(--border);
+        }
+        .post-content {
+          font-size: 0.95rem;
+        }
+        .post-images img {
+          height: 150px;
+          border-width: 2px;
+        }
+        .nav-btn {
+          display: none !important;
+        }
+        #lbImg {
+          max-width: 95%;
+          max-height: 75%;
+          border: 2px solid var(--border);
+        }
+        .lb-counter {
+          top: calc(20px + var(--safe-top));
+          left: 50% !important;
+          right: auto !important;
+          margin-right: 0;
+          transform: translateX(-50%) rotate(2deg) skewX(-8deg);
+        }
+        #lbCloseBtn {
+          top: calc(18px + var(--safe-top));
+          left: 16px;
+          width: 38px;
+          height: 38px;
+        }
+        .publish-mask {
+          padding: 0;
+          align-items: flex-end;
+        }
+        .publish-panel {
+          width: 100%;
+          max-height: 80vh;
+          padding: 20px 16px;
+          border-bottom: none;
+          border-left: none;
+          border-right: none;
+          border-style: solid;
+          box-shadow: 0 -6px 0px var(--accent);
+          transform: none;
+          border-radius: 20px 20px 0 0;
+        }
+        .publish-footer {
+          margin-top: 16px;
+          padding-bottom: var(--safe-bottom);
+        }
+        .search-modal {
+          padding: calc(56px + env(safe-area-inset-top)) 12px
+            calc(16px + env(safe-area-inset-bottom));
+        }
+        .search-modal-header {
+          width: 100%;
+          padding: 4px 8px 4px 14px;
+          gap: 6px;
+          margin-bottom: 16px;
+        }
+        .search-modal-header input {
+          font-size: 1rem;
+          padding: 10px 0;
+          min-width: 0;
+        }
+        .search-modal-header button {
+          padding: 8px 14px;
+          font-size: 0.9rem;
+        }
+        .close-search-btn {
+          top: calc(10px + env(safe-area-inset-top));
+          right: 14px;
+          width: 40px;
+          height: 40px;
+        }
+        .search-results {
+          width: 100%;
+          padding: 0;
+        }
+        .search-results .post {
+          padding: 12px;
+          margin-bottom: 12px;
+          font-size: 0.95rem;
+        }
+      }
+      @media (max-width: 480px) {
+        #modalSearchInput,
+        .publish-input,
+        .publish-textarea {
+          font-size: 16px !important;
+        }
+        .post-images img {
+          height: 130px;
+        }
+      }
 
-.search-modal-header {
-  width: 100%; max-width: 700px; margin-bottom: 30px;
-  display: flex; gap: 12px; align-items: center;
-  background: var(--paper); border: 3px solid var(--border);
-  padding: 8px 12px 8px 18px; box-shadow: 6px 6px 0 var(--border);
-}
-.search-modal-header input {
-  flex: 1; min-width: 0; background: transparent; border: none;
-  font-size: 1rem; font-family: inherit; padding: 10px 0;
-  outline: none; color: var(--text); font-weight: 700;
-}
-.search-modal-header button {
-  background: var(--accent); border: 3px solid var(--border);
-  padding: 8px 20px; cursor: pointer; font-family: inherit;
-  font-weight: 900; color: #fff; font-size: 1rem;
-  white-space: nowrap; user-select: none; flex-shrink: 0;
-}
-.search-results { 
-  width: 100%; max-width: 700px; margin: 0 auto; 
-}
-.search-results .post { margin: 0 0 18px; transform: none; }
-.search-results .post:hover { transform: translate(-2px,-2px); }
-.search-results .post-right { transform: none; }
-.search-loader { text-align: center; padding: 30px; color: var(--secondary-text); font-weight: 900; }
-.close-search-btn {
-  position: absolute; top: 20px; right: 30px;
-  width: 44px; height: 44px; background: var(--paper);
-  border: 3px solid var(--border); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem; color: var(--text); transition: all 0.2s;
-  user-select: none; box-shadow: 4px 4px 0 var(--accent);
-}
-.close-search-btn:hover { transform: scale(1.05); background: var(--accent); color: #fff; }
+      /* ==========================================
+   回到顶部按钮 - 手绘风格 (修复可见性)
+   ========================================== */
+      .back-to-top {
+        position: fixed;
+        bottom: calc(28px + var(--safe-bottom));
+        right: 20px;
+        width: 46px;
+        height: 46px;
+        background: var(--paper);
+        color: var(--text);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 4px 4px 0px var(--border);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: 900;
+        transform: rotate(3deg) skewX(-5deg);
+        z-index: 9000;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.25s ease,
+          transform 0.15s ease,
+          background 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        background: var(--accent);
+        color: var(--ink);
+        transform: rotate(0deg) scale(1.08) translateY(-3px);
+        box-shadow: 5px 5px 0px var(--border);
+      }
+      .back-to-top:active {
+        transform: translate(3px, 3px) rotate(2deg);
+        box-shadow: 0px 0px 0px var(--border);
+      }
+      @media (max-width: 768px) {
+        .back-to-top {
+          bottom: calc(20px + var(--safe-bottom));
+          right: 14px;
+          width: 42px;
+          height: 42px;
+          font-size: 1.15rem;
+        }
+      }
 
-/* 发布弹窗 */
-.publish-mask { position: fixed; inset: 0; background: rgba(5,5,5,0.85); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 99999; }
-.publish-panel { width: min(100%,600px); max-height: min(85vh,850px); overflow: auto; background: var(--paper); color: var(--text); border: 4px dashed var(--border); box-shadow: var(--p-shadow); padding: 26px; transform: rotate(0.5deg); }
-.publish-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 3px solid var(--border); padding-bottom: 12px; }
-.publish-title { margin: 0; font-size: 1.25rem; font-weight: 900; text-transform: uppercase; transform: skewX(-6deg); color: var(--accent); }
-.publish-close { border: 2px solid var(--border); background: transparent; color: var(--text); width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.publish-close:hover { background: var(--accent); color: white; }
-.publish-field { margin-bottom: 18px; }
-.publish-label { display: block; font-size: .85rem; font-weight: 900; color: var(--text); margin-bottom: 6px; text-transform: uppercase; }
-.publish-input, .publish-textarea { width: 100%; border: 3px solid var(--border); background: var(--bg); color: var(--text); padding: 10px; outline: none; font-family: -apple-system, sans-serif; font-weight: bold; transition: all .2s; }
-.publish-input:focus, .publish-textarea:focus { border-color: var(--accent); background: var(--paper); box-shadow: 5px 5px 0px var(--border); }
-.publish-tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-.pick-img-btn { border: 2px solid var(--border); background: var(--paper); color: var(--text); padding: 6px 14px; cursor: pointer; font-size: .82rem; font-weight: 900; transform: skewX(-4deg); }
-.pick-img-btn:hover { background: var(--accent); color: white; }
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(80px,1fr)); gap: 8px; margin-top: 8px; }
-.preview-item { position: relative; border: 2px solid var(--border); overflow: hidden; padding: 2px; background: var(--paper); aspect-ratio: 1/1; }
-.preview-item img { width: 100%; height: 100%; object-fit: cover; }
-.preview-del { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border: none; cursor: pointer; background: var(--accent); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-.publish-footer { display: flex; gap: 12px; margin-top: 24px; }
-.publish-submit, .publish-cancel { border: 3px solid var(--border); cursor: pointer; padding: 12px 20px; font-size: .95rem; font-weight: 900; transform: skewX(-6deg); }
-.publish-submit { flex: 1; background: var(--accent); color: white; box-shadow: 4px 4px 0px var(--border); }
-.publish-submit:hover:not(:disabled) { background: var(--text); color: var(--paper); box-shadow: none; transform: skewX(-6deg) translate(4px,4px); }
-.publish-cancel { min-width: 90px; background: transparent; color: var(--secondary-text); }
-.publish-submit:disabled { opacity: .3; cursor: not-allowed; }
-.publish-empty, .publish-tip { color: var(--secondary-text); font-size: 0.85rem; font-weight: 700; }
-.publish-textarea { min-height: 120px; resize: vertical; }
+      /* ==========================================
+   图片左右切换按钮 - 手绘风格
+   ========================================== */
+      .post-images-wrap {
+        position: relative;
+      }
+      .img-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-60%) rotate(2deg) skewX(-5deg);
+        width: 34px;
+        height: 34px;
+        background: var(--paper);
+        color: var(--text);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 3px 3px 0px var(--border);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 900;
+        z-index: 10;
+        transition: all 0.15s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .img-nav-btn:hover {
+        background: var(--accent);
+        color: var(--ink);
+        transform: translateY(-60%) rotate(-2deg) scale(1.08);
+        box-shadow: 4px 4px 0px var(--border);
+      }
+      .img-nav-btn:active {
+        transform: translateY(-58%) translate(2px, 2px);
+        box-shadow: 0 0 0 var(--border);
+      }
+      .img-nav-prev {
+        left: 4px;
+      }
+      .img-nav-next {
+        right: 4px;
+      }
+      .img-nav-btn.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @media (max-width: 768px) {
+        .img-nav-btn {
+          width: 30px;
+          height: 30px;
+          font-size: 0.9rem;
+        }
+      }
 
-/* toast */
-.toast-wrap { position: fixed; top: calc(28px + var(--safe-top)); left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
-.toast { min-width: 270px; padding: 14px 24px; background: var(--text); color: var(--paper); border: 3px solid var(--border); font-size: 0.95rem; font-weight: 900; text-align: center; transform: skewX(-12deg); box-shadow: var(--p-shadow); opacity: 0; animation: pToastIn .35s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
-.toast.success { color: var(--accent); }
-.toast.success::before { content: "💣 TACTICS TRIUMPH // "; }
-.toast.error { background: #ff3333; color: #ffffff; border-color: #000000; }
-.toast.error::before {
-  content: "⚠ MISSION FAILED // ";
-}
-.toast.hide { animation: pToastOut .2s ease forwards; }
-@keyframes pToastIn { to { opacity: 1; transform: skewX(-12deg); } }
-@keyframes pToastOut { to { opacity: 0; transform: translateY(-10px) skewX(-12deg); } }
+      /* 漂浮装饰（手账风格） */
+      .doodle-star,
+      .doodle-sparkle,
+      .doodle-swirl {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        width: 48px;
+        height: 48px;
+        opacity: 0.7;
+      }
+      .doodle-star {
+        top: 20px;
+        left: 20px;
+        animation: float-star 5s ease-in-out infinite;
+      }
+      .doodle-sparkle {
+        bottom: 30px;
+        right: 30px;
+        width: 40px;
+        height: 40px;
+        animation: float-sparkle 6s ease-in-out infinite 1s;
+      }
+      .doodle-swirl {
+        top: 40%;
+        right: 15px;
+        width: 32px;
+        height: 32px;
+        animation: float-swirl 7s ease-in-out infinite 2s;
+      }
+      @keyframes float-star {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-15deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(-10deg);
+        }
+      }
+      @keyframes float-sparkle {
+        0%,
+        100% {
+          transform: translateY(0) rotate(10deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(15deg);
+        }
+      }
+      @keyframes float-swirl {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(5deg);
+        }
+      }
 
-@media (max-width: 768px) {
-  body { padding: 0; }
-  .app-container { max-width: 100%; border-left: none; border-right: none; }
-  .topbar-inner { padding: 12px 14px; }
-  .blog-brand { font-size: 1.15rem; padding: 6px 12px; }
-  main { padding: 0 10px; }
-  .post { margin: 16px 0; padding: 16px; border-width: 2px; box-shadow: 4px 4px 0px var(--border); }
-  .post:hover{
+      /* 暗色模式下装饰颜色微调 */
+      body.dark .doodle-star {
+        fill: #daa06d;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-sparkle {
+        fill: #b8875a;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-swirl {
+        stroke: #f3e9dd;
+      }
 
-  transform:
-      rotate(-0.8deg)
-      skewX(-2deg)
-      translate(-2px,-2px);
-}
-  body.dark .post { box-shadow: 4px 4px 0px var(--accent); }
-  .post-content { font-size: 0.95rem; }
-  .post-images img { height: 150px; border-width: 2px; }
-  .nav-btn { display: none !important; }
-  #lbImg { max-width: 95%; max-height: 75%; border: 3px solid var(--text); }
-  .lb-counter { top: calc(20px + var(--safe-top)); left: 50% !important; right: auto !important; margin-right: 0; transform: translateX(-50%) rotate(2deg) skewX(-8deg); }
-  #lbCloseBtn { top: calc(18px + var(--safe-top)); left: 16px; width: 38px; height: 38px; }
-  .publish-mask { padding: 0; align-items: flex-end; }
-  .publish-panel { width: 100%; max-height: 80vh; padding: 20px 16px; border-bottom: none; border-left: none; border-right: none; border-style: solid; box-shadow: 0 -6px 0px var(--accent); transform: none; }
-  .publish-footer { margin-top: 16px; padding-bottom: var(--safe-bottom); }
-  .search-modal { padding: calc(56px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom)); }
-  .search-modal-header { width: 100%; padding: 4px 8px 4px 14px; gap: 6px; margin-bottom: 16px; }
-  .search-modal-header input { font-size: 1rem; padding: 10px 0; min-width: 0; }
-  .search-modal-header button { padding: 8px 14px; font-size: 0.9rem; }
-  .close-search-btn { top: calc(10px + env(safe-area-inset-top)); right: 14px; width: 40px; height: 40px; }
-  .search-results { width: 100%; padding: 0; }
-  .search-results .post { padding: 12px; margin-bottom: 12px; font-size: 0.95rem; }
-}
-@media (max-width: 480px) {
-  #modalSearchInput, .publish-input, .publish-textarea { font-size: 16px !important; }
-  .post-images img { height: 130px; }
-}
-.app-container::-webkit-scrollbar { width: 12px; height: 10px; }
-.app-container::-webkit-scrollbar-track { background: var(--bg); }
-.app-container::-webkit-scrollbar-thumb { background: var(--border); border: 2px solid var(--bg); border-radius: 0px !important; }
-.app-container::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-.publish-panel::-webkit-scrollbar { width: 12px; }
-.publish-panel::-webkit-scrollbar-track { background: var(--paper); }
-.publish-panel::-webkit-scrollbar-thumb { background: var(--border); border: 2px solid var(--paper); border-radius: 0px; }
-  </style>
-</head>
-<body>
-  <div class="app-container">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="blog-brand">MEMOS</div>
-        <div class="topbar-right">
-          <button class="topbar-icon" id="openSearchBtn" title="搜索"><span>🔍</span></button>
-          <button class="topbar-icon" id="themeToggleBtn" title="切换主题"><span>🌗</span></button>
-          <button class="publish-pill" id="openPublishBtn">PUBLISH</button>
+      /* 新增手账漂浮装饰 */
+      /* ===== 手账漂浮装饰 ===== */
+      .doodle-star,
+      .doodle-sparkle,
+      .doodle-swirl,
+      .doodle-flower,
+      .doodle-plane,
+      .doodle-clip,
+      .doodle-moon,
+      .doodle-leaf {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        will-change: transform;
+      }
+
+      /* 单个元素尺寸与初始位置 */
+      .doodle-star {
+        top: 20px;
+        left: 20px;
+        width: 48px;
+        height: 48px;
+        animation: floatStar 11s ease-in-out infinite;
+      }
+      .doodle-sparkle {
+        bottom: 30px;
+        right: 30px;
+        width: 40px;
+        height: 40px;
+        animation: floatSparkle 14s ease-in-out infinite 1.2s;
+      }
+      .doodle-swirl {
+        top: 35%;
+        right: 15px;
+        width: 32px;
+        height: 32px;
+        animation: floatSwirl 9s ease-in-out infinite 2.5s;
+      }
+      .doodle-flower {
+        bottom: 15%;
+        left: 3%;
+        width: 30px;
+        height: 30px;
+        animation: floatFlower 13s ease-in-out infinite 0.8s;
+      }
+      .doodle-plane {
+        top: 20%;
+        right: 2%;
+        width: 34px;
+        height: 34px;
+        animation: floatPlane 16s ease-in-out infinite 1.5s;
+      }
+      .doodle-clip {
+        top: 35%;
+        left: 2%;
+        width: 28px;
+        height: 28px;
+        animation: floatClip 10s ease-in-out infinite 3s;
+      }
+      .doodle-moon {
+        bottom: 25%;
+        right: 4%;
+        width: 32px;
+        height: 32px;
+        animation: floatMoon 12s ease-in-out infinite 0.5s;
+      }
+      .doodle-leaf {
+        top: 60%;
+        left: 5%;
+        width: 28px;
+        height: 28px;
+        animation: floatLeaf 15s ease-in-out infinite 2s;
+      }
+
+      /* 不规则飘浮动效 */
+      @keyframes floatStar {
+        0% {
+          transform: translate(0, 0) rotate(-15deg) scale(1);
+        }
+        25% {
+          transform: translate(12px, -18px) rotate(-8deg) scale(1.05);
+        }
+        50% {
+          transform: translate(-8px, -30px) rotate(2deg) scale(0.95);
+        }
+        75% {
+          transform: translate(18px, -12px) rotate(-4deg) scale(1.02);
+        }
+        100% {
+          transform: translate(0, 0) rotate(-15deg) scale(1);
+        }
+      }
+      @keyframes floatSparkle {
+        0% {
+          transform: translate(0, 0) rotate(10deg) scale(1);
+        }
+        30% {
+          transform: translate(-15px, -20px) rotate(18deg) scale(1.08);
+        }
+        60% {
+          transform: translate(10px, -35px) rotate(5deg) scale(0.92);
+        }
+        100% {
+          transform: translate(0, 0) rotate(10deg) scale(1);
+        }
+      }
+      @keyframes floatSwirl {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        20% {
+          transform: translate(8px, -12px) rotate(6deg);
+        }
+        40% {
+          transform: translate(-12px, -25px) rotate(-4deg);
+        }
+        60% {
+          transform: translate(6px, -8px) rotate(3deg);
+        }
+        80% {
+          transform: translate(-4px, -18px) rotate(-2deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+      @keyframes floatFlower {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        33% {
+          transform: translate(10px, -14px) rotate(6deg);
+        }
+        66% {
+          transform: translate(-6px, -26px) rotate(-3deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+      @keyframes floatPlane {
+        0% {
+          transform: translate(0, 0) rotate(-8deg);
+        }
+        25% {
+          transform: translate(-18px, -12px) rotate(-2deg);
+        }
+        50% {
+          transform: translate(8px, -28px) rotate(4deg);
+        }
+        75% {
+          transform: translate(-10px, -16px) rotate(-6deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(-8deg);
+        }
+      }
+      @keyframes floatClip {
+        0% {
+          transform: translate(0, 0) rotate(0deg) skewX(0deg);
+        }
+        35% {
+          transform: translate(14px, -10px) rotate(10deg) skewX(4deg);
+        }
+        70% {
+          transform: translate(-5px, -22px) rotate(-5deg) skewX(-2deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg) skewX(0deg);
+        }
+      }
+      @keyframes floatMoon {
+        0% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        40% {
+          transform: translate(-8px, -18px) rotate(8deg) scale(1.06);
+        }
+        80% {
+          transform: translate(12px, -30px) rotate(-4deg) scale(0.94);
+        }
+        100% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+      }
+      @keyframes floatLeaf {
+        0% {
+          transform: translate(0, 0) rotate(-3deg);
+        }
+        25% {
+          transform: translate(6px, -10px) rotate(1deg);
+        }
+        50% {
+          transform: translate(-14px, -22px) rotate(5deg);
+        }
+        75% {
+          transform: translate(8px, -14px) rotate(-2deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(-3deg);
+        }
+      }
+
+      /* 暗黑模式下装饰颜色微调 */
+      body.dark .doodle-star {
+        fill: #daa06d;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-sparkle {
+        fill: #b8875a;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-swirl {
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-flower {
+        fill: #daa06d;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-plane {
+        fill: #2d2a26;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-clip {
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-moon {
+        fill: #b8875a;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-leaf {
+        fill: #5e7b5c;
+        stroke: #f3e9dd;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 手绘漂浮装饰（来自登录页） -->
+    <svg
+      class="doodle-star"
+      viewBox="0 0 24 24"
+      fill="#E5AA70"
+      stroke="#323232"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polygon
+        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+      ></polygon>
+    </svg>
+    <svg
+      class="doodle-sparkle"
+      viewBox="0 0 24 24"
+      fill="#DAA06D"
+      stroke="#323232"
+      stroke-width="1.5"
+    >
+      <path
+        d="M12 2 Q12 12 22 12 Q12 12 12 22 Q12 12 2 12 Q12 12 12 2 Z"
+      ></path>
+    </svg>
+    <svg
+      class="doodle-swirl"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#323232"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    >
+      <path
+        d="M3 12 C 3 5 10 5 16 5 C 20 5 21 9 18 12 C 15 15 10 13 12 9 C 14 5 22 9 21 16"
+      ></path>
+    </svg>
+
+    <!-- 小花朵 -->
+    <svg
+      class="doodle-flower"
+      viewBox="0 0 24 24"
+      fill="#E5AA70"
+      stroke="#323232"
+      stroke-width="1.5"
+    >
+      <circle cx="12" cy="12" r="3" fill="#F5C6A0" />
+      <path d="M12 3 Q12 8 12 12" />
+      <path d="M12 21 Q12 16 12 12" />
+      <path d="M3 12 Q8 12 12 12" />
+      <path d="M21 12 Q16 12 12 12" />
+      <circle cx="12" cy="12" r="2" fill="#E5AA70" />
+    </svg>
+
+    <!-- 小纸飞机 -->
+    <svg
+      class="doodle-plane"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#323232"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M2 12 L10 14 L12 22 L22 2 L2 12Z" fill="#FFF9E6" />
+    </svg>
+
+    <!-- 回形针 -->
+    <svg
+      class="doodle-clip"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#323232"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    >
+      <path d="M17 2 L8 12 C6 14 6 16 8 18 C10 20 12 20 14 18 L20 10" />
+    </svg>
+
+    <!-- 小月亮 -->
+    <svg
+      class="doodle-moon"
+      viewBox="0 0 24 24"
+      fill="#DAA06D"
+      stroke="#323232"
+      stroke-width="1.5"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+
+    <!-- 小叶子 -->
+    <svg
+      class="doodle-leaf"
+      viewBox="0 0 24 24"
+      fill="#A7C5A3"
+      stroke="#323232"
+      stroke-width="1.5"
+    >
+      <path
+        d="M12 2 C8 6 6 10 6 14 C6 18 8 22 12 22 C16 22 18 18 18 14 C18 10 16 6 12 2Z"
+      />
+      <path d="M12 2 L12 22" stroke="#323232" stroke-width="1.2" fill="none" />
+    </svg>
+
+    <div class="app-container">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="blog-brand" id="logoTitle">WEN</div>
+          <div class="topbar-right">
+            <!-- 搜索按钮 -->
+            <button class="topbar-icon" id="openSearchBtn" title="搜索">
+              <svg
+                width="1.2em"
+                height="1.2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="10" cy="10" r="7"></circle>
+                <line x1="21" y1="21" x2="15" y2="15"></line>
+              </svg>
+            </button>
+
+            <!-- 主题切换按钮（放一个图标，JS里再换另一个） -->
+            <button class="topbar-icon" id="themeToggleBtn" title="切换主题">
+              <svg
+                id="themeIcon"
+                width="1.2em"
+                height="1.2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path>
+              </svg>
+            </button>
+
+            <!-- 发布按钮 -->
+            <button class="topbar-icon" id="openPublishBtn" title="发布">
+              <svg
+                width="1.2em"
+                height="1.2em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M17 3a2.85 2.83 0 0 0 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"
+                ></path>
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
-    <main>
-      <div id="postsContainer"></div>
-      <div id="loader">正在检索记忆碎片...</div>
-    </main>
-  </div>
-
-  <!-- 灯箱 -->
-  <div id="p5Lightbox" class="lightbox">
-    <div class="lb-counter" id="lbCounter">1 / 1</div>
-    <button class="lb-btn" id="lbCloseBtn">✕</button>
-    <button class="lb-btn nav-btn" id="lbPrevBtn">‹</button>
-    <img id="lbImg" src="" alt="大图预览" draggable="false" />
-    <button class="lb-btn nav-btn" id="lbNextBtn">›</button>
-  </div>
-
-  <!-- 搜索全屏弹窗 -->
-  <div id="searchModal" class="search-modal">
-    <div class="search-modal-header">
-      <input type="text" id="modalSearchInput" placeholder="输入关键词..." autofocus />
-      <button id="modalSearchBtn">搜索</button>
+      </header>
+      <button class="back-to-top" id="backToTopBtn" title="回到顶部">⬆︎</button>
+      <main>
+        <div id="postsContainer"></div>
+        <div id="loader">正在检索记忆碎片...</div>
+      </main>
     </div>
-    <div id="searchResults" class="search-results"></div>
-    <div class="close-search-btn" id="closeSearchModal">✕</div>
-  </div>
 
-  <div class="toast-wrap" id="toastWrap"></div>
+    <div id="p5Lightbox" class="lightbox">
+      <div class="lb-counter" id="lbCounter">1 / 1</div>
+      <button class="lb-btn" id="lbCloseBtn">✕</button>
+      <button class="lb-btn nav-btn" id="lbPrevBtn">‹</button>
+      <img id="lbImg" src="" alt="大图预览" draggable="false" />
+      <button class="lb-btn nav-btn" id="lbNextBtn">›</button>
+    </div>
 
-  <script>
-  if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
-  marked.setOptions({ breaks: true, gfm: true });
+    <div id="searchModal" class="search-modal">
+      <div class="search-modal-header">
+        <input
+          type="text"
+          id="modalSearchInput"
+          placeholder="输入关键词..."
+          autofocus
+        />
+        <button id="modalSearchBtn">搜索</button>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+      <div class="close-search-btn" id="closeSearchModal">✕</div>
+    </div>
 
-  // ---------- 数据层 ----------
-  let allPosts = [], filtered = [], page = 1;
-  const perPage = 10;
-  let isLoading = false;
-  const START_YEAR = new Date().getFullYear();
-  const MIN_YEAR = 2025;
+    <div class="toast-wrap" id="toastWrap"></div>
 
-  // ---------- 灯箱完整状态 ----------
-  let currentGallery = [], currentIndex = 0;
-  let scale = 1, baseScale = 1;
-  let translateX = 0, translateY = 0;
-  let isPointerDown = false;
-  let pointerCache = [];
-  let lastPinchDist = 0;
-  let lastClickTime = 0;
+    <script>
+      // 1. 定义更新图标的函数
+      const updateThemeIcon = (isDark) => {
+        const themeIcon = document.getElementById("themeIcon");
+        if (!themeIcon) return;
+        if (isDark) {
+          // 深色模式 → 太阳图标
+          themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+        } else {
+          // 浅色模式 → 月亮图标
+          themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+        }
+      };
 
-  // 搜索状态
-  let currentSearchResults = [], currentSearchKeyword = '';
-  let searchPage = 1;
-  const searchPerPage = 12;
-  let lastScrollY = 0;
-
-  // 发布状态
-  let publishModal = null, selectedPublishFiles = [];
-  const WORKER_URL = "https://solitary-forest-7065.hahagoodboy008.workers.dev";
-  const PUBLISH_PWD_KEY = "memo_publish_pwd";
-  const PUBLISH_PWD_DAYS = 30;
-
-  const loaderDom = document.getElementById("loader");
-  const postsContainer = document.getElementById("postsContainer");
-  const lb = document.getElementById("p5Lightbox");
-  const lbImg = document.getElementById("lbImg");
-  const lbCounter = document.getElementById("lbCounter");
-  const searchModal = document.getElementById("searchModal");
-  const modalSearchInput = document.getElementById("modalSearchInput");
-  const searchResultsDiv = document.getElementById("searchResults");
-
-  // ---------- 工具函数 ----------
-  function escapeRegExp(s) { return s.replace(/[.*+?^${}()|\\[\]]/g, '\\$&'); }
-  function formatRelativeTime(dateStr) {
-    const target = new Date(dateStr.replace(/-/g, "/"));
-    if (isNaN(target.getTime())) return dateStr;
-    const now = new Date(), diffMs = now - target;
-    const diffMin = Math.floor(diffMs / 60000);
-    const diffHour = Math.floor(diffMin / 60);
-    const diffDay = Math.floor(diffHour / 24);
-    if (diffDay < 3) {
-      if (diffMin < 1) return "刚刚";
-      if (diffMin < 60) return diffMin + "分钟前";
-      if (diffHour < 24) return diffHour + "小时前";
-    }
-    const y = target.getFullYear();
-    const m = String(target.getMonth()+1).padStart(2,"0");
-    const d = String(target.getDate()).padStart(2,"0");
-    return y+"-"+m+"-"+d;
-  }
-
-  function parseMdToPosts(mdContent, fileYear) {
-    const fi = mdContent.indexOf("---", 3);
-    const raw = fi > -1 ? mdContent.slice(fi + 3).trim() : mdContent.trim();
-    return raw.split(/\n\n+/).filter(s => s.trim()).map((item, idx) => {
-      let text = item.trim();
-      let date = "";
-      let images = [];
-      const imgR = /!\[.*?\]\((https?:\/\/.+?)\)/g;
-      const imgM = [...text.matchAll(imgR)];
-      if (imgM.length) {
-        images = imgM.map(m => m[1]);
-        text = text.replace(imgR, "");
+      // 2. 初始化主题（读取 localStorage）
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
       }
-      const dm = text.match(/@(\d{4}-\d{2}-\d{2}\s+\d{2}(?::|::)\d{2})/);
-      if (dm) {
-        date = dm[1].replace(/::/g, ":");
-        text = text.replace(dm[0], "").trim();
-      } else {
-        date = fileYear + "-01-01 00:00";
-      }
-      if (text || images.length) {
-        return { id: fileYear + "_" + idx + "_" + Math.random().toString(36).slice(2, 5), date, content: [text], images };
-      }
-      return null;
-    }).filter(Boolean);
-  }
+      // 3. 同步图标（根据当前是否有 dark 类）
+      updateThemeIcon(document.body.classList.contains("dark"));
 
-  function buildPostHTML(p) {
-    const text = Array.isArray(p.content) ? p.content.join("\n\n") : (p.content||"");
-    const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
-    const showTime = formatRelativeTime(p.date);
-    let imagesHtml = "";
-    if (p.images && p.images.length) {
-      const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
-      imagesHtml = `<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
-    }
-    return `<article class="post" id="post-${p.id}">
+      // 4. 绑定主题切换按钮事件
+      document.getElementById("themeToggleBtn").onclick = () => {
+        document.body.classList.toggle("dark");
+        const isDark = document.body.classList.contains("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        updateThemeIcon(isDark);
+      };
+
+      marked.setOptions({ breaks: true, gfm: true });
+
+      // ---------- 数据层 ----------
+      let allPosts = [],
+        filtered = [],
+        page = 1;
+      const perPage = 10;
+      let isLoading = false;
+      const START_YEAR = new Date().getFullYear();
+      const MIN_YEAR = 2025;
+
+      // ---------- 灯箱完整状态 ----------
+      let currentGallery = [],
+        currentIndex = 0;
+      let scale = 1,
+        baseScale = 1;
+      let translateX = 0,
+        translateY = 0;
+      let isPointerDown = false;
+      let pointerCache = [];
+      let lastPinchDist = 0;
+      let lastClickTime = 0;
+
+      // 搜索状态
+      let currentSearchResults = [],
+        currentSearchKeyword = "";
+      let searchPage = 1;
+      const searchPerPage = 12;
+      let lastScrollY = 0;
+
+      // 发布状态
+      let publishModal = null,
+        selectedPublishFiles = [];
+      const WORKER_URL =
+        "https://solitary-forest-7065.hahagoodboy008.workers.dev";
+      const PUBLISH_PWD_KEY = "memo_publish_pwd";
+      const PUBLISH_PWD_DAYS = 30;
+
+      const loaderDom = document.getElementById("loader");
+      const postsContainer = document.getElementById("postsContainer");
+      const lb = document.getElementById("p5Lightbox");
+      const lbImg = document.getElementById("lbImg");
+      const lbCounter = document.getElementById("lbCounter");
+      const searchModal = document.getElementById("searchModal");
+      const modalSearchInput = document.getElementById("modalSearchInput");
+      const searchResultsDiv = document.getElementById("searchResults");
+
+      // ---------- 工具函数 ----------
+      function escapeRegExp(s) {
+        return s.replace(/[.*+?^${}()|\\[\]]/g, "\\$&");
+      }
+      function formatRelativeTime(dateStr) {
+        const target = new Date(dateStr.replace(/-/g, "/"));
+        if (isNaN(target.getTime())) return dateStr;
+        const now = new Date(),
+          diffMs = now - target;
+        const diffMin = Math.floor(diffMs / 60000);
+        const diffHour = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHour / 24);
+        if (diffDay < 3) {
+          if (diffMin < 1) return "刚刚";
+          if (diffMin < 60) return diffMin + "分钟前";
+          if (diffHour < 24) return diffHour + "小时前";
+        }
+        const y = target.getFullYear();
+        const m = String(target.getMonth() + 1).padStart(2, "0");
+        const d = String(target.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + d;
+      }
+
+      function parseMdToPosts(mdContent, fileYear) {
+        const fi = mdContent.indexOf("---", 3);
+        const raw = fi > -1 ? mdContent.slice(fi + 3).trim() : mdContent.trim();
+        return raw
+          .split(/\n\n+/)
+          .filter((s) => s.trim())
+          .map((item, idx) => {
+            let text = item.trim();
+            let date = "";
+            let images = [];
+            const imgR = /!\[.*?\]\((https?:\/\/.+?)\)/g;
+            const imgM = [...text.matchAll(imgR)];
+            if (imgM.length) {
+              images = imgM.map((m) => m[1]);
+              text = text.replace(imgR, "");
+            }
+            const dm = text.match(/@(\d{4}-\d{2}-\d{2}\s+\d{2}(?::|::)\d{2})/);
+            if (dm) {
+              date = dm[1].replace(/::/g, ":");
+              text = text.replace(dm[0], "").trim();
+            } else {
+              date = fileYear + "-01-01 00:00";
+            }
+            if (text || images.length) {
+              return {
+                id:
+                  fileYear +
+                  "_" +
+                  idx +
+                  "_" +
+                  Math.random().toString(36).slice(2, 5),
+                date,
+                content: [text],
+                images,
+              };
+            }
+            return null;
+          })
+          .filter(Boolean);
+      }
+
+      function buildPostHTML(p) {
+        const text = Array.isArray(p.content)
+          ? p.content.join("\n\n")
+          : p.content || "";
+        const parsed =
+          typeof marked !== "undefined" ? marked.parse(text) : text;
+        const showTime = formatRelativeTime(p.date);
+        let imagesHtml = "";
+        if (p.images && p.images.length) {
+          const imgs = p.images
+            .map((url) => `<img src="${url}" alt="" draggable="false">`)
+            .join("");
+          const navBtns =
+            p.images.length > 1
+              ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
+              : "";
+          imagesHtml = `<div class="post-images-wrap">${navBtns}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+        }
+        return `<article class="post" id="post-${p.id}">
       <div class="post-header"><span class="post-time">${showTime}</span></div>
       <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
     </article>`;
-  }
+      }
 
-  // ---------- 数据加载 ----------
-  async function init() {
-    if (isLoading) return;
-    isLoading = true;
-    loaderDom.style.display = "block";
-    loaderDom.textContent = "正在全量穿透检索所有年份记忆碎片...";
-    const years = [];
-    for (let y = START_YEAR; y >= MIN_YEAR; y--) years.push(y);
-    const results = await Promise.all(years.map(y =>
-      fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache:"no-store" })
-        .then(r => { if (!r.ok) throw 0; return r.text(); })
-        .then(text => ({ year:y, text, ok:true }))
-        .catch(() => ({ year:y, ok:false }))
-    ));
-    allPosts = [];
-    results.forEach(r => { if (r.ok && r.text) allPosts.push(...parseMdToPosts(r.text, r.year)); });
-    allPosts.sort((a,b) => new Date(b.date.replace(/-/g,"/")) - new Date(a.date.replace(/-/g,"/")));
-    isLoading = false;
-    filtered = [...allPosts];
-    page = 1;
-    render(true);
-    if (allPosts.length) loaderDom.style.display = "none";
-    else { loaderDom.style.display = "block"; loaderDom.textContent = "暂无备忘录数据"; }
-    setupInfiniteScroll();
-    setupLightbox();  // 完整灯箱初始化
-  }
-
-  function render(reset = false) {
-    if (!postsContainer) return;
-    if (reset) postsContainer.innerHTML = "";
-    const start = reset ? 0 : (page-1)*perPage;
-    const end = page*perPage;
-    const show = filtered.slice(start, end);
-    if (!show.length && reset) { postsContainer.innerHTML = '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>'; return; }
-    const html = show.map(buildPostHTML).join("");
-    if (reset) postsContainer.innerHTML = html;
-    else { const t = document.createElement("div"); t.innerHTML = html; while (t.firstChild) postsContainer.appendChild(t.firstChild); }
-    bindImagesInContainer(postsContainer);
-  }
-
-  // 核心修复：监听正确的滚动容器
-  function setupInfiniteScroll() {
-    const scrollContainer = document.querySelector('.app-container');
-    if (!scrollContainer) return;
-    const handleScroll = () => {
-      if (isLoading) return;
-      const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
-      if (scrollTop + clientHeight >= scrollHeight - 150) {
-        if (page * perPage < filtered.length) {
-          page++;
-          if (loaderDom) loaderDom.style.display = "block";
-          render(false);
-          if (loaderDom) loaderDom.style.display = "none";
-        } else if (loaderDom && filtered.length) {
+      // ---------- 数据加载 ----------
+      async function init() {
+        if (isLoading) return;
+        isLoading = true;
+        loaderDom.style.display = "block";
+        loaderDom.textContent = "正在加载手账...";
+        const years = [];
+        for (let y = START_YEAR; y >= MIN_YEAR; y--) years.push(y);
+        const results = await Promise.all(
+          years.map((y) =>
+            fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache: "no-store" })
+              .then((r) => {
+                if (!r.ok) throw 0;
+                return r.text();
+              })
+              .then((text) => ({ year: y, text, ok: true }))
+              .catch(() => ({ year: y, ok: false })),
+          ),
+        );
+        allPosts = [];
+        results.forEach((r) => {
+          if (r.ok && r.text) allPosts.push(...parseMdToPosts(r.text, r.year));
+        });
+        allPosts.sort(
+          (a, b) =>
+            new Date(b.date.replace(/-/g, "/")) -
+            new Date(a.date.replace(/-/g, "/")),
+        );
+        isLoading = false;
+        filtered = [...allPosts];
+        page = 1;
+        render(true);
+        if (allPosts.length) loaderDom.style.display = "none";
+        else {
           loaderDom.style.display = "block";
-          loaderDom.textContent = "已经没有更多备忘录了";
-          setTimeout(() => { if (loaderDom && filtered.length) loaderDom.style.display = "none"; }, 800);
+          loaderDom.textContent = "暂无手账数据";
         }
+        setupInfiniteScroll();
+        setupLightbox();
       }
-    };
-    scrollContainer.addEventListener('scroll', handleScroll);
-  }
 
-  // ---------- 图片轮播 + 灯箱绑定 ----------
-  let globalGalleryLock = false;
-  function bindImagesInContainer(container) {
-    container.querySelectorAll(".post-images").forEach(wrap => {
-      if (wrap.dataset.boundDrag) return;
-      wrap.dataset.boundDrag = "true";
-      const slide = wrap.querySelector(".img-slide");
-      const dotsBox = wrap.querySelector(".img-dots");
-      const imgs = slide.querySelectorAll("img");
-      const total = imgs.length;
-      if (total <= 1) { if (dotsBox) dotsBox.style.display = "none"; wrap.classList.add("single-image"); }
-      else {
-        if (dotsBox) { dotsBox.innerHTML = ""; for (let i = 0; i < total; i++) { const dot = document.createElement("span"); dot.className = i===0 ? "dot active" : "dot"; dotsBox.appendChild(dot); } }
-        const dots = dotsBox ? dotsBox.querySelectorAll(".dot") : [];
-        let sX=0,sY=0,isScrolling=null,cur=0,isDrag=false,moved=0,prevTrans=0,curTrans=0,animId=0;
-        function setPos() { slide.style.transform = `translateX(${curTrans}px)`; }
-        function anim() { if (!isDrag) return; setPos(); animId = requestAnimationFrame(anim); }
-        function stopAnim() { if (animId) { cancelAnimationFrame(animId); animId=0; } }
-        function gx(e) { return e.type.includes("mouse") ? e.pageX : e.touches[0].clientX; }
-        function gy(e) { return e.type.includes("mouse") ? e.pageY : e.touches[0].clientY; }
-        function updateDots() { dots.forEach(d=>d.classList.remove("active")); if(dots[cur]) dots[cur].classList.add("active"); }
-        function goTo(idx, animate=true) { cur = Math.max(0,Math.min(total-1,idx)); curTrans = -imgs[cur].offsetLeft; prevTrans = curTrans; slide.style.transition = animate ? "transform 0.15s cubic-bezier(0.25,1,0.5,1)" : "none"; setPos(); updateDots(); }
-        function forceStop() { isDrag=false; isScrolling=null; moved=0; wrap.classList.remove("dragging"); stopAnim(); curTrans=prevTrans; setPos(); }
-        function tStart(e) { if (e.type==="mousedown" && e.button!==0) return; isDrag=true; isScrolling=null; moved=0; sX=gx(e); sY=gy(e); slide.style.transition="none"; wrap.classList.add("dragging"); stopAnim(); animId=requestAnimationFrame(anim); }
-        function tMove(e) { if (!isDrag) return; const dx=gx(e)-sX, dy=gy(e)-sY; if (isScrolling===null) isScrolling = Math.abs(dy)>Math.abs(dx); if (isScrolling) { forceStop(); return; } if (Math.abs(dx)>5) e.preventDefault(); moved=dx; curTrans=prevTrans+dx; }
-        function tEnd() { if (!isDrag) return; isDrag=false; isScrolling=null; wrap.classList.remove("dragging"); stopAnim(); const iw = imgs[0] ? imgs[0].offsetWidth+8 : wrap.offsetWidth; if (Math.abs(moved) > iw*0.22) { const ms = Math.max(1,Math.round(Math.abs(moved)/iw)); cur = moved<0 ? Math.min(total-1,cur+ms) : Math.max(0,cur-ms); } goTo(cur); moved=0; }
-        wrap.addEventListener("touchstart",tStart,{passive:true}); wrap.addEventListener("touchmove",tMove,{passive:false}); wrap.addEventListener("touchend",tEnd); wrap.addEventListener("touchcancel",forceStop);
-        wrap.addEventListener("mousedown",tStart); wrap.addEventListener("mousemove",tMove); wrap.addEventListener("mouseup",tEnd); wrap.addEventListener("mouseleave",forceStop);
-        wrap.addEventListener("dragstart",e=>e.preventDefault());
-        let wLocked=false; wrap.addEventListener("wheel",e=>{ const dd = Math.abs(e.deltaX)>=Math.abs(e.deltaY)?e.deltaX:e.deltaY; if (Math.abs(dd)<5) return; e.preventDefault(); forceStop(); if (wLocked) return; if (Math.abs(dd)>15) { wLocked=true; cur=dd>0?Math.min(total-1,cur+1):Math.max(0,cur-1); goTo(cur); setTimeout(()=>{wLocked=false;},300); } },{passive:false});
-        dots.forEach((dot,i) => dot.addEventListener("click",()=>goTo(i)));
-        goTo(0,false);
+      function render(reset = false) {
+        if (!postsContainer) return;
+        if (reset) postsContainer.innerHTML = "";
+        const start = reset ? 0 : (page - 1) * perPage;
+        const end = page * perPage;
+        const show = filtered.slice(start, end);
+        if (!show.length && reset) {
+          postsContainer.innerHTML =
+            '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>';
+          return;
+        }
+        const html = show.map(buildPostHTML).join("");
+        if (reset) postsContainer.innerHTML = html;
+        else {
+          const t = document.createElement("div");
+          t.innerHTML = html;
+          while (t.firstChild) postsContainer.appendChild(t.firstChild);
+        }
+        bindImagesInContainer(postsContainer);
       }
-    });
-    container.querySelectorAll(".post").forEach(post => {
-      const imgs = Array.from(post.querySelectorAll(".post-right img"));
-      imgs.forEach((img, idx) => { if (img.dataset.boundClick) return; img.dataset.boundClick = "true"; img.onclick = e => { if (globalGalleryLock) { e.preventDefault(); return; } currentGallery = imgs.map(i => i.src); currentIndex = idx; openLightbox(); }; });
-    });
-  }
 
-  // ---------- 完整灯箱逻辑（滚轮缩放、双指、双击、上滑退出等） ----------
-  function applyTransform() { if (lbImg) lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`; }
-  function resetTransform() { scale=1; baseScale=1; translateX=0; translateY=0; pointerCache=[]; if (lbImg) { lbImg.style.transition="none"; applyTransform(); } }
-  function updateLightboxImage(animate=true) {
-    if (!lbImg) return;
-    document.getElementById("lbPrevBtn").style.display = currentIndex>0 ? "flex" : "none";
-    document.getElementById("lbNextBtn").style.display = currentIndex<currentGallery.length-1 ? "flex" : "none";
-    lbCounter.textContent = (currentIndex+1)+" / "+currentGallery.length;
-    if (!animate) { lbImg.src = currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; return; }
-    lbImg.style.transition = "opacity 0.18s ease";
-    lbImg.style.opacity = "0";
-    setTimeout(() => { lbImg.src=currentGallery[currentIndex]; resetTransform(); lbImg.style.opacity="1"; }, 160);
-  }
-  function openLightbox() {
-    resetTransform();
-    lb.style.display = "flex"; lb.style.opacity = "0";
-    lb.style.transition = "opacity 0.2s ease";
-    requestAnimationFrame(() => { lb.style.opacity = "1"; });
-    document.body.style.overflow = "hidden";
-    updateLightboxImage(false);
-  }
-  function closeLightbox() {
-    lb.style.transition = "opacity 0.22s ease";
-    lb.style.opacity = "0";
-    setTimeout(() => {
-      lb.style.display = "none"; lb.style.opacity = "";
-      if (!searchModal.classList.contains('open')) document.body.style.overflow = '';
-      resetTransform();
-    }, 230);
-  }
-  function showNext() { if (scale!==1 || currentGallery.length<=1) return; if (currentIndex < currentGallery.length-1) { currentIndex++; updateLightboxImage(); } }
-  function showPrev() { if (scale!==1 || currentGallery.length<=1) return; if (currentIndex > 0) { currentIndex--; updateLightboxImage(); } }
-
-  function ptDist(p1,p2) { return Math.hypot(p1.clientX-p2.clientX,p1.clientY-p2.clientY); }
-  function updatePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache[i]=e; break; } } }
-  function removePtrCache(e) { for (let i=0;i<pointerCache.length;i++) { if (pointerCache[i].pointerId===e.pointerId) { pointerCache.splice(i,1); break; } } }
-
-  function setupLightbox() {
-    document.getElementById("lbCloseBtn").onclick = closeLightbox;
-    document.getElementById("lbPrevBtn").onclick = e => { e.stopPropagation(); showPrev(); };
-    document.getElementById("lbNextBtn").onclick = e => { e.stopPropagation(); showNext(); };
-
-    // 滚轮缩放 + 横向滚动切图
-    let lbWheelDX = 0, lbWheelTimer = null;
-    lb.addEventListener("wheel", e => {
-      e.preventDefault();
-      const isH = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
-      if (scale===1 && isH && currentGallery.length>1) {
-        lbWheelDX += e.deltaX;
-        clearTimeout(lbWheelTimer);
-        lbWheelTimer = setTimeout(() => {
-          if (Math.abs(lbWheelDX) >= 70) { lbWheelDX>0 ? showNext() : showPrev(); }
-          lbWheelDX = 0;
-        }, 60);
-        return;
-      }
-      const delta = e.deltaY<0 ? 0.15 : -0.15;
-      const oldScale = scale;
-      scale = Math.max(1, Math.min(5, scale+delta));
-      if (scale>1) {
-        const rect = lbImg.getBoundingClientRect();
-        translateX += -(e.clientX-rect.left-rect.width/2)*(scale/oldScale-1);
-        translateY += -(e.clientY-rect.top-rect.height/2)*(scale/oldScale-1);
-      } else { translateX=0; translateY=0; }
-      lbImg.style.transition = "transform 0.1s ease-out";
-      applyTransform();
-    }, { passive:false });
-
-    // Pointer 事件：平移/捏合/上滑退出
-    let dragStartX=0, dragStartY=0, pointerStartX=0, pointerStartY=0;
-    let isDragging=false;
-    const SWIPE_TH = 32;
-
-    lbImg.addEventListener("pointerdown", e => {
-      e.preventDefault();
-      lbImg.setPointerCapture?.(e.pointerId);
-      pointerCache.push(e);
-      lbImg.style.transition = "none";
-      isDragging = true;
-      if (pointerCache.length===1) {
-        isPointerDown = true;
-        pointerStartX = e.clientX; pointerStartY = e.clientY;
-        dragStartX = e.clientX - translateX;
-        dragStartY = e.clientY - translateY;
-      } else if (pointerCache.length===2) {
-        isPointerDown = false;
-        lastPinchDist = ptDist(pointerCache[0], pointerCache[1]);
-        baseScale = scale;
-      }
-    });
-    lbImg.addEventListener("pointermove", e => {
-      if (!isDragging) return;
-      updatePtrCache(e);
-      if (pointerCache.length===1 && isPointerDown) {
-        if (scale>1) {
-          translateX = e.clientX - dragStartX;
-          translateY = e.clientY - dragStartY;
-          applyTransform();
-        } else {
-          const dx = e.clientX - pointerStartX;
-          const dy = e.clientY - pointerStartY;
-          if (Math.abs(dy) > Math.abs(dx) && dy < 0) {
-            const op = Math.max(0.15, 1 - Math.abs(dy)/280);
-            lb.style.opacity = op;
-            lb.style.transition = "none";
-          } else {
-            lb.style.opacity = "1";
+      function setupInfiniteScroll() {
+        const scrollContainer = document.querySelector(".app-container");
+        if (!scrollContainer) return;
+        const handleScroll = () => {
+          if (isLoading) return;
+          const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
+          if (scrollTop + clientHeight >= scrollHeight - 150) {
+            if (page * perPage < filtered.length) {
+              page++;
+              if (loaderDom) loaderDom.style.display = "block";
+              render(false);
+              if (loaderDom) loaderDom.style.display = "none";
+            } else if (loaderDom && filtered.length) {
+              loaderDom.style.display = "block";
+              loaderDom.textContent = "已经没有更多手账了";
+              setTimeout(() => {
+                if (loaderDom && filtered.length)
+                  loaderDom.style.display = "none";
+              }, 800);
+            }
           }
-          let finalDx = dx;
-          if (currentIndex===0 && dx>0) finalDx=0;
-          else if (currentIndex===currentGallery.length-1 && dx<0) finalDx=0;
-          lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
-        }
-      } else if (pointerCache.length===2) {
-        const d = ptDist(pointerCache[0], pointerCache[1]);
-        scale = Math.max(1, Math.min(5, baseScale*(d/lastPinchDist)));
-        if (scale===1) { translateX=0; translateY=0; }
-        applyTransform();
+        };
+        scrollContainer.addEventListener("scroll", handleScroll);
       }
-    });
-    function handlePointerUp(e) {
-      if (!isDragging) { removePtrCache(e); return; }
-      const wasSingle = pointerCache.length===1 && scale===1 && isPointerDown;
-      let finalDx = 0, finalDy = 0;
-      if (wasSingle) {
-        finalDx = e.clientX - pointerStartX;
-        finalDy = e.clientY - pointerStartY;
-        if (currentIndex===0 && finalDx>0) finalDx=0;
-        else if (currentIndex===currentGallery.length-1 && finalDx<0) finalDx=0;
-      }
-      removePtrCache(e);
-      if (pointerCache.length===0) {
-        isDragging=false; isPointerDown=false;
-        if (scale>1) {
-          lbImg.style.transition="transform 0.2s ease-out"; applyTransform(); return;
-        }
-        lb.style.transition="opacity 0.2s ease"; lb.style.opacity="1";
-        if (Math.abs(finalDy) > Math.abs(finalDx) && finalDy < -60) {
-          closeLightbox(); return;
-        }
-        lbImg.style.transition = "transform 0.22s cubic-bezier(0.25,1,0.5,1)";
-        if (Math.abs(finalDx) > SWIPE_TH) {
-          finalDx>0 ? showPrev() : showNext();
-        } else {
-          lbImg.style.transform = "translateX(0) scale(1)";
-        }
-      } else if (pointerCache.length===1) {
-        isPointerDown=false; lastPinchDist=0;
-      }
-    }
-    lbImg.addEventListener("pointerup", handlePointerUp);
-    lbImg.addEventListener("pointercancel", handlePointerUp);
-    lbImg.addEventListener("pointerleave", handlePointerUp);
 
-    lb.onclick = e => { if (e.target===lb && scale===1) closeLightbox(); };
+      // ---------- 图片轮播 + 灯箱绑定 ----------
+      let globalGalleryLock = false;
+      function bindImagesInContainer(container) {
+        container.querySelectorAll(".post-images").forEach((wrap) => {
+          if (wrap.dataset.boundDrag) return;
+          wrap.dataset.boundDrag = "true";
+          const slide = wrap.querySelector(".img-slide");
+          const dotsBox = wrap.querySelector(".img-dots");
+          const imgs = slide.querySelectorAll("img");
+          const total = imgs.length;
+          if (total <= 1) {
+            if (dotsBox) dotsBox.style.display = "none";
+            wrap.classList.add("single-image");
+          } else {
+            if (dotsBox) {
+              dotsBox.innerHTML = "";
+              for (let i = 0; i < total; i++) {
+                const dot = document.createElement("span");
+                dot.className = i === 0 ? "dot active" : "dot";
+                dotsBox.appendChild(dot);
+              }
+            }
+            const dots = dotsBox ? dotsBox.querySelectorAll(".dot") : [];
+            let sX = 0,
+              sY = 0,
+              isScrolling = null,
+              cur = 0,
+              isDrag = false,
+              moved = 0,
+              prevTrans = 0,
+              curTrans = 0,
+              animId = 0;
+            function setPos() {
+              slide.style.transform = `translateX(${curTrans}px)`;
+            }
+            function anim() {
+              if (!isDrag) return;
+              setPos();
+              animId = requestAnimationFrame(anim);
+            }
+            function stopAnim() {
+              if (animId) {
+                cancelAnimationFrame(animId);
+                animId = 0;
+              }
+            }
+            function gx(e) {
+              return e.type.includes("mouse") ? e.pageX : e.touches[0].clientX;
+            }
+            function gy(e) {
+              return e.type.includes("mouse") ? e.pageY : e.touches[0].clientY;
+            }
+            function updateDots() {
+              dots.forEach((d) => d.classList.remove("active"));
+              if (dots[cur]) dots[cur].classList.add("active");
+            }
+            function goTo(idx, animate = true) {
+              cur = Math.max(0, Math.min(total - 1, idx));
+              curTrans = -imgs[cur].offsetLeft;
+              prevTrans = curTrans;
+              slide.style.transition = animate
+                ? "transform 0.15s cubic-bezier(0.25,1,0.5,1)"
+                : "none";
+              setPos();
+              updateDots();
+            }
+            function forceStop() {
+              isDrag = false;
+              isScrolling = null;
+              moved = 0;
+              wrap.classList.remove("dragging");
+              stopAnim();
+              curTrans = prevTrans;
+              setPos();
+            }
+            function tStart(e) {
+              if (e.type === "mousedown" && e.button !== 0) return;
+              isDrag = true;
+              isScrolling = null;
+              moved = 0;
+              sX = gx(e);
+              sY = gy(e);
+              slide.style.transition = "none";
+              wrap.classList.add("dragging");
+              stopAnim();
+              animId = requestAnimationFrame(anim);
+            }
+            function tMove(e) {
+              if (!isDrag) return;
+              const dx = gx(e) - sX,
+                dy = gy(e) - sY;
+              if (isScrolling === null)
+                isScrolling = Math.abs(dy) > Math.abs(dx);
+              if (isScrolling) {
+                forceStop();
+                return;
+              }
+              if (Math.abs(dx) > 5) e.preventDefault();
+              moved = dx;
+              curTrans = prevTrans + dx;
+            }
+            function tEnd() {
+              if (!isDrag) return;
+              isDrag = false;
+              isScrolling = null;
+              wrap.classList.remove("dragging");
+              stopAnim();
+              const iw = imgs[0] ? imgs[0].offsetWidth + 8 : wrap.offsetWidth;
+              if (Math.abs(moved) > iw * 0.22) {
+                const ms = Math.max(1, Math.round(Math.abs(moved) / iw));
+                cur =
+                  moved < 0
+                    ? Math.min(total - 1, cur + ms)
+                    : Math.max(0, cur - ms);
+              }
+              goTo(cur);
+              moved = 0;
+            }
+            wrap.addEventListener("touchstart", tStart, { passive: true });
+            wrap.addEventListener("touchmove", tMove, { passive: false });
+            wrap.addEventListener("touchend", tEnd);
+            wrap.addEventListener("touchcancel", forceStop);
+            wrap.addEventListener("mousedown", tStart);
+            wrap.addEventListener("mousemove", tMove);
+            wrap.addEventListener("mouseup", tEnd);
+            wrap.addEventListener("mouseleave", forceStop);
+            wrap.addEventListener("dragstart", (e) => e.preventDefault());
+            dots.forEach((dot, i) =>
+              dot.addEventListener("click", () => goTo(i)),
+            );
 
-    // 双击放大/恢复
-    lbImg.addEventListener("click", e => {
-      const now = Date.now();
-      const movedX = Math.abs(e.clientX-pointerStartX), movedY = Math.abs(e.clientY-pointerStartY);
-      if (movedX>6 || movedY>6) return;
-      if (now-lastClickTime < 280) {
-        if (scale>1) {
-          lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
-          resetTransform();
-        } else {
-          scale=2.5;
-          const rect=lbImg.getBoundingClientRect();
-          const cx=e.clientX-rect.left-rect.width/2;
-          const cy=e.clientY-rect.top-rect.height/2;
-          translateX=-cx*1.5; translateY=-cy*1.5;
-          lbImg.style.transition="transform 0.25s cubic-bezier(0.25,1,0.5,1)";
+            const wrapParent = wrap.closest(".post-images-wrap");
+            if (wrapParent) {
+              const prevBtn = wrapParent.querySelector(".img-nav-prev");
+              const nextBtn = wrapParent.querySelector(".img-nav-next");
+              function updateNavBtns() {
+                if (prevBtn) prevBtn.classList.toggle("hidden", cur <= 0);
+                if (nextBtn)
+                  nextBtn.classList.toggle("hidden", cur >= total - 1);
+              }
+              const origGoTo = goTo;
+              goTo = function (idx, animate) {
+                origGoTo(idx, animate);
+                updateNavBtns();
+              };
+              if (prevBtn)
+                prevBtn.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  goTo(Math.max(0, cur - 1));
+                });
+              if (nextBtn)
+                nextBtn.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  goTo(Math.min(total - 1, cur + 1));
+                });
+              updateNavBtns();
+            }
+
+            goTo(0, false);
+          }
+        });
+        container.querySelectorAll(".post").forEach((post) => {
+          const imgs = Array.from(post.querySelectorAll(".post-right img"));
+          imgs.forEach((img, idx) => {
+            if (img.dataset.boundClick) return;
+            img.dataset.boundClick = "true";
+            img.onclick = (e) => {
+              if (globalGalleryLock) {
+                e.preventDefault();
+                return;
+              }
+              currentGallery = imgs.map((i) => i.src);
+              currentIndex = idx;
+              openLightbox();
+            };
+          });
+        });
+      }
+
+      // ---------- 完整灯箱逻辑 ----------
+      function applyTransform() {
+        if (lbImg)
+          lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`;
+      }
+      function resetTransform() {
+        scale = 1;
+        baseScale = 1;
+        translateX = 0;
+        translateY = 0;
+        pointerCache = [];
+        if (lbImg) {
+          lbImg.style.transition = "none";
           applyTransform();
         }
-        lastClickTime=0;
-      } else { lastClickTime=now; }
-    });
-
-    document.addEventListener("keydown", e => {
-      if (lb.style.display!=="flex") return;
-      if (e.key==="Escape") closeLightbox();
-      if (scale!==1) return;
-      if (e.key==="ArrowRight") showNext();
-      if (e.key==="ArrowLeft") showPrev();
-    });
-  }
-
-  // ---------- 搜索逻辑 ----------
-  function getCleanTextForSearch(rawContent) {
-    let text = Array.isArray(rawContent) ? rawContent.join("\n\n") : (rawContent || "");
-    text = text.replace(/```[a-zA-Z0-9_-]*/g, "").replace(/`/g, "");
-    return text;
-  }
-  function renderSearchResults(resetPage=true) {
-    if (resetPage) searchPage=1;
-    const start=(searchPage-1)*searchPerPage, end=start+searchPerPage;
-    const pageR = currentSearchResults.slice(start,end);
-    if (resetPage && searchPage===1) searchResultsDiv.innerHTML="";
-    pageR.forEach(post => {
-      const div = document.createElement("article");
-      div.className = "post";
-      const raw = Array.isArray(post.content) ? post.content.join("\n\n") : (post.content || "");
-      let parsed = marked.parse(raw);
-      if (currentSearchKeyword) {
-        const regex = new RegExp(`(${escapeRegExp(currentSearchKeyword)})`, "gi");
-        parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) => match.replace(regex, '<span style="border: 2px solid var(--accent); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg); color: var(--text);">$1</span>'));
       }
-      const showTime = formatRelativeTime(post.date);
-      let imagesHtml="";
-      if (post.images&&post.images.length) {
-        const imgs = post.images.map(url=>`<img src="${url}" alt="" draggable="false">`).join("");
-        imagesHtml=`<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div>`;
+      function updateLightboxImage(animate = true) {
+        if (!lbImg) return;
+        document.getElementById("lbPrevBtn").style.display =
+          currentIndex > 0 ? "flex" : "none";
+        document.getElementById("lbNextBtn").style.display =
+          currentIndex < currentGallery.length - 1 ? "flex" : "none";
+        lbCounter.textContent =
+          currentIndex + 1 + " / " + currentGallery.length;
+        if (!animate) {
+          lbImg.src = currentGallery[currentIndex];
+          resetTransform();
+          lbImg.style.opacity = "1";
+          return;
+        }
+        lbImg.style.transition = "opacity 0.18s ease";
+        lbImg.style.opacity = "0";
+        setTimeout(() => {
+          lbImg.src = currentGallery[currentIndex];
+          resetTransform();
+          lbImg.style.opacity = "1";
+        }, 160);
       }
-      div.innerHTML=`<div class="post-header"><span class="post-time">${showTime}</span></div><div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
-      searchResultsDiv.appendChild(div);
-    });
-    bindImagesInContainer(searchResultsDiv);
-    const el = document.getElementById("searchLoader");
-    if (el) el.remove();
-    if (end<currentSearchResults.length) {
-      const ldr=document.createElement("div");
-      ldr.id="searchLoader"; ldr.className="search-loader"; ldr.textContent="向下滚动加载更多...";
-      searchResultsDiv.appendChild(ldr);
-      const obs = new IntersectionObserver(entries=>{
-        if (entries[0].isIntersecting) { searchPage++; renderSearchResults(false); obs.unobserve(ldr); }
-      },{root:searchModal,rootMargin:"200px"});
-      obs.observe(ldr);
-    }
-  }
-  function performSearch() {
-    const kw = modalSearchInput.value.trim().toLowerCase();
-    currentSearchKeyword = kw;
-    if (!kw) { currentSearchResults=[]; searchResultsDiv.innerHTML='<div class="search-loader">✨ 输入关键词看看</div>'; return; }
-    searchResultsDiv.innerHTML='<div class="search-loader">🔍 搜索中...</div>';
-    setTimeout(()=>{
-      currentSearchResults = allPosts.filter(p=>getCleanTextForSearch(p.content).toLowerCase().includes(kw));
-      if (!currentSearchResults.length) searchResultsDiv.innerHTML='<div class="search-loader">😢 没有找到相关碎念</div>';
-      else { searchResultsDiv.innerHTML=""; renderSearchResults(true); }
-    },50);
-  }
-  function openSearchModal() {
-    lastScrollY = window.scrollY;
-    searchModal.classList.add("open");
-    document.body.style.overflow = "hidden";
-    modalSearchInput.value = "";
-    modalSearchInput.focus();
-    performSearch();
-  }
-  function closeSearchModalFunc() {
-    searchModal.classList.remove("open");
-    document.body.style.overflow = "";
-    window.scrollTo(0, lastScrollY);
-  }
+      function openLightbox() {
+        resetTransform();
+        lb.style.display = "flex";
+        lb.style.opacity = "0";
+        lb.style.transition = "opacity 0.2s ease";
+        requestAnimationFrame(() => {
+          lb.style.opacity = "1";
+        });
+        document.body.style.overflow = "hidden";
+        updateLightboxImage(false);
+      }
+      function closeLightbox() {
+        lb.style.transition = "opacity 0.22s ease";
+        lb.style.opacity = "0";
+        setTimeout(() => {
+          lb.style.display = "none";
+          lb.style.opacity = "";
+          if (!searchModal.classList.contains("open"))
+            document.body.style.overflow = "";
+          resetTransform();
+        }, 230);
+      }
+      function showNext() {
+        if (scale !== 1 || currentGallery.length <= 1) return;
+        if (currentIndex < currentGallery.length - 1) {
+          currentIndex++;
+          updateLightboxImage();
+        }
+      }
+      function showPrev() {
+        if (scale !== 1 || currentGallery.length <= 1) return;
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateLightboxImage();
+        }
+      }
 
-  // ---------- 发布功能 (完整保留) ----------
-  function setPublishPassword(p) { const e=new Date(Date.now()+PUBLISH_PWD_DAYS*86400000).toUTCString(); document.cookie=`${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`; }
-  function getPublishPassword() { const m=document.cookie.match(new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`)); return m?decodeURIComponent(m[1]):""; }
-  function clearPublishPassword() { document.cookie=`${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`; }
-  function getNowBeijingString() { const d=new Date(Date.now()+8*3600000); const p=n=>String(n).padStart(2,"0"); return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`; }
-  function insertNewPostToTop(post) { allPosts.unshift(post); filtered.unshift(post); const t=document.createElement("div"); t.innerHTML=buildPostHTML(post); if (postsContainer) { postsContainer.firstChild ? postsContainer.insertBefore(t.firstElementChild,postsContainer.firstChild) : postsContainer.appendChild(t.firstElementChild); bindImagesInContainer(postsContainer); } }
-  function openPublishEditor() {
-    if (publishModal) publishModal.remove();
-    selectedPublishFiles=[];
-    const savedPwd=getPublishPassword();
-    publishModal=document.createElement("div");
-    publishModal.className="publish-mask";
-    publishModal.innerHTML=`<div class="publish-panel" onclick="event.stopPropagation()">
-      <div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>
-      ${savedPwd?'<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>':`<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}
-      <div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div>
-      <div class="publish-field"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">未选择图片</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可重复补选。</div></div></div>
-      <div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div>
-    </div>`;
-    document.body.appendChild(publishModal);
-    const close=()=>{ if(publishModal){publishModal.remove();publishModal=null;selectedPublishFiles.forEach(i=>URL.revokeObjectURL(i.previewUrl));selectedPublishFiles=[];} };
-    publishModal.onclick=()=>close();
-    document.getElementById("closeMemo").onclick=close;
-    document.getElementById("closeMemo2").onclick=close;
-    document.getElementById("selectImg").onclick=()=>document.getElementById("imgFile").click();
-    document.getElementById("imgFile").addEventListener("change",e=>{
-      Array.from(e.target.files||[]).forEach(f=>selectedPublishFiles.push({file:f,previewUrl:URL.createObjectURL(f)}));
-      e.target.value=""; renderSelectedImages();
-    });
-    document.getElementById("submitMemo").onclick=submitMemo;
-    renderSelectedImages();
-  }
-  function renderSelectedImages() {
-    const wrap=document.getElementById("previewWrap"), ct=document.getElementById("imgCountText");
-    if (!wrap||!ct) return;
-    ct.textContent=selectedPublishFiles.length?`已选择${selectedPublishFiles.length}张图片`:"未选择图片";
-    if (!selectedPublishFiles.length){wrap.innerHTML='<div class="publish-empty">支持多张，可重复补选。</div>';return;}
-    wrap.innerHTML=`<div class="preview-grid">${selectedPublishFiles.map((i,idx)=>`<div class="preview-item"><img src="${i.previewUrl}"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
-    wrap.querySelectorAll(".preview-del").forEach(btn=>{ btn.onclick=()=>{ const i=Number(btn.dataset.idx); URL.revokeObjectURL(selectedPublishFiles[i].previewUrl); selectedPublishFiles.splice(i,1); renderSelectedImages(); }; });
-  }
-  async function submitMemo() {
-    const savedPwd=getPublishPassword();
-    const pwdInput=document.getElementById("publishPwd");
-    const pwd=savedPwd||(pwdInput?pwdInput.value.trim():"");
-    const content=document.getElementById("memoContent").value.trim();
-    if (!pwd||(!content&&!selectedPublishFiles.length)) return showToast("请填写完整内容","error");
-    const btn=document.getElementById("submitMemo");
-    btn.textContent="发布中..."; btn.disabled=true;
-    try {
-      const imgs=[]; for(const item of selectedPublishFiles){imgs.push(await toBase64(item.file));}
-      const localUrls=selectedPublishFiles.map(i=>i.previewUrl);
-      const res=await fetch(WORKER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({publishPassword:pwd,content,imgList:imgs})});
-      const json=await res.json();
-      if (json.code===200) {
-        setPublishPassword(pwd);
-        //insertNewPostToTop({id:`local_${Date.now()}`,date:getNowBeijingString(),content:[content],image//s:localUrls});
-        // ==================== 核心修改：静默写入内存，不再操作 DOM 置顶 ====================
-        // 创建一个真实的数据对象塞进内存数组，确保如果你在不刷新页面的情况下进行搜索，也能搜到刚发的这条
-        const newPostItem = {
-          id: `local_${Date.now()}`,
-          date: getNowBeijingString(),
-          content: [content],
-          images: localUrls // 注意：这里用的是本地临时图，刷新后会变成线上的真实图片
+      function ptDist(p1, p2) {
+        return Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+      }
+      function updatePtrCache(e) {
+        for (let i = 0; i < pointerCache.length; i++) {
+          if (pointerCache[i].pointerId === e.pointerId) {
+            pointerCache[i] = e;
+            break;
+          }
+        }
+      }
+      function removePtrCache(e) {
+        for (let i = 0; i < pointerCache.length; i++) {
+          if (pointerCache[i].pointerId === e.pointerId) {
+            pointerCache.splice(i, 1);
+            break;
+          }
+        }
+      }
+
+      function setupLightbox() {
+        document.getElementById("lbCloseBtn").onclick = closeLightbox;
+        document.getElementById("lbPrevBtn").onclick = (e) => {
+          e.stopPropagation();
+          showPrev();
         };
-        allPosts.unshift(newPostItem);
-        filtered.unshift(newPostItem);
-        
-        if(publishModal){publishModal.remove();publishModal=null;} selectedPublishFiles=[];
-        showToast("发布成功","success");
-      } else { if(json.code===403)clearPublishPassword(); showToast(json.msg||"发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
-    } catch(e){ showToast("网络错误，发布失败","error"); btn.textContent="发布"; btn.disabled=false; }
-  }
-  function toBase64(file){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);}); }
-  function showToast(m,t="success",d=2200) { let w=document.getElementById("toastWrap"); const toast=document.createElement("div"); toast.className=`toast ${t}`; toast.textContent=m; w.appendChild(toast); setTimeout(()=>{toast.classList.add("hide");setTimeout(()=>{toast.remove();},220);},d); }
+        document.getElementById("lbNextBtn").onclick = (e) => {
+          e.stopPropagation();
+          showNext();
+        };
 
-  // 事件绑定
-  document.getElementById("openSearchBtn").onclick = openSearchModal;
-  document.getElementById("closeSearchModal").onclick = closeSearchModalFunc;
-  document.getElementById("modalSearchBtn").onclick = performSearch;
-  document.getElementById("modalSearchInput").addEventListener("keypress",e=>{ if(e.key==="Enter")performSearch(); });
-  document.getElementById("modalSearchInput").addEventListener("input",performSearch);
-  document.getElementById('themeToggleBtn').onclick = () => { document.body.classList.toggle('dark'); localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light'); };
-  document.getElementById("openPublishBtn").onclick=openPublishEditor;
-  document.addEventListener("DOMContentLoaded",()=>{ init(); });
-  </script>
-</body>
+        let lbWheelDX = 0,
+          lbWheelTimer = null;
+        lb.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            const isH = Math.abs(e.deltaX) >= Math.abs(e.deltaY);
+            if (scale === 1 && isH && currentGallery.length > 1) {
+              lbWheelDX += e.deltaX;
+              clearTimeout(lbWheelTimer);
+              lbWheelTimer = setTimeout(() => {
+                if (Math.abs(lbWheelDX) >= 70) {
+                  lbWheelDX > 0 ? showNext() : showPrev();
+                }
+                lbWheelDX = 0;
+              }, 60);
+              return;
+            }
+            const delta = e.deltaY < 0 ? 0.15 : -0.15;
+            const oldScale = scale;
+            scale = Math.max(1, Math.min(5, scale + delta));
+            if (scale > 1) {
+              const rect = lbImg.getBoundingClientRect();
+              translateX +=
+                -(e.clientX - rect.left - rect.width / 2) *
+                (scale / oldScale - 1);
+              translateY +=
+                -(e.clientY - rect.top - rect.height / 2) *
+                (scale / oldScale - 1);
+            } else {
+              translateX = 0;
+              translateY = 0;
+            }
+            lbImg.style.transition = "transform 0.1s ease-out";
+            applyTransform();
+          },
+          { passive: false },
+        );
+
+        let dragStartX = 0,
+          dragStartY = 0,
+          pointerStartX = 0,
+          pointerStartY = 0;
+        let isDragging = false;
+        const SWIPE_TH = 32;
+
+        lbImg.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          lbImg.setPointerCapture?.(e.pointerId);
+          pointerCache.push(e);
+          lbImg.style.transition = "none";
+          isDragging = true;
+          if (pointerCache.length === 1) {
+            isPointerDown = true;
+            pointerStartX = e.clientX;
+            pointerStartY = e.clientY;
+            dragStartX = e.clientX - translateX;
+            dragStartY = e.clientY - translateY;
+          } else if (pointerCache.length === 2) {
+            isPointerDown = false;
+            lastPinchDist = ptDist(pointerCache[0], pointerCache[1]);
+            baseScale = scale;
+          }
+        });
+        lbImg.addEventListener("pointermove", (e) => {
+          if (!isDragging) return;
+          updatePtrCache(e);
+          if (pointerCache.length === 1 && isPointerDown) {
+            if (scale > 1) {
+              translateX = e.clientX - dragStartX;
+              translateY = e.clientY - dragStartY;
+              applyTransform();
+            } else {
+              const dx = e.clientX - pointerStartX;
+              const dy = e.clientY - pointerStartY;
+              if (Math.abs(dy) > Math.abs(dx) && dy < 0) {
+                const op = Math.max(0.15, 1 - Math.abs(dy) / 280);
+                lb.style.opacity = op;
+                lb.style.transition = "none";
+              } else {
+                lb.style.opacity = "1";
+              }
+              let finalDx = dx;
+              if (currentIndex === 0 && dx > 0) finalDx = 0;
+              else if (currentIndex === currentGallery.length - 1 && dx < 0)
+                finalDx = 0;
+              lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
+            }
+          } else if (pointerCache.length === 2) {
+            const d = ptDist(pointerCache[0], pointerCache[1]);
+            scale = Math.max(1, Math.min(5, baseScale * (d / lastPinchDist)));
+            if (scale === 1) {
+              translateX = 0;
+              translateY = 0;
+            }
+            applyTransform();
+          }
+        });
+        function handlePointerUp(e) {
+          if (!isDragging) {
+            removePtrCache(e);
+            return;
+          }
+          const wasSingle =
+            pointerCache.length === 1 && scale === 1 && isPointerDown;
+          let finalDx = 0,
+            finalDy = 0;
+          if (wasSingle) {
+            finalDx = e.clientX - pointerStartX;
+            finalDy = e.clientY - pointerStartY;
+            if (currentIndex === 0 && finalDx > 0) finalDx = 0;
+            else if (currentIndex === currentGallery.length - 1 && finalDx < 0)
+              finalDx = 0;
+          }
+          removePtrCache(e);
+          if (pointerCache.length === 0) {
+            isDragging = false;
+            isPointerDown = false;
+            if (scale > 1) {
+              lbImg.style.transition = "transform 0.2s ease-out";
+              applyTransform();
+              return;
+            }
+            lb.style.transition = "opacity 0.2s ease";
+            lb.style.opacity = "1";
+            if (Math.abs(finalDy) > Math.abs(finalDx) && finalDy < -60) {
+              closeLightbox();
+              return;
+            }
+            lbImg.style.transition =
+              "transform 0.22s cubic-bezier(0.25,1,0.5,1)";
+            if (Math.abs(finalDx) > SWIPE_TH) {
+              finalDx > 0 ? showPrev() : showNext();
+            } else {
+              lbImg.style.transform = "translateX(0) scale(1)";
+            }
+          } else if (pointerCache.length === 1) {
+            isPointerDown = false;
+            lastPinchDist = 0;
+          }
+        }
+        lbImg.addEventListener("pointerup", handlePointerUp);
+        lbImg.addEventListener("pointercancel", handlePointerUp);
+        lbImg.addEventListener("pointerleave", handlePointerUp);
+
+        lb.onclick = (e) => {
+          if (e.target === lb && scale === 1) closeLightbox();
+        };
+
+        lbImg.addEventListener("click", (e) => {
+          const now = Date.now();
+          const movedX = Math.abs(e.clientX - pointerStartX),
+            movedY = Math.abs(e.clientY - pointerStartY);
+          if (movedX > 6 || movedY > 6) return;
+          if (now - lastClickTime < 280) {
+            if (scale > 1) {
+              lbImg.style.transition =
+                "transform 0.25s cubic-bezier(0.25,1,0.5,1)";
+              resetTransform();
+            } else {
+              scale = 2.5;
+              const rect = lbImg.getBoundingClientRect();
+              const cx = e.clientX - rect.left - rect.width / 2;
+              const cy = e.clientY - rect.top - rect.height / 2;
+              translateX = -cx * 1.5;
+              translateY = -cy * 1.5;
+              lbImg.style.transition =
+                "transform 0.25s cubic-bezier(0.25,1,0.5,1)";
+              applyTransform();
+            }
+            lastClickTime = 0;
+          } else {
+            lastClickTime = now;
+          }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (lb.style.display !== "flex") return;
+          if (e.key === "Escape") closeLightbox();
+          if (scale !== 1) return;
+          if (e.key === "ArrowRight") showNext();
+          if (e.key === "ArrowLeft") showPrev();
+        });
+      }
+
+      // ---------- 搜索逻辑 (略 保持原样) ----------
+      function getCleanTextForSearch(rawContent) {
+        /* ... 完整保留 ... */
+        let text = Array.isArray(rawContent)
+          ? rawContent.join("\n\n")
+          : rawContent || "";
+        text = text.replace(/```[a-zA-Z0-9_-]*/g, "").replace(/`/g, "");
+        return text;
+      }
+      function renderSearchResults(resetPage = true) {
+        if (resetPage) searchPage = 1;
+        const start = (searchPage - 1) * searchPerPage,
+          end = start + searchPerPage;
+        const pageR = currentSearchResults.slice(start, end);
+        if (resetPage && searchPage === 1) searchResultsDiv.innerHTML = "";
+        pageR.forEach((post) => {
+          const div = document.createElement("article");
+          div.className = "post";
+          const raw = Array.isArray(post.content)
+            ? post.content.join("\n\n")
+            : post.content || "";
+          let parsed = marked.parse(raw);
+          if (currentSearchKeyword) {
+            const regex = new RegExp(
+              `(${escapeRegExp(currentSearchKeyword)})`,
+              "gi",
+            );
+            parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) =>
+              match.replace(
+                regex,
+                '<span style="border: 2px solid var(--accent); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg); color: var(--text);">$1</span>',
+              ),
+            );
+          }
+          const showTime = formatRelativeTime(post.date);
+          let imagesHtml = "";
+          if (post.images && post.images.length) {
+            const imgs = post.images
+              .map((url) => `<img src="${url}" alt="" draggable="false">`)
+              .join("");
+            const navBtns2 =
+              post.images.length > 1
+                ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
+                : "";
+            imagesHtml = `<div class="post-images-wrap">${navBtns2}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+          }
+          div.innerHTML = `<div class="post-header"><span class="post-time">${showTime}</span></div><div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
+          searchResultsDiv.appendChild(div);
+        });
+        bindImagesInContainer(searchResultsDiv);
+        const el = document.getElementById("searchLoader");
+        if (el) el.remove();
+        if (end < currentSearchResults.length) {
+          const ldr = document.createElement("div");
+          ldr.id = "searchLoader";
+          ldr.className = "search-loader";
+          ldr.textContent = "向下滚动加载更多...";
+          searchResultsDiv.appendChild(ldr);
+          const obs = new IntersectionObserver(
+            (entries) => {
+              if (entries[0].isIntersecting) {
+                searchPage++;
+                renderSearchResults(false);
+                obs.unobserve(ldr);
+              }
+            },
+            { root: searchModal, rootMargin: "200px" },
+          );
+          obs.observe(ldr);
+        }
+      }
+      function performSearch() {
+        const kw = modalSearchInput.value.trim().toLowerCase();
+        currentSearchKeyword = kw;
+        if (!kw) {
+          currentSearchResults = [];
+          searchResultsDiv.innerHTML =
+            '<div class="search-loader">✨ 输入关键词看看</div>';
+          return;
+        }
+        searchResultsDiv.innerHTML =
+          '<div class="search-loader">🔍 搜索中...</div>';
+        setTimeout(() => {
+          currentSearchResults = allPosts.filter((p) =>
+            getCleanTextForSearch(p.content).toLowerCase().includes(kw),
+          );
+          if (!currentSearchResults.length)
+            searchResultsDiv.innerHTML =
+              '<div class="search-loader">😢 没有找到相关手账</div>';
+          else {
+            searchResultsDiv.innerHTML = "";
+            renderSearchResults(true);
+          }
+        }, 50);
+      }
+      function openSearchModal() {
+        lastScrollY = window.scrollY;
+        searchModal.classList.add("open");
+        document.body.style.overflow = "hidden";
+        modalSearchInput.value = "";
+        modalSearchInput.focus();
+        performSearch();
+      }
+      function closeSearchModalFunc() {
+        searchModal.classList.remove("open");
+        document.body.style.overflow = "";
+        window.scrollTo(0, lastScrollY);
+      }
+
+      // ---------- 发布功能 ----------
+      function setPublishPassword(p) {
+        /* 简写保留完整 */ const e = new Date(
+          Date.now() + PUBLISH_PWD_DAYS * 86400000,
+        ).toUTCString();
+        document.cookie = `${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`;
+      }
+      function getPublishPassword() {
+        const m = document.cookie.match(
+          new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`),
+        );
+        return m ? decodeURIComponent(m[1]) : "";
+      }
+      function clearPublishPassword() {
+        document.cookie = `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+      }
+      function getNowBeijingString() {
+        const d = new Date(Date.now() + 8 * 3600000);
+        const p = (n) => String(n).padStart(2, "0");
+        return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`;
+      }
+      function insertNewPostToTop(post) {
+        allPosts.unshift(post);
+        filtered.unshift(post);
+        const t = document.createElement("div");
+        t.innerHTML = buildPostHTML(post);
+        if (postsContainer) {
+          postsContainer.firstChild
+            ? postsContainer.insertBefore(
+                t.firstElementChild,
+                postsContainer.firstChild,
+              )
+            : postsContainer.appendChild(t.firstElementChild);
+          bindImagesInContainer(postsContainer);
+        }
+      }
+      function openPublishEditor() {
+        /* 略 原样保留 */ if (publishModal) publishModal.remove();
+        selectedPublishFiles = [];
+        const savedPwd = getPublishPassword();
+        publishModal = document.createElement("div");
+        publishModal.className = "publish-mask";
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">未选择图片</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可重复补选。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
+        document.body.appendChild(publishModal);
+        const close = () => {
+          if (publishModal) {
+            publishModal.remove();
+            publishModal = null;
+            selectedPublishFiles.forEach((i) =>
+              URL.revokeObjectURL(i.previewUrl),
+            );
+            selectedPublishFiles = [];
+          }
+        };
+        publishModal.onclick = () => close();
+        document.getElementById("closeMemo").onclick = close;
+        document.getElementById("closeMemo2").onclick = close;
+        document.getElementById("selectImg").onclick = () =>
+          document.getElementById("imgFile").click();
+        document.getElementById("imgFile").addEventListener("change", (e) => {
+          Array.from(e.target.files || []).forEach((f) =>
+            selectedPublishFiles.push({
+              file: f,
+              previewUrl: URL.createObjectURL(f),
+            }),
+          );
+          e.target.value = "";
+          renderSelectedImages();
+        });
+        document.getElementById("submitMemo").onclick = submitMemo;
+        renderSelectedImages();
+      }
+      function renderSelectedImages() {
+        const wrap = document.getElementById("previewWrap"),
+          ct = document.getElementById("imgCountText");
+        if (!wrap || !ct) return;
+        ct.textContent = selectedPublishFiles.length
+          ? `已选择${selectedPublishFiles.length}张图片`
+          : "未选择图片";
+        if (!selectedPublishFiles.length) {
+          wrap.innerHTML =
+            '<div class="publish-empty">支持多张，可重复补选。</div>';
+          return;
+        }
+        wrap.innerHTML = `<div class="preview-grid">${selectedPublishFiles.map((i, idx) => `<div class="preview-item"><img src="${i.previewUrl}"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
+        wrap.querySelectorAll(".preview-del").forEach((btn) => {
+          btn.onclick = () => {
+            const i = Number(btn.dataset.idx);
+            URL.revokeObjectURL(selectedPublishFiles[i].previewUrl);
+            selectedPublishFiles.splice(i, 1);
+            renderSelectedImages();
+          };
+        });
+      }
+      async function submitMemo() {
+        const savedPwd = getPublishPassword();
+        const pwdInput = document.getElementById("publishPwd");
+        const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
+        const content = document.getElementById("memoContent").value.trim();
+        if (!pwd || (!content && !selectedPublishFiles.length))
+          return showToast("请填写完整内容", "error");
+        const btn = document.getElementById("submitMemo");
+        btn.textContent = "发布中...";
+        btn.disabled = true;
+        try {
+          const imgs = [];
+          for (const item of selectedPublishFiles) {
+            imgs.push(await toBase64(item.file));
+          }
+          const localUrls = selectedPublishFiles.map((i) => i.previewUrl);
+          const res = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              publishPassword: pwd,
+              content,
+              imgList: imgs,
+            }),
+          });
+          const json = await res.json();
+          if (json.code === 200) {
+            setPublishPassword(pwd);
+            const newPostItem = {
+              id: `local_${Date.now()}`,
+              date: getNowBeijingString(),
+              content: [content],
+              images: localUrls,
+            };
+            allPosts.unshift(newPostItem);
+            filtered.unshift(newPostItem);
+            if (publishModal) {
+              publishModal.remove();
+              publishModal = null;
+            }
+            selectedPublishFiles = [];
+            showToast("发布成功", "success");
+          } else {
+            if (json.code === 403) clearPublishPassword();
+            showToast(json.msg || "发布失败", "error");
+            btn.textContent = "发布";
+            btn.disabled = false;
+          }
+        } catch (e) {
+          showToast("网络错误，发布失败", "error");
+          btn.textContent = "发布";
+          btn.disabled = false;
+        }
+      }
+      function toBase64(file) {
+        return new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = () => res(r.result);
+          r.onerror = rej;
+          r.readAsDataURL(file);
+        });
+      }
+      function showToast(m, t = "success", d = 2200) {
+        let w = document.getElementById("toastWrap");
+        const toast = document.createElement("div");
+        toast.className = `toast ${t}`;
+        toast.textContent = m;
+        w.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add("hide");
+          setTimeout(() => {
+            toast.remove();
+          }, 220);
+        }, d);
+      }
+
+      // ---------- 事件绑定 + 回到顶部按钮修复 ----------
+      document.getElementById("openSearchBtn").onclick = openSearchModal;
+      document.getElementById("closeSearchModal").onclick =
+        closeSearchModalFunc;
+      document.getElementById("modalSearchBtn").onclick = performSearch;
+      document
+        .getElementById("modalSearchInput")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") performSearch();
+        });
+      document
+        .getElementById("modalSearchInput")
+        .addEventListener("input", performSearch);
+
+      document.getElementById("openPublishBtn").onclick = openPublishEditor;
+
+      // 核心修复: 回到顶部按钮滚动显示/隐藏逻辑
+      function initBackToTop() {
+        const backBtn = document.getElementById("backToTopBtn");
+        if (!backBtn) return;
+        const scrollContainer = document.querySelector(".app-container");
+        if (!scrollContainer) return;
+        const handleScroll = () => {
+          if (scrollContainer.scrollTop > 300) {
+            backBtn.classList.add("visible");
+          } else {
+            backBtn.classList.remove("visible");
+          }
+        };
+        scrollContainer.addEventListener("scroll", handleScroll, {
+          passive: true,
+        });
+        backBtn.addEventListener("click", () => {
+          scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        handleScroll(); // 初始检测一次
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        init();
+        initBackToTop();
+      });
+    </script>
+  </body>
 </html>
