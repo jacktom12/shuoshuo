@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+当代诗人臧克家写过一首诗：“块块荒田水和泥，深翻细作走东西。老牛亦解韶光贵，不待扬鞭自奋蹄。”老牛尚且知道时间如白驹过隙，不等主人挥舞鞭子催促，自己便发奋努力干活。做牛马也要有觉悟吗？
+@2026-06-13 15:39
+
 艹，sitamap谷歌终于可以读取到了。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781334064818_544.png&n=-1)
 @2026-06-13 15:01
