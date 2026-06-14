@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+life is strange
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781432257681_423.png&n=-1)
+@2026-06-14 18:17
+
 这房子真好看
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781424974409_443.png&n=-1)
 @2026-06-14 16:16
