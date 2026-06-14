@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+初恋的地方
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781436580356_161.png&n=-1)
+@2026-06-14 19:29
+
 life is strange
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781432257681_423.png&n=-1)
 @2026-06-14 18:17
