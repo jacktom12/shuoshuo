@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+> 【费洛蒙】 莎士比亚时代的欧洲流行一种寻找爱情的游戏：女孩将一块削了皮的苹果放在腋下，再将沾了自己汗水的苹果送给意中人，若对方喜欢这苹果的滋味，双方的感情就会发展下去，
+---
+感觉好恶心
+@2026-06-14 09:34
+
 朱迪好像小李子，记得前目的地的女主也很像！这电影我以为看过，居然没看过！97年的电影，现在看一点不过时！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356433015_411.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781356436494_153.png&n=-1)
