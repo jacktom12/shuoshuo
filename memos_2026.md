@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+哈哈又来了个0.58，又抽到的壁纸！壁纸就少点意思了！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781515859659_80.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781515861915_27.png&n=-1)
+@2026-06-15 17:30
+
 性格內向的人，支配他的是邏輯，不是情感？还有这种说法吗？
 @2026-06-15 16:42
 
