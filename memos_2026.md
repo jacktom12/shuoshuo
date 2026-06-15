@@ -9,6 +9,12 @@ draft: false
 image: ""
 ---
 
+当下失业人四部曲:
+先去考研考公考编, 把自信掏空再去摆摊开店自媒体, 把存款花光
+然后去干外卖快递滴滴, 把身体拖垮
+最后去当保安保洁保姆, 把尊严丢没
+@2026-06-15 20:18
+
 哈哈又来了个0.58，又抽到的壁纸！壁纸就少点意思了！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781515859659_80.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781515861915_27.png&n=-1)
