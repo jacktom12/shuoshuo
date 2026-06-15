@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+B战这个只能推荐搜索脑残到让人无语
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781563487827_984.jpeg&n=-1)
+@2026-06-16 06:44
+
 当下失业人四部曲:
 先去考研考公考编, 把自信掏空再去摆摊开店自媒体, 把存款花光
 然后去干外卖快递滴滴, 把身体拖垮
