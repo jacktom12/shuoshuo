@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+岁月失语，唯石能言。
+@2026-06-16 08:40
+
 B战这个智能推荐搜索脑残到让人无语
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781563487827_984.jpeg&n=-1)
 @2026-06-16 06:44
