@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+怪物史瑞克5，有生之年！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781682337707_322.gif&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781682340661_810.webp&n=-1)
+@2026-06-17 15:45
+
 中国有句俗话，七十三，八十四，阎王不叫自己去。如果闯过了这两个年头，就可以活到一百岁。
 @2026-06-17 09:26
 
