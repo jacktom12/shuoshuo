@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+艹，泰捷盒子居然直接关闭服务器无法显示了。
+@2026-06-17 19:40
+
 史瑞克真丑萌
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781685177663_399.png&n=-1)
 @2026-06-17 16:32
