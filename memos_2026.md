@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+不能添加密钥？github还有这安全设置？
+@2026-06-18 08:26
+
 搭了个免费的看电视的Moontvplus, tv.199105.xyz
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781741762560_907.png&n=-1)
 @2026-06-18 08:16
