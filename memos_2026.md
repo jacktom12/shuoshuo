@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+2个老人为了一个塑料瓶发生争执
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781748794876_505.jpeg&n=-1)
+@2026-06-18 10:13
+
 不能添加密钥？github还有这安全设置？
 @2026-06-18 08:26
 
