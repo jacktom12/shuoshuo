@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+有爱的家庭孩子才懂得爱人！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781790756056_887.jpeg&n=-1)
+@2026-06-18 21:52
+
 离开父母啥都不是的人被人看不起，离开孩子啥都不是的父母其实也让人讨厌，他们也会被同龄人嘲笑吧，当然都是私底下！
 @2026-06-18 21:45
 
