@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+好久好久没有登入最终幻想了。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781749960589_114.png&n=-1)
+@2026-06-18 10:32
+
 2个老人为了一个塑料瓶发生争执
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781748794876_505.jpeg&n=-1)
 @2026-06-18 10:13
