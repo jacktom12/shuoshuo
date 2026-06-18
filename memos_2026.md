@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+今天重温《怪物史瑞克》发现了史瑞克的配音演员貌似很像我印象中的那位演员，我就问了AI，发现不是，但是AI根据我提供的记忆“记忆中的那位演员拍过一部喜剧，在里面几乎是趴着走路”找到了那部电影《情人眼里出西施》。然后我去豆瓣搜索资料，发现没有影人页，谷歌搜索了下，新闻里显示他已经去世了，70岁，哎。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781774384472_564.png&n=-1)
+@2026-06-18 17:19
+
 好久好久没有登入最终幻想了。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781749960589_114.png&n=-1)
 @2026-06-18 10:32
