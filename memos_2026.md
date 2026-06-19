@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+人都是有尊严的
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781868672274_812.png&n=-1)
+@2026-06-19 19:31
+
 随随便便就10几刀啊。codex token消耗好快。
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781843118810_585.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781843120026_772.png&n=-1)
