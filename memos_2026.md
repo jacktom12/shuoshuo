@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+随随便便就10几刀啊。codex token消耗好快。
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781843118810_585.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781843120026_772.png&n=-1)
+@2026-06-19 12:25
+
 > “如果丘处机没有路过牛家村,郭靖就不会流落大漠;没有郭靖的帮助,铁木真就会死在扎木合手上,蒙古各部就不会统一;蒙古不统一,就不会有西征,火药也就不会传入欧洲;没有火药, 骑士老爷的统治就坚不可摧,欧洲会一直处于黑暗的中世纪,后来的大航海就不会发生....,所有的一切,都怪丘处机,没事干吗路过牛家村啊”
 好沙雕！！
 @2026-06-19 08:46
