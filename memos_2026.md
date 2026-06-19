@@ -9,6 +9,11 @@ draft: false
 image: ""
 ---
 
+codex还是牛逼的
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781828150975_91.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781828152109_903.png&n=-1)
+@2026-06-19 08:15
+
 爱，也有不同层次的：功能性的爱和关系性的爱，有的父母的爱体现在喂养、照料、操心、付出，甚至牺牲。他们认为把孩子养大，不缺吃穿，就完成了职责。关系性的爱，就是能察觉孩子真实的情绪，接住孩子的感受而不反应过激。当孩子说：“这件事你的做法让我不舒服”有些父母听到的却是：“我的孩子嫌弃我”，“我这么辛苦你还不满足”，“我是不是不被需要了”，于是他们委屈、自责，反过来孩子只能把自己感受收起来，去安抚父母的情绪。
 @2026-06-19 06:43
 
