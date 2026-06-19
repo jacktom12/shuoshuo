@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+> “如果丘处机没有路过牛家村,郭靖就不会流落大漠;没有郭靖的帮助,铁木真就会死在扎木合手上,蒙古各部就不会统一;蒙古不统一,就不会有西征,火药也就不会传入欧洲;没有火药, 骑士老爷的统治就坚不可摧,欧洲会一直处于黑暗的中世纪,后来的大航海就不会发生....,所有的一切,都怪丘处机,没事干吗路过牛家村啊”
+好沙雕！！
+@2026-06-19 08:46
+
 codex还是牛逼的
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781828150975_91.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781828152109_903.png&n=-1)
