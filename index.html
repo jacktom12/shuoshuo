@@ -463,14 +463,35 @@
    P5高级重型手绘灯箱
    ========================================== */
       .lightbox {
+        --lightbox-rgb: 243, 233, 221;
         display: none;
         position: fixed;
         inset: 0;
-        background: var(--lightbox-bg);
+        background:
+          radial-gradient(
+            circle at 50% 45%,
+            rgba(var(--lightbox-rgb), 0.82),
+            rgba(var(--lightbox-rgb), 0.46) 46%,
+            rgba(50, 50, 50, 0.7) 100%
+          ),
+          rgba(var(--lightbox-rgb), 0.92);
         z-index: 300000;
         justify-content: center;
         align-items: center;
-        transition: opacity 0.25s ease;
+        transition:
+          opacity 0.25s ease,
+          background 0.38s ease;
+      }
+      body.dark .lightbox {
+        --lightbox-rgb: 26, 25, 23;
+        background:
+          radial-gradient(
+            circle at 50% 45%,
+            rgba(var(--lightbox-rgb), 0.72),
+            rgba(var(--lightbox-rgb), 0.36) 46%,
+            rgba(8, 8, 8, 0.86) 100%
+          ),
+          rgba(var(--lightbox-rgb), 0.9);
       }
       .lightbox.lb-closing {
         opacity: 0;
@@ -489,6 +510,16 @@
         touch-action: none;
         transform-origin: center center;
         will-change: transform;
+      }
+      #lbImg.switching {
+        transition:
+          transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.22s ease;
+      }
+      #lbImg.exit-animate {
+        transition:
+          transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.24s ease;
       }
       .lb-counter {
         position: absolute;
@@ -826,6 +857,26 @@
         gap: 10px;
         margin-bottom: 12px;
       }
+      .publish-drop-zone {
+        border: 2px dashed rgba(50, 50, 50, 0.34);
+        border-radius: var(--sketch-radius-1);
+        padding: 12px;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease,
+          transform 0.15s ease;
+      }
+      .publish-drop-zone.drag-over {
+        background: rgba(229, 170, 112, 0.16);
+        border-color: var(--accent-dark);
+        transform: rotate(-0.4deg) translateY(-1px);
+      }
+      body.dark .publish-drop-zone {
+        border-color: rgba(243, 233, 221, 0.34);
+      }
+      body.dark .publish-drop-zone.drag-over {
+        background: rgba(218, 160, 109, 0.14);
+      }
       .pick-img-btn {
         border: 2px solid var(--border);
         background: var(--paper);
@@ -860,11 +911,30 @@
         padding: 2px;
         background: var(--paper);
         aspect-ratio: 1/1;
+        cursor: grab;
+        transition:
+          transform 0.15s ease,
+          opacity 0.15s ease,
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .preview-item:active {
+        cursor: grabbing;
+      }
+      .preview-item.dragging {
+        opacity: 0.45;
+        transform: scale(0.96) rotate(-2deg);
+      }
+      .preview-item.drag-target {
+        border-color: var(--accent-dark);
+        box-shadow: 4px 4px 0px var(--accent);
+        transform: translateY(-2px) rotate(1deg);
       }
       .preview-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
       }
       .preview-del {
         position: absolute;
@@ -882,6 +952,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 2;
       }
 
       .publish-footer {
@@ -1800,6 +1871,9 @@
       let pointerCache = [];
       let lastPinchDist = 0;
       let lastClickTime = 0;
+      let lightboxColorToken = 0;
+      let lightboxSwitching = false;
+      let lightboxClosing = false;
 
       // 搜索状态
       let currentSearchResults = [],
@@ -1810,7 +1884,9 @@
 
       // 发布状态
       let publishModal = null,
-        selectedPublishFiles = [];
+        selectedPublishFiles = [],
+        publishPreviewDragIndex = null;
+      const PUBLISH_PREVIEW_DRAG_TYPE = "application/x-publish-preview-index";
       const WORKER_URL =
         "https://solitary-forest-7065.hahagoodboy008.workers.dev";
       const PUBLISH_PWD_KEY = "memo_publish_pwd";
@@ -2184,6 +2260,9 @@
         if (lbImg)
           lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`;
       }
+      function setLightboxImageMotion(x = 0, y = 0, s = 1) {
+        if (lbImg) lbImg.style.transform = `translate(${x}px,${y}px) scale(${s})`;
+      }
       function resetTransform() {
         scale = 1;
         baseScale = 1;
@@ -2195,6 +2274,90 @@
           applyTransform();
         }
       }
+      function resetLightboxBackdrop() {
+        const fallback = document.body.classList.contains("dark")
+          ? "26, 25, 23"
+          : "243, 233, 221";
+        lb.style.setProperty("--lightbox-rgb", fallback);
+      }
+      function getDominantImageColor(img) {
+        const canvas = document.createElement("canvas");
+        const size = 56;
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx || !img.naturalWidth || !img.naturalHeight) return null;
+        ctx.drawImage(img, 0, 0, size, size);
+        const data = ctx.getImageData(0, 0, size, size).data;
+        const buckets = new Map();
+        for (let i = 0; i < data.length; i += 16) {
+          const r = data[i],
+            g = data[i + 1],
+            b = data[i + 2],
+            a = data[i + 3];
+          if (a < 180) continue;
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          const saturation = max === 0 ? 0 : (max - min) / max;
+          const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+          if (
+            (brightness > 0.96 && saturation < 0.08) ||
+            (brightness < 0.06 && saturation < 0.08)
+          )
+            continue;
+          const key = `${Math.round(r / 32)},${Math.round(g / 32)},${Math.round(b / 32)}`;
+          const item = buckets.get(key) || {
+            count: 0,
+            r: 0,
+            g: 0,
+            b: 0,
+            score: 0,
+          };
+          item.count++;
+          item.r += r;
+          item.g += g;
+          item.b += b;
+          item.score += 1 + saturation * 0.8;
+          buckets.set(key, item);
+        }
+        let best = null;
+        buckets.forEach((item) => {
+          if (!best || item.score > best.score) best = item;
+        });
+        if (!best) return null;
+        return {
+          r: Math.round(best.r / best.count),
+          g: Math.round(best.g / best.count),
+          b: Math.round(best.b / best.count),
+        };
+      }
+      function updateLightboxBackdropFromImage(img, token) {
+        try {
+          const color = getDominantImageColor(img);
+          if (!color || token !== lightboxColorToken) return;
+          lb.style.setProperty(
+            "--lightbox-rgb",
+            `${color.r}, ${color.g}, ${color.b}`,
+          );
+        } catch (err) {
+          if (token === lightboxColorToken) resetLightboxBackdrop();
+        }
+      }
+      function sampleLightboxImageSource(src, token) {
+        if (/^https?:\/\//i.test(src)) {
+          const sampler = new Image();
+          sampler.crossOrigin = "anonymous";
+          sampler.onload = () => updateLightboxBackdropFromImage(sampler, token);
+          sampler.onerror = () => {
+            if (token === lightboxColorToken) resetLightboxBackdrop();
+          };
+          sampler.src = src;
+          return;
+        }
+        if (lbImg.complete && lbImg.naturalWidth) {
+          updateLightboxBackdropFromImage(lbImg, token);
+        }
+      }
       function updateLightboxImage(animate = true) {
         if (!lbImg) return;
         document.getElementById("lbPrevBtn").style.display =
@@ -2203,54 +2366,108 @@
           currentIndex < currentGallery.length - 1 ? "flex" : "none";
         lbCounter.textContent =
           currentIndex + 1 + " / " + currentGallery.length;
+        const imageSrc = currentGallery[currentIndex];
+        const colorToken = ++lightboxColorToken;
+        resetLightboxBackdrop();
+        lbImg.onload = () => sampleLightboxImageSource(imageSrc, colorToken);
+        lbImg.onerror = () => resetLightboxBackdrop();
+        lbImg.removeAttribute("crossorigin");
         if (!animate) {
-          lbImg.src = currentGallery[currentIndex];
+          lbImg.src = imageSrc;
           resetTransform();
           lbImg.style.opacity = "1";
+          if (lbImg.complete && lbImg.naturalWidth)
+            sampleLightboxImageSource(imageSrc, colorToken);
           return;
         }
         lbImg.style.transition = "opacity 0.18s ease";
         lbImg.style.opacity = "0";
         setTimeout(() => {
-          lbImg.src = currentGallery[currentIndex];
+          lbImg.src = imageSrc;
           resetTransform();
           lbImg.style.opacity = "1";
+          if (lbImg.complete && lbImg.naturalWidth)
+            sampleLightboxImageSource(imageSrc, colorToken);
         }, 160);
       }
+      function animateSwitchImage(targetIdx, direction = 1) {
+        if (
+          lightboxSwitching ||
+          targetIdx < 0 ||
+          targetIdx >= currentGallery.length ||
+          targetIdx === currentIndex
+        )
+          return;
+        lightboxSwitching = true;
+        const distance = Math.min(window.innerWidth * 0.26, 180);
+        lbImg.classList.add("switching");
+        lbImg.style.opacity = "0";
+        setLightboxImageMotion(-direction * distance, 0, 0.96);
+        setTimeout(() => {
+          currentIndex = targetIdx;
+          updateLightboxImage(false);
+          lbImg.classList.add("switching");
+          lbImg.style.opacity = "0";
+          setLightboxImageMotion(direction * distance, 0, 0.96);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              lbImg.style.opacity = "1";
+              setLightboxImageMotion(0, 0, 1);
+            });
+          });
+          setTimeout(() => {
+            lbImg.classList.remove("switching");
+            lbImg.style.opacity = "";
+            resetTransform();
+            lightboxSwitching = false;
+          }, 240);
+        }, 170);
+      }
       function openLightbox() {
+        lightboxClosing = false;
         resetTransform();
+        resetLightboxBackdrop();
         lb.style.display = "flex";
         lb.style.opacity = "0";
-        lb.style.transition = "opacity 0.2s ease";
+        lb.style.transition = "opacity 0.2s ease, background 0.38s ease";
         requestAnimationFrame(() => {
           lb.style.opacity = "1";
         });
         document.body.style.overflow = "hidden";
         updateLightboxImage(false);
       }
-      function closeLightbox() {
-        lb.style.transition = "opacity 0.22s ease";
+      function closeLightbox(exitDirection = "fade") {
+        if (lightboxClosing) return;
+        lightboxClosing = true;
+        lb.style.transition = "opacity 0.22s ease, background 0.25s ease";
         lb.style.opacity = "0";
+        if (exitDirection === "up") {
+          lbImg.classList.add("exit-animate");
+          lbImg.style.opacity = "0";
+          setLightboxImageMotion(0, -90, 0.96);
+        }
         setTimeout(() => {
           lb.style.display = "none";
           lb.style.opacity = "";
+          lb.style.transition = "";
+          lbImg.classList.remove("exit-animate", "switching");
+          lbImg.style.opacity = "";
           if (!searchModal.classList.contains("open"))
             document.body.style.overflow = "";
           resetTransform();
+          lightboxClosing = false;
         }, 230);
       }
       function showNext() {
         if (scale !== 1 || currentGallery.length <= 1) return;
         if (currentIndex < currentGallery.length - 1) {
-          currentIndex++;
-          updateLightboxImage();
+          animateSwitchImage(currentIndex + 1, 1);
         }
       }
       function showPrev() {
         if (scale !== 1 || currentGallery.length <= 1) return;
         if (currentIndex > 0) {
-          currentIndex--;
-          updateLightboxImage();
+          animateSwitchImage(currentIndex - 1, -1);
         }
       }
 
@@ -2364,14 +2581,23 @@
                 const op = Math.max(0.15, 1 - Math.abs(dy) / 280);
                 lb.style.opacity = op;
                 lb.style.transition = "none";
+                lbImg.classList.add("exit-animate");
+                lbImg.style.opacity = Math.max(0.35, op);
+                setLightboxImageMotion(
+                  0,
+                  dy * 0.42,
+                  1 - Math.min(Math.abs(dy) / 1200, 0.06),
+                );
               } else {
                 lb.style.opacity = "1";
+                lbImg.classList.remove("exit-animate");
+                lbImg.style.opacity = "";
+                let finalDx = dx;
+                if (currentIndex === 0 && dx > 0) finalDx = 0;
+                else if (currentIndex === currentGallery.length - 1 && dx < 0)
+                  finalDx = 0;
+                lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
               }
-              let finalDx = dx;
-              if (currentIndex === 0 && dx > 0) finalDx = 0;
-              else if (currentIndex === currentGallery.length - 1 && dx < 0)
-                finalDx = 0;
-              lbImg.style.transform = `translateX(${finalDx}px) scale(1)`;
             }
           } else if (pointerCache.length === 2) {
             const d = ptDist(pointerCache[0], pointerCache[1]);
@@ -2411,7 +2637,7 @@
             lb.style.transition = "opacity 0.2s ease";
             lb.style.opacity = "1";
             if (Math.abs(finalDy) > Math.abs(finalDx) && finalDy < -60) {
-              closeLightbox();
+              closeLightbox("up");
               return;
             }
             lbImg.style.transition =
@@ -2419,6 +2645,8 @@
             if (Math.abs(finalDx) > SWIPE_TH) {
               finalDx > 0 ? showPrev() : showNext();
             } else {
+              lbImg.classList.remove("exit-animate");
+              lbImg.style.opacity = "";
               lbImg.style.transform = "translateX(0) scale(1)";
             }
           } else if (pointerCache.length === 1) {
@@ -2616,18 +2844,36 @@
           bindImagesInContainer(postsContainer);
         }
       }
+      function addSelectedPublishFiles(files) {
+        let added = 0;
+        Array.from(files || []).forEach((f) => {
+          if (!f.type || !f.type.startsWith("image/")) return;
+          selectedPublishFiles.push({
+            file: f,
+            previewUrl: URL.createObjectURL(f),
+          });
+          added++;
+        });
+        if (added) {
+          renderSelectedImages();
+        } else if (files?.length) {
+          showToast("请拖入图片文件", "error");
+        }
+      }
       function openPublishEditor() {
         /* 略 原样保留 */ if (publishModal) publishModal.remove();
         selectedPublishFiles = [];
+        publishPreviewDragIndex = null;
         const savedPwd = getPublishPassword();
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
-        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">未选择图片</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可重复补选。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">可点击选择，也可拖放图片到这里</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
         document.body.appendChild(publishModal);
         const close = () => {
           if (publishModal) {
             publishModal.remove();
             publishModal = null;
+            publishPreviewDragIndex = null;
             selectedPublishFiles.forEach((i) =>
               URL.revokeObjectURL(i.previewUrl),
             );
@@ -2640,14 +2886,31 @@
         document.getElementById("selectImg").onclick = () =>
           document.getElementById("imgFile").click();
         document.getElementById("imgFile").addEventListener("change", (e) => {
-          Array.from(e.target.files || []).forEach((f) =>
-            selectedPublishFiles.push({
-              file: f,
-              previewUrl: URL.createObjectURL(f),
-            }),
-          );
+          addSelectedPublishFiles(e.target.files);
           e.target.value = "";
-          renderSelectedImages();
+        });
+        const dropZone = document.getElementById("publishDropZone");
+        ["dragenter", "dragover"].forEach((type) => {
+          dropZone.addEventListener(type, (e) => {
+            e.preventDefault();
+            dropZone.classList.add("drag-over");
+          });
+        });
+        ["dragleave", "drop"].forEach((type) => {
+          dropZone.addEventListener(type, (e) => {
+            e.preventDefault();
+            const isSortingPreview =
+              publishPreviewDragIndex !== null ||
+              Array.from(e.dataTransfer?.types || []).includes(
+                PUBLISH_PREVIEW_DRAG_TYPE,
+              );
+            if (type === "drop" && !isSortingPreview) {
+              addSelectedPublishFiles(e.dataTransfer.files);
+            }
+            if (type === "drop" || !dropZone.contains(e.relatedTarget)) {
+              dropZone.classList.remove("drag-over");
+            }
+          });
         });
         document.getElementById("submitMemo").onclick = submitMemo;
         renderSelectedImages();
@@ -2661,10 +2924,64 @@
           : "未选择图片";
         if (!selectedPublishFiles.length) {
           wrap.innerHTML =
-            '<div class="publish-empty">支持多张，可重复补选。</div>';
+            '<div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div>';
           return;
         }
-        wrap.innerHTML = `<div class="preview-grid">${selectedPublishFiles.map((i, idx) => `<div class="preview-item"><img src="${i.previewUrl}"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
+        wrap.innerHTML = `<div class="preview-grid">${selectedPublishFiles.map((i, idx) => `<div class="preview-item" draggable="true" data-idx="${idx}"><img src="${i.previewUrl}" draggable="false"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
+        wrap.querySelectorAll(".preview-item").forEach((item) => {
+          const idx = Number(item.dataset.idx);
+          item.addEventListener("dragstart", (e) => {
+            publishPreviewDragIndex = idx;
+            item.classList.add("dragging");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", String(idx));
+            e.dataTransfer.setData(PUBLISH_PREVIEW_DRAG_TYPE, String(idx));
+          });
+          item.addEventListener("dragend", () => {
+            publishPreviewDragIndex = null;
+            item.classList.remove("dragging");
+            document
+              .getElementById("publishDropZone")
+              ?.classList.remove("drag-over");
+            wrap
+              .querySelectorAll(".drag-target")
+              .forEach((el) => el.classList.remove("drag-target"));
+          });
+          item.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            item.classList.add("drag-target");
+          });
+          item.addEventListener("dragleave", () =>
+            item.classList.remove("drag-target"),
+          );
+          item.addEventListener("drop", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            item.classList.remove("drag-target");
+            document
+              .getElementById("publishDropZone")
+              ?.classList.remove("drag-over");
+            const fromText = e.dataTransfer.getData(
+              PUBLISH_PREVIEW_DRAG_TYPE,
+            );
+            const from =
+              publishPreviewDragIndex ??
+              (fromText === "" ? NaN : Number(fromText));
+            const to = idx;
+            if (
+              !Number.isInteger(from) ||
+              from === to ||
+              from < 0 ||
+              from >= selectedPublishFiles.length
+            ) {
+              addSelectedPublishFiles(e.dataTransfer.files);
+              return;
+            }
+            const [moved] = selectedPublishFiles.splice(from, 1);
+            selectedPublishFiles.splice(to, 0, moved);
+            renderSelectedImages();
+          });
+        });
         wrap.querySelectorAll(".preview-del").forEach((btn) => {
           btn.onclick = () => {
             const i = Number(btn.dataset.idx);
