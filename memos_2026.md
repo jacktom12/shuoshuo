@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+亚洲父母普遍这样，不知道文化程度差异会不会好一点
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781990030681_322.jpeg&n=-1)
+@2026-06-21 05:13
+
 爱不是控制！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781987536059_197.jpeg&n=-1)
 @2026-06-21 04:32
