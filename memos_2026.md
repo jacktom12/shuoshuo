@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+爱不是控制！
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781987536059_197.jpeg&n=-1)
+@2026-06-21 04:32
+
 什么才是真的恶，确实啊，那些夫妻吵架，教小孩子不用管的，换个角度，如果他们看到邻居吵架，看到小孩子在哭，难道会感觉不到小孩子的痛苦？难道也会轻飘飘来一句那是大人的事情，你不用管嘛！小孩子是小，又不是没心，没眼睛没耳朵。没感觉！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781912861580_568.jpeg&n=-1)
 @2026-06-20 07:47
