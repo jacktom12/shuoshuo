@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+https://uc-browser.en.uptodown.com/android/versions?utm_source=chatgpt.com
+这个网站貌似不错！下老版本软件
+@2026-06-21 12:27
+
 型号：天猫魔盒1s增强版（TMB2200RA）
 处理器CPU：Quad-core Coretex A7 四核1.2GHz （全志A31s）
 图形处理器GPU：SGX544MP2（支持1080P）
