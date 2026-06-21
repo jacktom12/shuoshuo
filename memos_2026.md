@@ -9,6 +9,15 @@ draft: false
 image: ""
 ---
 
+型号：天猫魔盒1s增强版（TMB2200RA）
+处理器CPU：Quad-core Coretex A7 四核1.2GHz （全志A31s）
+图形处理器GPU：SGX544MP2（支持1080P）
+内存：DDR3 1GB
+闪存：EMMC 8GB
+无线：双天线WIFI（RTL8192EU）
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782000713324_73.webp&n=-1)
+@2026-06-21 08:11
+
 我的天猫魔盒增强版也寿终正寝了！！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1781999733651_623.webp&n=-1)
 @2026-06-21 07:55
