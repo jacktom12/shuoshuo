@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+所谓的厚黑，恭维话，高情商，就是睁眼说瞎话，说谎而已，一个谎言要编造更多谎言来支撑，当被忽悠的人反抗点破的时候才是最尴尬的，你不得不违心讲出更多谎言来圆谎！何苦呢！
+@2026-06-24 06:45
+
 什么是青春，荒唐又甜蜜，不能同时拥有它以及对它的感悟！！！
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782212941491_259.png&n=-1)
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782212943139_489.png&n=-1)
