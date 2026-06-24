@@ -2914,6 +2914,10 @@
         });
         document.getElementById("submitMemo").onclick = submitMemo;
         renderSelectedImages();
+        
+        setTimeout(() => {
+        document.querySelector(".publish-textarea")?.focus();
+    }, 50); // 用 setTimeout 延迟 50 毫秒可以确保弹窗在完全显示出来后再执行聚焦，体验最稳妥
       }
       function renderSelectedImages() {
         const wrap = document.getElementById("previewWrap"),
