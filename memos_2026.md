@@ -9,6 +9,9 @@ draft: false
 image: ""
 ---
 
+小人诈富，难逃贫穷之机体；君子贫寒，不失骨格之坚守。
+@2026-06-26 07:43
+
 确实敢说（无悔追踪）
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782375778545_149.png&n=-1)
 @2026-06-25 16:22
