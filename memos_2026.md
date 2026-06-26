@@ -9,6 +9,10 @@ draft: false
 image: ""
 ---
 
+人圣就是个牢狱
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782439437588_746.jpeg&n=-1)
+@2026-06-26 10:03
+
 > 人生的酒盏
 我们紧闭着双眼，
 饮啜人生的酒盏 ，
