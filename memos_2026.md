@@ -9,6 +9,14 @@ draft: false
 image: ""
 ---
 
+无悔追踪，李冰冰还有婴儿肥呢
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782460873151_857.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782460875095_379.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782460876927_429.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782460879027_617.png&n=-1)
+![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782460880915_909.png&n=-1)
+@2026-06-26 16:01
+
 - https://bedtimepoem.com/archives/8595
 莱蒙托夫这位继普希金俄罗斯最牛逼的抒情诗人，在中国，从五十年代起，特别是在七八十年代，产生过巨大的影响。一方面是由于冷战时期特殊的地缘政治关系，中国只能更多的去接受苏联文学和经典的俄罗斯文学，另外，七十年代末到八十年代初之间，时代青年在经历了之后的各种“运动”之后，那种精神幻灭之感在莱蒙托夫的诗里，找到了强烈的共鸣。
 作为朦胧诗的先驱，诗人食指的就是莱蒙托夫的忠实拥护趸，他说：“很多人喜欢普希金，我却喜欢喜欢莱蒙托夫，他的诗直面命运，只是太短了。”北岛也承认他们那一代人，受普希金和莱蒙托夫的影响甚大。
