@@ -19,7 +19,7 @@ image: ""
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782439918865_351.jpeg&n=-1)
 @2026-06-26 10:11
 
-人圣就是个牢狱
+人生就是个牢狱
 ![](https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjacktom12%2Fblogpic3%2Fmain%2F1782439437588_746.jpeg&n=-1)
 @2026-06-26 10:03
 
