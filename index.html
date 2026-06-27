@@ -1038,6 +1038,19 @@
       .toast.success::before {
         content: "✍️ 手账已收录 // ";
       }
+      
+      .toast.delete {
+        color: #e53e3e;
+      }
+      .toast.delete::before {
+        content: "🗑️ 纸张已撕毁 // ";
+      }
+      .toast.edit {
+        color: #3182ce;
+      }
+      .toast.edit::before {
+        content: "📝 涂改已生效 // ";
+      }
       .toast.error {
         background: #ffccd5;
         color: #c0392b;
@@ -3119,7 +3132,7 @@
                 const json = await res.json();
                 if (json.code === 200) {
                     setPublishPassword(pwd);
-                    showToast("删除成功", "success");
+                    showToast("删除成功", "delete");
                     allPosts = allPosts.filter(p => p.id !== id);
                     filtered = filtered.filter(p => p.id !== id);
                     render(true);
@@ -3257,7 +3270,7 @@
               publishModal = null;
             }
             selectedPublishFiles = [];
-            showToast("更新成功", "success");
+            showToast("更新成功", "edit");
             render(true);
           } else {
             if (json.code === 403) clearPublishPassword();
