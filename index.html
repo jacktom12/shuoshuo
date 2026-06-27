@@ -1618,7 +1618,42 @@
         fill: #5e7b5c;
         stroke: #f3e9dd;
       }
-    </style>
+    
+.post-actions {
+  display: flex;
+  gap: 8px;
+   margin-left: auto; /* 加了这一行，自动推到最右侧 */
+}
+.post-action-btn {
+  background: var(--paper);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 5px 8px;
+  border-radius: var(--sketch-radius-btn);
+  box-shadow: 2px 2px 0px var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  transform: rotate(-2deg) skewX(2deg);
+}
+.post-action-btn:hover {
+  transform: rotate(0deg) skewX(0deg) translateY(-1px);
+  box-shadow: 3px 3px 0px var(--border);
+}
+.post-action-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px 0px var(--border);
+}
+.post-action-btn.delete-btn {
+  color: #e53e3e;
+}
+.dark .post-action-btn.delete-btn {
+  color: #fc8181;
+}
+
+</style>
   </head>
   <body>
     <!-- 手绘漂浮装饰（来自登录页） -->
@@ -1965,28 +2000,39 @@
           .filter(Boolean);
       }
 
-      function buildPostHTML(p) {
-        const text = Array.isArray(p.content)
-          ? p.content.join("\n\n")
-          : p.content || "";
-        const parsed =
-          typeof marked !== "undefined" ? marked.parse(text) : text;
+            function buildPostHTML(p) {
+        const text = Array.isArray(p.content) ? p.content.join("\n\n") : p.content || "";
+        const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
         if (p.images && p.images.length) {
-          const imgs = p.images
-            .map((url) => `<img src="${url}" alt="" draggable="false">`)
-            .join("");
-          const navBtns =
-            p.images.length > 1
-              ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
-              : "";
+          const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
+          const navBtns = p.images.length > 1
+            ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
+            : "";
           imagesHtml = `<div class="post-images-wrap">${navBtns}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
         }
+
+        const hasAuth = !!getPublishPassword();
+        let actionsHtml = '';
+        if (hasAuth) {
+            actionsHtml = `<div class="post-actions">
+                <button class="post-action-btn edit-btn" onclick="openEditEditor('${p.id}')" title="编辑">
+                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                </button>
+                <button class="post-action-btn delete-btn" onclick="deletePost('${p.id}')" title="删除">
+                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+            </div>`;
+        }
+
         return `<article class="post" id="post-${p.id}">
-  <div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span></div>
-      <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
-    </article>`;
+          <div class="post-header">
+            <span class="post-time">${randomColorBlock()} ${showTime}</span>
+            ${actionsHtml}
+          </div>
+          <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
+        </article>`;
       }
 
       // ---------- 数据加载 ----------
@@ -1995,37 +2041,26 @@
         isLoading = true;
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
-        const years = [];
-        for (let y = START_YEAR; y >= MIN_YEAR; y--) years.push(y);
-        const results = await Promise.all(
-          years.map((y) =>
-            fetch(`memos_${y}.md?v=${Date.now()}_${y}`, { cache: "no-store" })
-              .then((r) => {
-                if (!r.ok) throw 0;
-                return r.text();
-              })
-              .then((text) => ({ year: y, text, ok: true }))
-              .catch(() => ({ year: y, ok: false })),
-          ),
-        );
-        allPosts = [];
-        results.forEach((r) => {
-          if (r.ok && r.text) allPosts.push(...parseMdToPosts(r.text, r.year));
-        });
-        allPosts.sort(
-          (a, b) =>
-            new Date(b.date.replace(/-/g, "/")) -
-            new Date(a.date.replace(/-/g, "/")),
-        );
-        isLoading = false;
+        try {
+            const res = await fetch(WORKER_URL);
+            if (!res.ok) throw new Error("网络响应错误");
+            const json = await res.json();
+            if (json.code === 200) {
+                allPosts = json.data || [];
+            } else {
+                throw new Error(json.msg || "获取数据失败");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("加载失败，请检查网络或配置", "error");
+            allPosts = [];
+        }
+
         filtered = [...allPosts];
         page = 1;
+        loaderDom.style.display = "none";
+        isLoading = false;
         render(true);
-        if (allPosts.length) loaderDom.style.display = "none";
-        else {
-          loaderDom.style.display = "block";
-          loaderDom.textContent = "暂无手账数据";
-        }
         setupInfiniteScroll();
         setupLightbox();
       }
@@ -2995,40 +3030,37 @@
           };
         });
       }
-      async function submitMemo() {
+            async function submitMemo() {
         const savedPwd = getPublishPassword();
         const pwdInput = document.getElementById("publishPwd");
         const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
         const content = document.getElementById("memoContent").value.trim();
-        if (!pwd || (!content && !selectedPublishFiles.length))
-          return showToast("请填写完整内容", "error");
+
+        if (!pwd || (!content && !selectedPublishFiles.length)) {
+          return showToast("请填写完整内容和密码", "error");
+        }
+
         const btn = document.getElementById("submitMemo");
-        btn.textContent = "发布中...";
-        btn.disabled = true;
+        if(btn) { btn.textContent = "发布中..."; btn.disabled = true; }
         try {
-          const imgs = [];
+          const newImgList = [];
           for (const item of selectedPublishFiles) {
-            imgs.push(await toBase64(item.file));
+            newImgList.push(await toBase64(item.file));
           }
-          const localUrls = selectedPublishFiles.map((i) => i.previewUrl);
+
           const res = await fetch(WORKER_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               publishPassword: pwd,
               content,
-              imgList: imgs,
+              newImgList,
             }),
           });
           const json = await res.json();
           if (json.code === 200) {
             setPublishPassword(pwd);
-            const newPostItem = {
-              id: `local_${Date.now()}`,
-              date: getNowBeijingString(),
-              content: [content],
-              images: localUrls,
-            };
+            const newPostItem = json.data;
             allPosts.unshift(newPostItem);
             filtered.unshift(newPostItem);
             if (publishModal) {
@@ -3037,18 +3069,192 @@
             }
             selectedPublishFiles = [];
             showToast("发布成功", "success");
+            render(true);
           } else {
             if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "发布失败", "error");
-            btn.textContent = "发布";
-            btn.disabled = false;
           }
         } catch (e) {
           showToast("网络错误，发布失败", "error");
-          btn.textContent = "发布";
-          btn.disabled = false;
+        } finally {
+          if (btn) {
+            btn.textContent = "发布";
+            btn.disabled = false;
+          }
         }
       }
+
+      async function deletePost(id) {
+        if (!confirm("确定要删除这条说说吗？")) return;
+        const savedPwd = getPublishPassword();
+        let pwd = savedPwd;
+        if (!pwd) {
+            pwd = prompt("请输入发布密码：");
+            if (!pwd) return;
+        }
+
+        try {
+            const res = await fetch(WORKER_URL, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, publishPassword: pwd })
+            });
+            const json = await res.json();
+            if (json.code === 200) {
+                setPublishPassword(pwd);
+                showToast("删除成功", "success");
+                allPosts = allPosts.filter(p => p.id !== id);
+                filtered = filtered.filter(p => p.id !== id);
+                render(true);
+            } else {
+                if (json.code === 403) clearPublishPassword();
+                showToast(json.msg || "删除失败", "error");
+            }
+        } catch (e) {
+            showToast("网络错误", "error");
+        }
+      }
+
+      let currentEditId = null;
+      let existingImagesForEdit = [];
+
+      function openEditEditor(id) {
+        const post = allPosts.find(p => p.id === id);
+        if (!post) return;
+
+        currentEditId = id;
+        existingImagesForEdit = post.images ? [...post.images] : [];
+        if (publishModal) publishModal.remove();
+        selectedPublishFiles = [];
+        publishPreviewDragIndex = null;
+
+        const savedPwd = getPublishPassword();
+        const contentText = Array.isArray(post.content) ? post.content.join("\n") : (post.content || "");
+
+        publishModal = document.createElement("div");
+        publishModal.className = "publish-mask";
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()">
+            <div class="publish-top">
+                <h3 class="publish-title">编辑说说</h3>
+                <button id="closeMemo" class="publish-close">✕</button>
+            </div>
+            ${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}
+            <div class="publish-field">
+                <label class="publish-label">内容</label>
+                <textarea id="memoContent" class="publish-textarea" placeholder="可以说点什么...">${contentText}</textarea>
+            </div>
+
+            <div class="publish-field" id="existingImagesArea" style="${existingImagesForEdit.length ? '' : 'display:none;'}">
+                <label class="publish-label">现有图片 (点击缩略图移除)</label>
+                <div id="existingImagesList" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+                    ${existingImagesForEdit.map((img, idx) => `<img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;" onclick="removeExistingImage(${idx})" title="点击移除" />`).join('')}
+                </div>
+            </div>
+
+            <div class="publish-field publish-drop-zone" id="publishDropZone">
+                <div class="publish-tools">
+                    <button id="selectImg" class="pick-img-btn">新增照片</button>
+                    <span id="imgCountText" class="publish-tip">选择要新增的图片</span>
+                </div>
+                <input type="file" id="imgFile" accept="image/*" multiple hidden/>
+                <div id="previewWrap"></div>
+            </div>
+            <div class="publish-footer">
+                <button id="submitEditMemo" class="publish-submit">保存更新</button>
+                <button id="closeMemo2" class="publish-cancel">取消</button>
+            </div>
+        </div>`;
+        document.body.appendChild(publishModal);
+
+        const close = () => {
+          if (publishModal) {
+            publishModal.remove();
+            publishModal = null;
+            selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+            selectedPublishFiles = [];
+          }
+        };
+        publishModal.onclick = close;
+        document.getElementById("closeMemo").onclick = close;
+        document.getElementById("closeMemo2").onclick = close;
+        document.getElementById("selectImg").onclick = () => document.getElementById("imgFile").click();
+        document.getElementById("imgFile").addEventListener("change", (e) => {
+          addSelectedPublishFiles(e.target.files);
+          e.target.value = "";
+        });
+        document.getElementById("submitEditMemo").onclick = submitEditMemo;
+      }
+
+      window.removeExistingImage = function(index) {
+          existingImagesForEdit.splice(index, 1);
+          const listDiv = document.getElementById('existingImagesList');
+          if (listDiv) {
+              listDiv.innerHTML = existingImagesForEdit.map((img, idx) => `<img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;" onclick="removeExistingImage(${idx})" title="点击移除" />`).join('');
+          }
+          if (existingImagesForEdit.length === 0) {
+              document.getElementById('existingImagesArea').style.display = 'none';
+          }
+      };
+
+      async function submitEditMemo() {
+        const savedPwd = getPublishPassword();
+        const pwdInput = document.getElementById("publishPwd");
+        const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
+        const content = document.getElementById("memoContent").value.trim();
+
+        if (!pwd || (!content && !selectedPublishFiles.length && !existingImagesForEdit.length)) {
+          return showToast("请填写完整内容和密码", "error");
+        }
+
+        const btn = document.getElementById("submitEditMemo");
+        if(btn) { btn.textContent = "保存中..."; btn.disabled = true; }
+        try {
+          const newImgList = [];
+          for (const item of selectedPublishFiles) {
+            newImgList.push(await toBase64(item.file));
+          }
+
+          const res = await fetch(WORKER_URL, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: currentEditId,
+              publishPassword: pwd,
+              content,
+              existingImages: existingImagesForEdit,
+              newImgList,
+            }),
+          });
+          const json = await res.json();
+          if (json.code === 200) {
+            setPublishPassword(pwd);
+            const updatedPost = json.data;
+            const idxAll = allPosts.findIndex(p => p.id === currentEditId);
+            if (idxAll > -1) allPosts[idxAll] = updatedPost;
+            const idxFil = filtered.findIndex(p => p.id === currentEditId);
+            if (idxFil > -1) filtered[idxFil] = updatedPost;
+
+            if (publishModal) {
+              publishModal.remove();
+              publishModal = null;
+            }
+            selectedPublishFiles = [];
+            showToast("更新成功", "success");
+            render(true);
+          } else {
+            if (json.code === 403) clearPublishPassword();
+            showToast(json.msg || "更新失败", "error");
+          }
+        } catch (e) {
+          showToast("网络错误，更新失败", "error");
+        } finally {
+          if (btn) {
+            btn.textContent = "保存更新";
+            btn.disabled = false;
+          }
+        }
+      }
+      
       function toBase64(file) {
         return new Promise((res, rej) => {
           const r = new FileReader();
