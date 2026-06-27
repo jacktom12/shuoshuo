@@ -1622,7 +1622,7 @@
 .post-actions {
   display: flex;
   gap: 8px;
-   margin-left: auto; /* 加了这一行，自动推到最右侧 */
+  margin-left: auto;
 }
 .post-action-btn {
   background: var(--paper);
@@ -3084,35 +3084,53 @@
         }
       }
 
-      async function deletePost(id) {
-        if (!confirm("确定要删除这条说说吗？")) return;
-        const savedPwd = getPublishPassword();
-        let pwd = savedPwd;
-        if (!pwd) {
-            pwd = prompt("请输入发布密码：");
-            if (!pwd) return;
-        }
+      function deletePost(id) {
+        const confirmModal = document.createElement("div");
+        confirmModal.className = "publish-mask";
+        confirmModal.innerHTML = `
+            <div class="publish-panel" style="max-width: 320px; padding: 30px 20px;" onclick="event.stopPropagation()">
+                <h3 class="publish-title" style="border-bottom: none; text-align: center; padding: 0 0 20px 0;">确定要删除这条说说吗？</h3>
+                <div class="publish-footer" style="justify-content: center; margin-top: 0; gap: 15px;">
+                    <button id="confirmDeleteBtn" class="publish-submit" style="background: #e53e3e; border-color: #e53e3e; color: #fff;">删除</button>
+                    <button id="cancelDeleteBtn" class="publish-cancel">取消</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmModal);
 
-        try {
-            const res = await fetch(WORKER_URL, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id, publishPassword: pwd })
-            });
-            const json = await res.json();
-            if (json.code === 200) {
-                setPublishPassword(pwd);
-                showToast("删除成功", "success");
-                allPosts = allPosts.filter(p => p.id !== id);
-                filtered = filtered.filter(p => p.id !== id);
-                render(true);
-            } else {
-                if (json.code === 403) clearPublishPassword();
-                showToast(json.msg || "删除失败", "error");
+        const close = () => confirmModal.remove();
+
+        confirmModal.onclick = close;
+        document.getElementById("cancelDeleteBtn").onclick = close;
+
+        document.getElementById("confirmDeleteBtn").onclick = async () => {
+            close();
+            const pwd = getPublishPassword();
+            if (!pwd) {
+                return showToast("凭证已过期，请重新点击发布校验密码", "error");
             }
-        } catch (e) {
-            showToast("网络错误", "error");
-        }
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, publishPassword: pwd })
+                });
+                const json = await res.json();
+                if (json.code === 200) {
+                    setPublishPassword(pwd);
+                    showToast("删除成功", "success");
+                    allPosts = allPosts.filter(p => p.id !== id);
+                    filtered = filtered.filter(p => p.id !== id);
+                    render(true);
+                } else {
+                    if (json.code === 403) clearPublishPassword();
+                    showToast(json.msg || "删除失败", "error");
+                }
+            } catch (e) {
+                showToast("网络错误", "error");
+            }
+        };
       }
 
       let currentEditId = null;
