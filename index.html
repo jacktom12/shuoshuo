@@ -2055,7 +2055,13 @@
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
         try {
-            const res = await fetch(WORKER_URL);
+                   // 请求加上特定路径，并改为 POST 方法
+      const res = await fetch(`${WORKER_URL}/api/get-memos`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
             if (!res.ok) throw new Error("网络响应错误");
             const json = await res.json();
             if (json.code === 200) {
