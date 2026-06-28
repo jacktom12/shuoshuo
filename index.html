@@ -2868,7 +2868,7 @@ body.dark {
             parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) =>
               match.replace(
                 regex,
-                '<span style="border: 2px solid var(--accent); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg); color: var(--text);">$1</span>',
+                '<span style="background-color: var(--accent); color: var(--ink); border: 2px solid var(--border); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg);">$1</span>',
               ),
             );
           }
