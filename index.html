@@ -109,8 +109,7 @@
         height: 100dvh;
         overflow-y: auto;
         background: var(--bg);
-        border-left: 3px solid var(--border);
-        border-right: 3px solid var(--border);
+         
         position: relative;
         scrollbar-width: thin;
         scrollbar-color: var(--border) var(--bg);
@@ -122,35 +121,68 @@
         position: sticky;
         top: 0;
         z-index: 20;
-        background: var(--bg);
-        border-bottom: 3px solid var(--border);
-        padding-top: var(--safe-top);
+         padding-top: calc(var(--safe-top) + 16px);
+        padding-bottom: 16px;
       }
       .topbar-inner {
+          position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
-        padding: 16px 20px;
+        padding: 14px 20px;
+        
+        /* 核心修改：变成独立的手绘长方形卡片 */
+        margin: 0 16px; /* 让卡片和屏幕边缘有空隙 */
+        background: var(--paper); /* 使用纸张背景色 */
+        border: 2px solid var(--border); /* 加上手绘边框 */
+        border-radius: var(--sketch-radius-btn); /* 使用你已有的手绘圆角变量 */
+        box-shadow: var(--p-shadow); /* 使用你已有的卡片阴影变量 */
+        
+        /* 稍微加一点倾斜，更有手作感 */
+        transform: rotate(-0.5deg) skewX(-1deg);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
       }
-
-      .blog-brand {
+      /* 让整个圈框 hover 时也有呼吸感 */
+      .topbar-inner:hover {
+        transform: rotate(0deg) skewX(0deg) translate(-2px, -2px);
+         box-shadow: 6px 6px 0px var(--border);
+      }
+/* 针对暗黑模式修正投影颜色 */
+      body.dark .topbar-inner {
+         box-shadow: 4px 5px 0px rgba(255,255,255,0.05);
+      }
+       .blog-brand {
         color: var(--ink) !important;
         background: var(--accent);
-        padding: 6px 16px;
+        padding: 6px 18px;
         font-weight: 900;
-        font-size: 1.35rem;
+        font-size: 1.45rem;
         letter-spacing: 1px;
         text-transform: uppercase;
-        transform: rotate(-3deg) skewX(-4deg);
-        display: inline-block;
+        /* 增加手绘标签的样式 */
         border: 2px solid var(--border);
-        box-shadow: -4px 4px 0px var(--border);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 3px 3px 0px var(--border);
+        transform: rotate(-3deg) skewX(-4deg);
         cursor: pointer;
         text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+        /* 使用 cubic-bezier 让过渡极其顺滑 */
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease;
       }
+
+      /* 去掉原来廉价的 wiggle，换成弹性的放大倾斜 */
       .blog-brand:hover {
-        animation: doodle-wiggle 0.5s ease-in-out infinite;
+        /* 取消了原本的 animation: doodle-wiggle */
+        background: var(--accent-dark);
+        transform: rotate(2deg) scale(1.1) translateY(-2px);
+        box-shadow: 5px 6px 0px var(--border);
+      }
+      
+      .blog-brand:active {
+        transform: rotate(-1deg) scale(0.95) translateY(2px);
+        box-shadow: 0px 0px 0px var(--border);
+        transition: all 0.1s ease;
       }
 
       .topbar-right {
@@ -1100,12 +1132,24 @@
           border-left: none;
           border-right: none;
         }
+         .topbar {
+          /* 手机端顶部的留白小一点 */
+          padding-top: calc(var(--safe-top) + 8px); 
+          padding-bottom: 8px;
+        }
         .topbar-inner {
-          padding: 12px 14px;
+         margin: 0 8px; 
+          padding: 8px 12px;
+          gap: 8px; /* 元素之间的间距缩小 */
         }
         .blog-brand {
           font-size: 1.15rem;
-          padding: 6px 12px;
+          padding: 4px 12px;
+        }
+         .topbar-icon {
+           /* 手机端右侧按钮稍微缩一点，避免拥挤 */
+           padding: 6px 8px;
+           font-size: 1rem;
         }
         main {
           padding: 0 10px;
