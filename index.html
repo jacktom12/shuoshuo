@@ -91,8 +91,15 @@
       }
 
       body {
-        margin: 0;
-        background: var(--bg);
+      margin: 0;
+        background-color: var(--bg);
+        background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/wallpaperlight.png');
+        
+        /* 电脑端策略：固定背景，保持图案比例并自适应屏幕高度，横向平铺填满空白 */
+        background-size: auto 100vh; /* 高度撑满屏幕，宽度等比例缩放 */
+        background-repeat: repeat-x; /* 因为高度已经满了，只需要在横向（x轴）重复平铺 */
+        background-attachment: fixed; /* 滚动时背景固定不动，类似桌布效果 */
+        background-position: center top; /* 居中对齐 */
         color: var(--text);
         font-family:
           "Comic Sans MS", "Chalkboard SE", "LXGW WenKai Screen", sans-serif;
@@ -101,14 +108,17 @@
         overscroll-behavior: contain;
         -webkit-font-smoothing: antialiased;
       }
-
+body.dark {
+        background-color: var(--bg);
+        background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/wallpaperdark.png');
+      }
       .app-container {
         width: 100%;
         max-width: 660px;
         height: 100vh;
         height: 100dvh;
         overflow-y: auto;
-        background: var(--bg);
+        background: transparent; /* 改为透明，让 body 的壁纸透出来 */
          
         position: relative;
         scrollbar-width: thin;
@@ -1126,6 +1136,12 @@
       @media (max-width: 768px) {
         body {
           padding: 0;
+          /* 手机端策略：图片比例本身就适合手机，直接让宽度撑满，高度自适应并往下平铺 */
+          background-size: 100vw auto; /* 宽度撑满屏幕宽度，高度等比例缩放 */
+          background-repeat: repeat-y; /* 随着瀑布流往下滚，在纵向（y轴）重复铺设 */
+          /* 手机端通常不建议用 fixed，滚动时容易卡顿，随内容一起滚动更自然 */
+          background-attachment: scroll; 
+          background-position: top center;
         }
         .app-container {
           max-width: 100%;
