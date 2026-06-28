@@ -105,7 +105,9 @@
           "Comic Sans MS", "Chalkboard SE", "LXGW WenKai Screen", sans-serif;
         display: flex;
         justify-content: center;
-        overscroll-behavior: contain;
+          overflow: hidden; 
+        height: 100vh;
+        height: 100dvh;
         -webkit-font-smoothing: antialiased;
       }
 body.dark {
@@ -121,18 +123,20 @@ body.dark {
         background: transparent; /* 改为透明，让 body 的壁纸透出来 */
          
         position: relative;
-        scrollbar-width: thin;
-        scrollbar-color: var(--border) var(--bg);
-        padding-bottom: calc(40px + var(--safe-bottom));
+         display: flex;
+        flex-direction: column;
+        overflow: hidden; /* 这里关掉滚动！ */
+        padding-bottom: 0; /* 去掉之前的 padding */
       }
 
       /* 顶部导航条改造 */
       .topbar {
-        position: sticky;
-        top: 0;
+       
         z-index: 20;
          padding-top: calc(var(--safe-top) + 5px);
         padding-bottom: 16px;
+         /* 防止导航栏被压缩 */
+        flex-shrink: 0; 
       }
       .topbar-inner {
           position: relative;
@@ -263,7 +267,22 @@ body.dark {
 
       main {
         padding: 0 16px;
-        padding-bottom: 60px;
+         /* 让 main 撑满剩下的所有屏幕高度 */
+        flex: 1; 
+        /* 核心修改：让 main 成为独立滚动区域！ */
+        overflow-y: auto; 
+        
+        /* 把原属于 .app-container 的滚动条样式移到这里 */
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent; /* 滚动条轨道变透明 */
+        
+        /* 底部留出安全区和一点空隙 */
+        padding-bottom: calc(60px + var(--safe-bottom)); 
+        
+        /* 这个就是你要的“凭空消失的间距”！ */
+        /* 通过 mask-image 让顶部产生渐变透明效果，看起来像是融化消失了（可选，非常惊艳） */
+         mask-image: linear-gradient(to bottom, transparent, black 16px); 
+         -webkit-mask-image: linear-gradient(to bottom, transparent, black 16px); 
       }
       #postsContainer {
         padding-top: 16px;
@@ -1168,7 +1187,14 @@ body.dark {
            font-size: 1rem;
         }
         main {
-          padding: 0 10px;
+         /* 手机端说说列表左右两边稍微窄一点 */
+          padding: 0 8px; 
+          /* 确保底部有足够的空间给“回到顶部”按钮，不要被手机底部的返回条遮挡 */
+          padding-bottom: calc(80px + var(--safe-bottom)); 
+          /* 如果你在电脑端加了 mask-image (渐变消失特效)，手机端可以根据喜好决定要不要保留 */
+          /* 手机端滑动比较快，加上会有不错的质感 */
+           mask-image: linear-gradient(to bottom, transparent, black 8px); 
+           -webkit-mask-image: linear-gradient(to bottom, transparent, black 8px); 
         }
         .post {
           margin: 16px 0;
@@ -2166,7 +2192,7 @@ body.dark {
       }
 
       function setupInfiniteScroll() {
-        const scrollContainer = document.querySelector(".app-container");
+        const scrollContainer = document.querySelector("main"); // 把滚动监听绑定给 main
         if (!scrollContainer) return;
         const handleScroll = () => {
           if (isLoading) return;
