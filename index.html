@@ -86,7 +86,8 @@
       html,
       body {
         height: 100%;
-        overflow: hidden;
+         overflow-y: hidden; /* 这里你原来写的是 overflow: hidden，建议分拆 */
+	overflow-x: hidden; /* 👉 关键1：强制禁止整个网页水平溢出 */
         height: 100dvh;
       }
 
@@ -1203,7 +1204,7 @@ body.dark {
           box-shadow: 4px 4px 0px var(--border);
         }
         .post:hover {
-          transform: rotate(-0.8deg) skewX(-1deg) translate(-2px, -2px);
+           transform: none;
         }
         body.dark .post {
           box-shadow: 4px 4px 0px var(--border);
