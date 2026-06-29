@@ -1291,6 +1291,50 @@ body.dark {
           margin-bottom: 12px;
           font-size: 0.95rem;
         }
+        
+        /* 放在 @media (max-width: 768px) 内部最后面 */
+
+/* 1. 强制所有容器不允许水平溢出 */
+html,
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  overscroll-behavior-x: none !important; /* 阻止浏览器左右回弹 */
+}
+
+.app-container,
+main {
+  overflow-x: hidden !important;
+}
+
+/* 2. 移动端完全禁用所有变形（旋转/倾斜），根治溢出源头 */
+.topbar-inner,
+.topbar-inner:hover,
+.blog-brand,
+.blog-brand:hover,
+.post,
+.post:hover,
+.post:nth-child(even),
+.post::after,
+.post:hover::after,
+.img-nav-btn,
+.img-nav-btn:hover {
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+/* 3. 移动端 hover 时也不改变阴影/位移，防止触发重绘导致溢出 */
+.topbar-inner:hover,
+.blog-brand:hover,
+.post:hover {
+  box-shadow: var(--p-shadow) !important;
+  translate: none !important;
+}
+
+/* 4. 限制触摸滚动方向，禁止水平拖拽 */
+body {
+  touch-action: pan-y !important;
+}
       }
       @media (max-width: 480px) {
         #modalSearchInput,
