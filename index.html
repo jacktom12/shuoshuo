@@ -389,7 +389,7 @@ body.dark {
 
       .post-time {
         color: var(--ink);
-        background: var(--accent);
+        background: #A8C9A8;  /* 🌿 草青色（柔和鼠尾草绿） */
         padding: 3px 12px;
         font-size: 0.8rem;
         font-weight: 900;
@@ -399,6 +399,9 @@ body.dark {
         border: 2px solid var(--border);
         border-radius: var(--sketch-radius-btn);
       }
+      body.dark .post-time {
+  background: #3D5C5C;  /* 🌙 深色模式下换成灰蓝绿色，和草青有明显区分 */
+}
       .post-time::before {
         content: "◇ // ";
         color: var(--ink);
@@ -1321,7 +1324,7 @@ body.dark .post-content blockquote {
           border-width: 2px;
         }
         .nav-btn {
-          display: none !important;
+          display: none !important;.post-time
         }
         #lbImg {
           max-width: 95%;
