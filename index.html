@@ -647,9 +647,7 @@ body.dark .post-content blockquote {
         z-index: 300000;
         justify-content: center;
         align-items: center;
-        transition:
-          opacity 0.25s ease,
-          background 0.38s ease;
+        transition: opacity 0.25s ease, background 0.6s ease;  /* 0.38s → 0.6s */
       }
       body.dark .lightbox {
         --lightbox-rgb: 26, 25, 23;
@@ -2636,9 +2634,22 @@ body {
           if (token === lightboxColorToken) resetLightboxBackdrop();
         }
       }
-      function sampleLightboxImageSource(src, token) {
-         return;
-      }
+       function sampleLightboxImageSource(src, token) {
+  if (/^https?:\/\//i.test(src)) {
+    const sampler = new Image();
+    sampler.crossOrigin = 'anonymous';
+    sampler.onload = () => updateLightboxBackdropFromImage(sampler, token);
+    sampler.onerror = () => {
+      if (token === lightboxColorToken) resetLightboxBackdrop();
+    };
+    sampler.src = src;
+    return;
+  }
+  // 如果 src 是 blob: 或 data: 等，直接使用 lbImg 元素
+  if (lbImg.complete && lbImg.naturalWidth) {
+    updateLightboxBackdropFromImage(lbImg, token);
+  }
+}
       function updateLightboxImage(animate = true) {
         if (!lbImg) return;
         document.getElementById("lbPrevBtn").style.display =
@@ -2649,7 +2660,8 @@ body {
           currentIndex + 1 + " / " + currentGallery.length;
         const imageSrc = currentGallery[currentIndex];
         const colorToken = ++lightboxColorToken;
-        resetLightboxBackdrop();
+        lbImg.onload = () => sampleLightboxImageSource(imageSrc, colorToken);
+lbImg.onerror = () => resetLightboxBackdrop();
         
         lbImg.removeAttribute("crossorigin");
         if (!animate) {
@@ -2671,54 +2683,61 @@ body {
         }, 160);
       }
        function animateSwitchImage(targetIdx, direction = 1) {
-  // 防止动画进行中重复点击，或越界
   if (lightboxSwitching || targetIdx < 0 || targetIdx >= currentGallery.length || targetIdx === currentIndex) return;
 
-  // 强制重置缩放/平移，保证水平滑动干净利落
   scale = 1;
   translateX = 0;
   translateY = 0;
 
   lightboxSwitching = true;
-  const distance = Math.min(window.innerWidth * 0.3, 200); // 滑动距离
-  const duration = 300; // 动画时长（毫秒）
+  const distance = Math.min(window.innerWidth * 0.3, 200);
+  const duration = 320;
 
   // ----- 1. 旧图滑出 -----
   lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
   lbImg.style.opacity = '0';
   lbImg.style.transform = `translateX(${-direction * distance}px) scale(0.92)`;
 
-  // ----- 2. 等待滑出完成，切换图片并滑入 -----
   setTimeout(() => {
-    // 更新索引和 UI
     currentIndex = targetIdx;
+    // 更新按钮和计数
     document.getElementById('lbPrevBtn').style.display = currentIndex > 0 ? 'flex' : 'none';
     document.getElementById('lbNextBtn').style.display = currentIndex < currentGallery.length - 1 ? 'flex' : 'none';
     lbCounter.textContent = currentIndex + 1 + ' / ' + currentGallery.length;
 
-    // 获取新图片地址
     const imageSrc = currentGallery[currentIndex];
 
-    // 瞬间切换图片，并将新图放在另一侧（滑入起始位置）
+    // 🧠 关键：清除旧 onload，防止冲突
+    lbImg.onload = null;
+    // 🧠 关键：不重置背景色！保留旧图颜色，让它自然过渡到新色
+
+    // 新图起始位置（从另一侧滑入）
     lbImg.style.transition = 'none';
     lbImg.src = imageSrc;
     lbImg.style.opacity = '0';
     lbImg.style.transform = `translateX(${direction * distance}px) scale(0.92)`;
+    void lbImg.offsetHeight; // 强制回流
 
-    // 强制浏览器回流，确保起始位置生效
-    void lbImg.offsetHeight;
+    // 🧠 关键：图片加载完成后，触发颜色提取（此时背景会从旧色平滑渐变到新色）
+    lbImg.onload = function() {
+      // 增加 token 防止旧回调覆盖新回调
+      sampleLightboxImageSource(imageSrc, ++lightboxColorToken);
+    };
+    // 如果加载失败，保持旧色不做变化，也不会闪
+    lbImg.onerror = function() {
+      // 什么都不做，保留旧色背景
+    };
 
     // 新图滑入中心
     lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
     lbImg.style.opacity = '1';
     lbImg.style.transform = `translateX(0px) scale(1)`;
 
-    // 动画结束后解锁
     setTimeout(() => {
-      lbImg.style.transition = '';   // 清空内联样式，恢复 CSS 控制
+      lbImg.style.transition = '';
       lightboxSwitching = false;
     }, duration + 50);
-  }, duration + 30); // 略大于滑出时长，确保旧图彻底消失
+  }, duration + 30);
 }
       function openLightbox() {
         lightboxClosing = false;
