@@ -15,8 +15,7 @@
       rel="icon"
       href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="15" y="20" width="70" height="60" rx="6" fill="%23fff9e6" stroke="%23323232" stroke-width="3"/><line x1="25" y1="35" x2="75" y2="35" stroke="%23323232" stroke-width="2"/><line x1="25" y1="45" x2="70" y2="45" stroke="%23323232" stroke-width="2"/><line x1="25" y1="55" x2="65" y2="55" stroke="%23323232" stroke-width="2"/><line x1="25" y1="65" x2="75" y2="65" stroke="%23323232" stroke-width="2"/><path d="M80 15 L85 20 L75 30 L70 25 Z" fill="%23E5AA70" stroke="%23323232" stroke-width="2"/></svg>'
     />
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
       :root {
         --safe-top: env(safe-area-inset-top, 0px);
@@ -26,10 +25,10 @@
 
         /* 完美同步登录页面的 P5 涂鸦风格配色体系 */
         --ink: #323232;
-        --bg: #f3e9dd;
-        --paper: #fff9e6;
+        --bg: #f3e9dd; /* 奶黄色底色 */
+        --paper: #fff9e6; /* 手绘米白纸张感 */
         --text: #323232;
-        --accent: #e5aa70;
+        --accent: #e5aa70; /* 标志性暖橙色 */
         --accent-dark: #d4924f;
         --border: #323232;
         --gold-glow: rgba(229, 170, 112, 0.4);
@@ -43,10 +42,12 @@
         --lightbox-btn-color: #323232;
         --lightbox-shadow: 3px 3px 0px #323232;
 
+        /* P5 倾斜与不规则手绘风骨架 */
         --p-skew: rotate(-0.5deg) skewX(-1deg);
         --p-skew-anti: skewX(1deg) rotate(0.5deg);
         --p-shadow: 4px 4px 0px #323232;
 
+        /* 手绘不规则圆角微调 */
         --sketch-radius-1: 8px 24px 8px 24px / 24px 8px 24px 8px;
         --sketch-radius-2: 24px 8px 24px 8px / 8px 24px 8px 24px;
         --sketch-radius-btn: 16px 5px 16px 5px / 5px 16px 5px 16px;
@@ -85,29 +86,31 @@
       html,
       body {
         height: 100%;
-        overflow-x: hidden;
+         overflow-y: hidden; /* 这里你原来写的是 overflow: hidden，建议分拆 */
+	overflow-x: hidden; /* 👉 关键1：强制禁止整个网页水平溢出 */
         height: 100dvh;
       }
 
       body {
-        margin: 0;
+      margin: 0;
         background-color: var(--bg);
         background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/wallpaperlight.png');
-        background-size: auto 100vh;
-        background-repeat: repeat-x;
-        background-attachment: fixed;
-        background-position: center top;
+        
+        /* 电脑端策略：固定背景，保持图案比例并自适应屏幕高度，横向平铺填满空白 */
+        background-size: auto 100vh; /* 高度撑满屏幕，宽度等比例缩放 */
+        background-repeat: repeat-x; /* 因为高度已经满了，只需要在横向（x轴）重复平铺 */
+        background-attachment: fixed; /* 滚动时背景固定不动，类似桌布效果 */
+        background-position: center top; /* 居中对齐 */
         color: var(--text);
-        font-family:
-          "LXGW WenKai Screen","Comic Sans MS", "Chalkboard SE",  sans-serif;
+        font-family: "LXGW WenKai Screen", sans-serif;
         display: flex;
         justify-content: center;
-        overflow: hidden;
+          overflow: hidden; 
         height: 100vh;
         height: 100dvh;
         -webkit-font-smoothing: antialiased;
       }
-      body.dark {
+body.dark {
         background-color: var(--bg);
         background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/wallpaperdark.png');
       }
@@ -117,67 +120,53 @@
         height: 100vh;
         height: 100dvh;
         overflow-y: auto;
-        background: transparent;
-        overflow-x: hidden;
+        background: transparent; /* 改为透明，让 body 的壁纸透出来 */
+         overflow-x: hidden; /* 👉 添加这一行，禁止水平方向滚动 */
         position: relative;
-        display: flex;
+         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        padding-bottom: 0;
+        overflow: hidden; /* 这里关掉滚动！ */
+        padding-bottom: 0; /* 去掉之前的 padding */
       }
 
-      /* ==========================================
-         顶部导航条 — 一体化延伸至刘海安全区
-         ========================================== */
+      /* 顶部导航条改造 */
       .topbar {
+       
         z-index: 20;
-        /* 核心：背景色与卡片一致，横向填满，顶部延伸到安全区 */
-        background: var(--paper);
-        padding-top: var(--safe-top);
-        padding-bottom: 12px;
-        padding-left: 0;
-        padding-right: 0;
-        margin: 0;
-        /* 底部手绘边框，与下方内容自然分割 */
-        border-bottom: 2px solid var(--border);
-        flex-shrink: 0;
-        position: relative;
-        /* 让顶部区域与卡片融合，无额外间隙 */
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+         padding-top: calc(var(--safe-top) + 5px);
+        padding-bottom: 16px;
+         /* 防止导航栏被压缩 */
+        flex-shrink: 0; 
       }
-      /* 暗黑模式下顶部边框颜色跟随 */
-      body.dark .topbar {
-        border-bottom-color: var(--border);
-        box-shadow: 0 2px 0 rgba(255, 255, 255, 0.03);
-      }
-
       .topbar-inner {
-        position: relative;
+          position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
-        /* 内边距和边距：让卡片在顶部区域内居中，且与边缘留出手绘呼吸感 */
         padding: 14px 20px;
-        margin: 10px 16px 0 16px;
-        background: var(--paper);
-        border: 2px solid var(--border);
-        border-radius: var(--sketch-radius-btn);
-        box-shadow: var(--p-shadow);
+        
+        /* 核心修改：变成独立的手绘长方形卡片 */
+        margin: 0 16px; /* 让卡片和屏幕边缘有空隙 */
+        background: var(--paper); /* 使用纸张背景色 */
+        border: 2px solid var(--border); /* 加上手绘边框 */
+        border-radius: var(--sketch-radius-btn); /* 使用你已有的手绘圆角变量 */
+        box-shadow: var(--p-shadow); /* 使用你已有的卡片阴影变量 */
+        
+        /* 稍微加一点倾斜，更有手作感 */
         transform: rotate(-0.5deg) skewX(-1deg);
-        transition:
-          transform 0.25s ease,
-          box-shadow 0.25s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
       }
+      /* 让整个圈框 hover 时也有呼吸感 */
       .topbar-inner:hover {
         transform: rotate(0deg) skewX(0deg) translate(-2px, -2px);
-        box-shadow: 6px 6px 0px var(--border);
+         box-shadow: 6px 6px 0px var(--border);
       }
+/* 针对暗黑模式修正投影颜色 */
       body.dark .topbar-inner {
-        box-shadow: 4px 5px 0px rgba(255, 255, 255, 0.05);
+         box-shadow: 4px 5px 0px rgba(255,255,255,0.05);
       }
-
-      .blog-brand {
+       .blog-brand {
         color: var(--ink) !important;
         background: var(--accent);
         padding: 6px 18px;
@@ -185,22 +174,25 @@
         font-size: 1.45rem;
         letter-spacing: 1px;
         text-transform: uppercase;
+        /* 增加手绘标签的样式 */
         border: 2px solid var(--border);
         border-radius: var(--sketch-radius-btn);
         box-shadow: 3px 3px 0px var(--border);
         transform: rotate(-3deg) skewX(-4deg);
         cursor: pointer;
         text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-        transition:
-          transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-          box-shadow 0.2s ease,
-          background 0.2s ease;
+        /* 使用 cubic-bezier 让过渡极其顺滑 */
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease;
       }
+
+      /* 去掉原来廉价的 wiggle，换成弹性的放大倾斜 */
       .blog-brand:hover {
+        /* 取消了原本的 animation: doodle-wiggle */
         background: var(--accent-dark);
         transform: rotate(2deg) scale(1.1) translateY(-2px);
         box-shadow: 5px 6px 0px var(--border);
       }
+      
       .blog-brand:active {
         transform: rotate(-1deg) scale(0.95) translateY(2px);
         box-shadow: 0px 0px 0px var(--border);
@@ -214,6 +206,7 @@
         min-width: 0;
       }
 
+      /* 导航小图标按钮 */
       .topbar-icon {
         background: var(--paper);
         border: 2px solid var(--border);
@@ -229,7 +222,7 @@
         justify-content: center;
         transition: all 0.15s ease;
       }
-      .topbar-icon>* {
+      .topbar-icon > * {
         transform: skewX(4deg) rotate(-2deg);
       }
       .topbar-icon:hover {
@@ -242,6 +235,7 @@
         box-shadow: 0px 0px 0px var(--border);
       }
 
+      /* 发布按钮大胶囊 */
       .publish-pill {
         background: #ffffff;
         border: 2px solid var(--border);
@@ -273,21 +267,30 @@
 
       main {
         padding: 0 16px;
-        flex: 1;
-        overflow-y: auto;
+         /* 让 main 撑满剩下的所有屏幕高度 */
+        flex: 1; 
+        /* 核心修改：让 main 成为独立滚动区域！ */
+        overflow-y: auto; 
+        
+        /* 把原属于 .app-container 的滚动条样式移到这里 */
         scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
-        padding-bottom: calc(60px + var(--safe-bottom));
-        mask-image: linear-gradient(to bottom, transparent, black 16px);
-        -webkit-mask-image: linear-gradient(to bottom, transparent, black 16px);
+        scrollbar-color: var(--border) transparent; /* 滚动条轨道变透明 */
+        
+        /* 底部留出安全区和一点空隙 */
+        padding-bottom: calc(60px + var(--safe-bottom)); 
+        
+        /* 这个就是你要的“凭空消失的间距”！ */
+        /* 通过 mask-image 让顶部产生渐变透明效果，看起来像是融化消失了（可选，非常惊艳） */
+         mask-image: linear-gradient(to bottom, transparent, black 16px); 
+         -webkit-mask-image: linear-gradient(to bottom, transparent, black 16px); 
       }
       #postsContainer {
         padding-top: 16px;
       }
 
       /* ==========================================
-         METAPHOR CARD V3 - 核心不规则涂鸦卡片
-         ========================================== */
+   METAPHOR CARD V3 - 核心不规则涂鸦卡片
+   ========================================== */
       .post {
         margin: 28px 0;
         padding: 24px;
@@ -304,6 +307,7 @@
           transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275),
           box-shadow 0.22s ease,
           border-color 0.22s ease;
+        /* 登录页同款米白信纸暗纹线效果 */
         background-image: repeating-linear-gradient(
           transparent,
           transparent 28px,
@@ -317,6 +321,7 @@
         transform: rotate(0.6deg) skewX(0.5deg);
       }
 
+      /* 底层趣味手绘阴影效果 */
       .post::before {
         content: "";
         position: absolute;
@@ -335,6 +340,8 @@
         background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' fill='%23DAA06D' stroke='%23F3E9DD' stroke-width='1.5'/%3E%3C/svg%3E")
           center/contain no-repeat;
       }
+      /* 右下角断裂撕纸点缀效果 */
+      /* 找到这段，替换 */
       .post::after {
         content: "";
         position: absolute;
@@ -349,7 +356,7 @@
         transition:
           opacity 0.35s ease,
           transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        transform: rotate(-15deg) scale(0);
+        transform: rotate(-15deg) scale(0); /* 初始缩成0，比0.7更有弹出感 */
       }
 
       .post:hover {
@@ -363,7 +370,7 @@
       }
       .post:hover::after {
         opacity: 1;
-        transform: rotate(12deg) scale(1.15);
+        transform: rotate(12deg) scale(1.15); /* 略微超出1，配合弹簧回弹 */
       }
 
       .post-right {
@@ -401,7 +408,7 @@
         font-size: 1rem;
         line-height: 1.7;
         word-wrap: break-word;
-        font-family: -apple-system, sans-serif;
+         font-family: "LXGW WenKai Screen", sans-serif;
         font-weight: 500;
       }
       .post-content p {
@@ -437,12 +444,53 @@
         list-style: none !important;
         margin-bottom: 4px;
       }
-      .post-content input[type="checkbox"] {
-        margin-right: 6px;
-        vertical-align: middle;
-        cursor: not-allowed;
-      }
+       .post-content input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  vertical-align: middle;
+  cursor: pointer;
 
+  border: 2px solid var(--border);
+  background: var(--paper);
+  border-radius: 4px;
+
+  box-shadow: 2px 2px 0px var(--border);
+  transform: rotate(-2deg);
+
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+/* hover：轻微抬起 */
+.post-content input[type="checkbox"]:hover {
+  transform: rotate(0deg) translateY(-1px);
+  box-shadow: 3px 3px 0px var(--border);
+  border-color: var(--accent);
+}
+
+/* 勾选状态：涂鸦完成感 */
+.post-content input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--border);
+  box-shadow: 2px 2px 0px var(--border);
+}
+
+/* 勾 */
+.post-content input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -55%) rotate(-8deg);
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+      /* 图片多图拖拽容器外观 */
       .post-images {
         overflow: hidden;
         padding: 12px 0 4px;
@@ -484,6 +532,7 @@
         box-shadow: 4px 4px 0px var(--border);
       }
 
+      /* 斜切模块点 */
       .img-dots {
         display: flex;
         justify-content: center;
@@ -512,8 +561,8 @@
       }
 
       /* ==========================================
-         P5高级重型手绘灯箱
-         ========================================== */
+   P5高级重型手绘灯箱
+   ========================================== */
       .lightbox {
         --lightbox-rgb: 243, 233, 221;
         display: none;
@@ -646,8 +695,8 @@
       }
 
       /* ==========================================
-         全屏手绘搜素面板
-         ========================================== */
+   全屏手绘搜素面板
+   ========================================== */
       .search-modal {
         position: fixed;
         inset: 0;
@@ -668,6 +717,7 @@
         display: flex;
       }
 
+      /* 涂鸦式滚动条定制 */
       .search-modal::-webkit-scrollbar,
       .search-results::-webkit-scrollbar,
       .app-container::-webkit-scrollbar,
@@ -790,8 +840,8 @@
       }
 
       /* ==========================================
-         重型涂鸦撕纸风发布面板
-         ========================================== */
+   重型涂鸦撕纸风发布面板
+   ========================================== */
       .publish-mask {
         position: fixed;
         inset: 0;
@@ -868,6 +918,7 @@
         transform: rotate(-1deg);
       }
 
+      /* 发布表单输入框样式完美等同于登录页输入框 */
       .publish-input,
       .publish-textarea {
         width: 100%;
@@ -884,8 +935,8 @@
       }
       body.dark .publish-input,
       body.dark .publish-textarea {
-        background: #2d2a26;
-        color: #f3e9dd;
+        background: #2d2a26; /* 与卡片背景一致 */
+        color: #f3e9dd; /* 浅色文字 */
         border-color: var(--border);
       }
       .publish-input:focus,
@@ -893,11 +944,11 @@
         border-color: var(--accent);
         border-radius: var(--sketch-radius-2);
         box-shadow: 4px 4px 0px var(--border);
-        background: #fffef7;
+        background: #fffef7; /* 极淡的奶油黄，手账纸质感 */
       }
       body.dark .publish-input:focus,
       body.dark .publish-textarea:focus {
-        background: #3a3834;
+        background: #3a3834; /* 聚焦时略亮 */
       }
 
       .publish-tools {
@@ -1054,8 +1105,8 @@
       }
 
       /* ==========================================
-         斜剪风格动态气泡 Toast
-         ========================================== */
+   斜剪风格动态气泡 Toast
+   ========================================== */
       .toast-wrap {
         position: fixed;
         top: calc(28px + var(--safe-top));
@@ -1088,7 +1139,7 @@
       .toast.success::before {
         content: "✍️ 手账已收录 // ";
       }
-
+      
       .toast.delete {
         color: #e53e3e;
       }
@@ -1124,6 +1175,7 @@
         }
       }
 
+      /* Wiggle 摇晃动态核心库 */
       @keyframes doodle-wiggle {
         0%,
         100% {
@@ -1140,15 +1192,14 @@
         }
       }
 
-      /* ==========================================
-         移动端适配 — 刘海一体化 & 防溢出
-         ========================================== */
       @media (max-width: 768px) {
         body {
           padding: 0;
-          background-size: 100vw auto;
-          background-repeat: repeat-y;
-          background-attachment: scroll;
+          /* 手机端策略：图片比例本身就适合手机，直接让宽度撑满，高度自适应并往下平铺 */
+          background-size: 100vw auto; /* 宽度撑满屏幕宽度，高度等比例缩放 */
+          background-repeat: repeat-y; /* 随着瀑布流往下滚，在纵向（y轴）重复铺设 */
+          /* 手机端通常不建议用 fixed，滚动时容易卡顿，随内容一起滚动更自然 */
+          background-attachment: scroll; 
           background-position: top center;
         }
         .app-container {
@@ -1156,32 +1207,34 @@
           border-left: none;
           border-right: none;
         }
-        .topbar {
-          /* 移动端顶部内边距略微减少，但安全区保留 */
-          padding-top: var(--safe-top);
+         .topbar {
+          /* 手机端顶部的留白小一点 */
+          padding-top: calc(var(--safe-top) + 8px); 
           padding-bottom: 8px;
-          padding-left: 0;
-          padding-right: 0;
-          border-bottom-width: 2px;
         }
         .topbar-inner {
-          margin: 6px 8px 0 8px;
+         margin: 0 8px; 
           padding: 8px 12px;
-          gap: 8px;
+          gap: 8px; /* 元素之间的间距缩小 */
         }
         .blog-brand {
           font-size: 1.15rem;
           padding: 4px 12px;
         }
-        .topbar-icon {
-          padding: 6px 8px;
-          font-size: 1rem;
+         .topbar-icon {
+           /* 手机端右侧按钮稍微缩一点，避免拥挤 */
+           padding: 6px 8px;
+           font-size: 1rem;
         }
         main {
-          padding: 0 8px;
-          padding-bottom: calc(80px + var(--safe-bottom));
-          mask-image: linear-gradient(to bottom, transparent, black 8px);
-          -webkit-mask-image: linear-gradient(to bottom, transparent, black 8px);
+         /* 手机端说说列表左右两边稍微窄一点 */
+          padding: 0 8px; 
+          /* 确保底部有足够的空间给“回到顶部”按钮，不要被手机底部的返回条遮挡 */
+          padding-bottom: calc(80px + var(--safe-bottom)); 
+          /* 如果你在电脑端加了 mask-image (渐变消失特效)，手机端可以根据喜好决定要不要保留 */
+          /* 手机端滑动比较快，加上会有不错的质感 */
+           mask-image: linear-gradient(to bottom, transparent, black 8px); 
+           -webkit-mask-image: linear-gradient(to bottom, transparent, black 8px); 
         }
         .post {
           margin: 16px 0;
@@ -1190,7 +1243,7 @@
           box-shadow: 4px 4px 0px var(--border);
         }
         .post:hover {
-          transform: none;
+           transform: none;
         }
         body.dark .post {
           box-shadow: 4px 4px 0px var(--border);
@@ -1277,43 +1330,51 @@
           margin-bottom: 12px;
           font-size: 0.95rem;
         }
+        
+        /* 放在 @media (max-width: 768px) 内部最后面 */
 
-        /* 移动端防水平溢出 + 禁用手绘变形（防止超出屏幕） */
-        html,
-        body {
-          overflow-x: hidden !important;
-          width: 100% !important;
-          overscroll-behavior-x: none !important;
-        }
-        .app-container,
-        main {
-          overflow-x: hidden !important;
-        }
-        .topbar-inner,
-        .topbar-inner:hover,
-        .blog-brand,
-        .blog-brand:hover,
-        .post,
-        .post:hover,
-        .post:nth-child(even),
-        .post::after,
-        .post:hover::after,
-        .img-nav-btn,
-        .img-nav-btn:hover {
-          transform: none !important;
-          -webkit-transform: none !important;
-        }
-        .topbar-inner:hover,
-        .blog-brand:hover,
-        .post:hover {
-          box-shadow: var(--p-shadow) !important;
-          translate: none !important;
-        }
-        body {
-          touch-action: pan-y !important;
-        }
+/* 1. 强制所有容器不允许水平溢出 */
+html,
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  overscroll-behavior-x: none !important; /* 阻止浏览器左右回弹 */
+}
+
+.app-container,
+main {
+  overflow-x: hidden !important;
+}
+
+/* 2. 移动端完全禁用所有变形（旋转/倾斜），根治溢出源头 */
+.topbar-inner,
+.topbar-inner:hover,
+.blog-brand,
+.blog-brand:hover,
+.post,
+.post:hover,
+.post:nth-child(even),
+.post::after,
+.post:hover::after,
+.img-nav-btn,
+.img-nav-btn:hover {
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+/* 3. 移动端 hover 时也不改变阴影/位移，防止触发重绘导致溢出 */
+.topbar-inner:hover,
+.blog-brand:hover,
+.post:hover {
+  box-shadow: var(--p-shadow) !important;
+  translate: none !important;
+}
+
+/* 4. 限制触摸滚动方向，禁止水平拖拽 */
+body {
+  touch-action: pan-y !important;
+}
       }
-
       @media (max-width: 480px) {
         #modalSearchInput,
         .publish-input,
@@ -1326,8 +1387,8 @@
       }
 
       /* ==========================================
-         回到顶部按钮 - 手绘风格
-         ========================================== */
+   回到顶部按钮 - 手绘风格 (修复可见性)
+   ========================================== */
       .back-to-top {
         position: fixed;
         bottom: calc(28px + var(--safe-bottom));
@@ -1380,8 +1441,8 @@
       }
 
       /* ==========================================
-         图片左右切换按钮
-         ========================================== */
+   图片左右切换按钮 - 手绘风格
+   ========================================== */
       .post-images-wrap {
         position: relative;
       }
@@ -1435,9 +1496,79 @@
         }
       }
 
-      /* ==========================================
-         手账漂浮装饰
-         ========================================== */
+      /* 漂浮装饰（手账风格） */
+      .doodle-star,
+      .doodle-sparkle,
+      .doodle-swirl {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        width: 48px;
+        height: 48px;
+        opacity: 0.7;
+      }
+      .doodle-star {
+        top: 20px;
+        left: 20px;
+        animation: float-star 5s ease-in-out infinite;
+      }
+      .doodle-sparkle {
+        bottom: 30px;
+        right: 30px;
+        width: 40px;
+        height: 40px;
+        animation: float-sparkle 6s ease-in-out infinite 1s;
+      }
+      .doodle-swirl {
+        top: 40%;
+        right: 15px;
+        width: 32px;
+        height: 32px;
+        animation: float-swirl 7s ease-in-out infinite 2s;
+      }
+      @keyframes float-star {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-15deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(-10deg);
+        }
+      }
+      @keyframes float-sparkle {
+        0%,
+        100% {
+          transform: translateY(0) rotate(10deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(15deg);
+        }
+      }
+      @keyframes float-swirl {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(5deg);
+        }
+      }
+
+      /* 暗色模式下装饰颜色微调 */
+      body.dark .doodle-star {
+        fill: #daa06d;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-sparkle {
+        fill: #b8875a;
+        stroke: #f3e9dd;
+      }
+      body.dark .doodle-swirl {
+        stroke: #f3e9dd;
+      }
+
+      /* 新增手账漂浮装饰 */
+      /* ===== 手账漂浮装饰 ===== */
       .doodle-star,
       .doodle-sparkle,
       .doodle-swirl,
@@ -1451,6 +1582,8 @@
         pointer-events: none;
         will-change: transform;
       }
+
+      /* 单个元素尺寸与初始位置 */
       .doodle-star {
         top: 20px;
         left: 20px;
@@ -1508,6 +1641,7 @@
         animation: floatLeaf 15s ease-in-out infinite 2s;
       }
 
+      /* 不规则飘浮动效 */
       @keyframes floatStar {
         0% {
           transform: translate(0, 0) rotate(-15deg) scale(1);
@@ -1636,6 +1770,7 @@
         }
       }
 
+      /* 暗黑模式下装饰颜色微调 */
       body.dark .doodle-star {
         fill: #daa06d;
         stroke: #f3e9dd;
@@ -1666,44 +1801,45 @@
         fill: #5e7b5c;
         stroke: #f3e9dd;
       }
+    
+.post-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.post-action-btn {
+  background: var(--paper);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 5px 8px;
+  border-radius: var(--sketch-radius-btn);
+  box-shadow: 2px 2px 0px var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  transform: rotate(-2deg) skewX(2deg);
+}
+.post-action-btn:hover {
+  transform: rotate(0deg) skewX(0deg) translateY(-1px);
+  box-shadow: 3px 3px 0px var(--border);
+}
+.post-action-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px 0px var(--border);
+}
+.post-action-btn.delete-btn {
+  color: #e53e3e;
+}
+.dark .post-action-btn.delete-btn {
+  color: #fc8181;
+}
 
-      .post-actions {
-        display: flex;
-        gap: 8px;
-        margin-left: auto;
-      }
-      .post-action-btn {
-        background: var(--paper);
-        border: 2px solid var(--border);
-        color: var(--text);
-        padding: 5px 8px;
-        border-radius: var(--sketch-radius-btn);
-        box-shadow: 2px 2px 0px var(--border);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s ease;
-        transform: rotate(-2deg) skewX(2deg);
-      }
-      .post-action-btn:hover {
-        transform: rotate(0deg) skewX(0deg) translateY(-1px);
-        box-shadow: 3px 3px 0px var(--border);
-      }
-      .post-action-btn:active {
-        transform: translateY(2px);
-        box-shadow: 0px 0px 0px var(--border);
-      }
-      .post-action-btn.delete-btn {
-        color: #e53e3e;
-      }
-      .dark .post-action-btn.delete-btn {
-        color: #fc8181;
-      }
-    </style>
+</style>
   </head>
   <body>
-    <!-- 手绘漂浮装饰 -->
+    <!-- 手绘漂浮装饰（来自登录页） -->
     <svg
       class="doodle-star"
       viewBox="0 0 24 24"
@@ -1740,6 +1876,8 @@
         d="M3 12 C 3 5 10 5 16 5 C 20 5 21 9 18 12 C 15 15 10 13 12 9 C 14 5 22 9 21 16"
       ></path>
     </svg>
+
+    <!-- 小花朵 -->
     <svg
       class="doodle-flower"
       viewBox="0 0 24 24"
@@ -1754,6 +1892,8 @@
       <path d="M21 12 Q16 12 12 12" />
       <circle cx="12" cy="12" r="2" fill="#E5AA70" />
     </svg>
+
+    <!-- 小纸飞机 -->
     <svg
       class="doodle-plane"
       viewBox="0 0 24 24"
@@ -1765,6 +1905,8 @@
     >
       <path d="M2 12 L10 14 L12 22 L22 2 L2 12Z" fill="#FFF9E6" />
     </svg>
+
+    <!-- 回形针 -->
     <svg
       class="doodle-clip"
       viewBox="0 0 24 24"
@@ -1775,6 +1917,8 @@
     >
       <path d="M17 2 L8 12 C6 14 6 16 8 18 C10 20 12 20 14 18 L20 10" />
     </svg>
+
+    <!-- 小月亮 -->
     <svg
       class="doodle-moon"
       viewBox="0 0 24 24"
@@ -1784,6 +1928,8 @@
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
+
+    <!-- 小叶子 -->
     <svg
       class="doodle-leaf"
       viewBox="0 0 24 24"
@@ -1802,6 +1948,7 @@
         <div class="topbar-inner">
           <div class="blog-brand" id="logoTitle">WEN</div>
           <div class="topbar-right">
+            <!-- 搜索按钮 -->
             <button class="topbar-icon" id="openSearchBtn" title="搜索">
               <svg
                 width="1.2em"
@@ -1817,6 +1964,8 @@
                 <line x1="21" y1="21" x2="15" y2="15"></line>
               </svg>
             </button>
+
+            <!-- 主题切换按钮（放一个图标，JS里再换另一个） -->
             <button class="topbar-icon" id="themeToggleBtn" title="切换主题">
               <svg
                 id="themeIcon"
@@ -1834,6 +1983,8 @@
                 ></path>
               </svg>
             </button>
+
+            <!-- 发布按钮 -->
             <button class="topbar-icon" id="openPublishBtn" title="发布">
               <svg
                 width="1.2em"
@@ -1890,21 +2041,22 @@
         const themeIcon = document.getElementById("themeIcon");
         if (!themeIcon) return;
         if (isDark) {
-          themeIcon.innerHTML =
-            `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+          // 深色模式 → 太阳图标
+          themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
         } else {
-          themeIcon.innerHTML =
-            `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+          // 浅色模式 → 月亮图标
+          themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
         }
       };
 
-      // 2. 初始化主题
+      // 2. 初始化主题（读取 localStorage）
       if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark");
       }
+      // 3. 同步图标（根据当前是否有 dark 类）
       updateThemeIcon(document.body.classList.contains("dark"));
 
-      // 3. 绑定主题切换
+      // 4. 绑定主题切换按钮事件
       document.getElementById("themeToggleBtn").onclick = () => {
         document.body.classList.toggle("dark");
         const isDark = document.body.classList.contains("dark");
@@ -1914,7 +2066,6 @@
 
       marked.setOptions({ breaks: true, gfm: true });
       const COLOR_BLOCKS = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "⬛", "⬜"];
-
       function randomColorBlock() {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
       }
@@ -1972,7 +2123,6 @@
       function escapeRegExp(s) {
         return s.replace(/[.*+?^${}()|\\[\]]/g, "\\$&");
       }
-
       function formatRelativeTime(dateStr) {
         const target = new Date(dateStr.replace(/-/g, "/"));
         if (isNaN(target.getTime())) return dateStr;
@@ -2017,7 +2167,8 @@
             }
             if (text || images.length) {
               return {
-                id: fileYear +
+                id:
+                  fileYear +
                   "_" +
                   idx +
                   "_" +
@@ -2032,28 +2183,23 @@
           .filter(Boolean);
       }
 
-      function buildPostHTML(p) {
-        const text = Array.isArray(p.content) ? p.content.join("\n\n") : p
-          .content || "";
+            function buildPostHTML(p) {
+        const text = Array.isArray(p.content) ? p.content.join("\n\n") : p.content || "";
         const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
         if (p.images && p.images.length) {
-          const imgs = p.images.map(url =>
-            `<img src="${url}" alt="" draggable="false">`
-          ).join("");
-          const navBtns = p.images.length > 1 ?
-            `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>` :
-            "";
-          imagesHtml =
-            `<div class="post-images-wrap">${navBtns}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+          const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
+          const navBtns = p.images.length > 1
+            ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
+            : "";
+          imagesHtml = `<div class="post-images-wrap">${navBtns}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
         }
 
         const hasAuth = !!getPublishPassword();
         let actionsHtml = '';
         if (hasAuth) {
-          actionsHtml =
-            `<div class="post-actions">
+            actionsHtml = `<div class="post-actions">
                 <button class="post-action-btn edit-btn" onclick="openEditEditor('${p.id}')" title="编辑">
                     <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                 </button>
@@ -2079,23 +2225,24 @@
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
         try {
-          const res = await fetch(`${WORKER_URL}/api/get-memos`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
+                   // 请求加上特定路径，并改为 POST 方法
+      const res = await fetch(`${WORKER_URL}/api/get-memos`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+            if (!res.ok) throw new Error("网络响应错误");
+            const json = await res.json();
+            if (json.code === 200) {
+                allPosts = json.data || [];
+            } else {
+                throw new Error(json.msg || "获取数据失败");
             }
-          });
-          if (!res.ok) throw new Error("网络响应错误");
-          const json = await res.json();
-          if (json.code === 200) {
-            allPosts = json.data || [];
-          } else {
-            throw new Error(json.msg || "获取数据失败");
-          }
         } catch (err) {
-          console.error(err);
-          showToast("加载失败，请检查网络或配置", "error");
-          allPosts = [];
+            console.error(err);
+            showToast("加载失败，请检查网络或配置", "error");
+            allPosts = [];
         }
 
         filtered = [...allPosts];
@@ -2129,7 +2276,7 @@
       }
 
       function setupInfiniteScroll() {
-        const scrollContainer = document.querySelector("main");
+        const scrollContainer = document.querySelector("main"); // 把滚动监听绑定给 main
         if (!scrollContainer) return;
         const handleScroll = () => {
           if (isLoading) return;
@@ -2155,7 +2302,6 @@
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
-
       function bindImagesInContainer(container) {
         container.querySelectorAll(".post-images").forEach((wrap) => {
           if (wrap.dataset.boundDrag) return;
@@ -2186,48 +2332,40 @@
               prevTrans = 0,
               curTrans = 0,
               animId = 0;
-
             function setPos() {
               slide.style.transform = `translateX(${curTrans}px)`;
             }
-
             function anim() {
               if (!isDrag) return;
               setPos();
               animId = requestAnimationFrame(anim);
             }
-
             function stopAnim() {
               if (animId) {
                 cancelAnimationFrame(animId);
                 animId = 0;
               }
             }
-
             function gx(e) {
               return e.type.includes("mouse") ? e.pageX : e.touches[0].clientX;
             }
-
             function gy(e) {
               return e.type.includes("mouse") ? e.pageY : e.touches[0].clientY;
             }
-
             function updateDots() {
               dots.forEach((d) => d.classList.remove("active"));
               if (dots[cur]) dots[cur].classList.add("active");
             }
-
             function goTo(idx, animate = true) {
               cur = Math.max(0, Math.min(total - 1, idx));
               curTrans = -imgs[cur].offsetLeft;
               prevTrans = curTrans;
-              slide.style.transition = animate ?
-                "transform 0.15s cubic-bezier(0.25,1,0.5,1)" :
-                "none";
+              slide.style.transition = animate
+                ? "transform 0.15s cubic-bezier(0.25,1,0.5,1)"
+                : "none";
               setPos();
               updateDots();
             }
-
             function forceStop() {
               isDrag = false;
               isScrolling = null;
@@ -2237,7 +2375,6 @@
               curTrans = prevTrans;
               setPos();
             }
-
             function tStart(e) {
               if (e.type === "mousedown" && e.button !== 0) return;
               isDrag = true;
@@ -2250,7 +2387,6 @@
               stopAnim();
               animId = requestAnimationFrame(anim);
             }
-
             function tMove(e) {
               if (!isDrag) return;
               const dx = gx(e) - sX,
@@ -2265,7 +2401,6 @@
               moved = dx;
               curTrans = prevTrans + dx;
             }
-
             function tEnd() {
               if (!isDrag) return;
               isDrag = false;
@@ -2276,9 +2411,9 @@
               if (Math.abs(moved) > iw * 0.22) {
                 const ms = Math.max(1, Math.round(Math.abs(moved) / iw));
                 cur =
-                  moved < 0 ?
-                  Math.min(total - 1, cur + ms) :
-                  Math.max(0, cur - ms);
+                  moved < 0
+                    ? Math.min(total - 1, cur + ms)
+                    : Math.max(0, cur - ms);
               }
               goTo(cur);
               moved = 0;
@@ -2300,14 +2435,13 @@
             if (wrapParent) {
               const prevBtn = wrapParent.querySelector(".img-nav-prev");
               const nextBtn = wrapParent.querySelector(".img-nav-next");
-
               function updateNavBtns() {
                 if (prevBtn) prevBtn.classList.toggle("hidden", cur <= 0);
                 if (nextBtn)
                   nextBtn.classList.toggle("hidden", cur >= total - 1);
               }
               const origGoTo = goTo;
-              goTo = function(idx, animate) {
+              goTo = function (idx, animate) {
                 origGoTo(idx, animate);
                 updateNavBtns();
               };
@@ -2348,14 +2482,11 @@
       // ---------- 完整灯箱逻辑 ----------
       function applyTransform() {
         if (lbImg)
-          lbImg.style.transform =
-          `translate(${translateX}px,${translateY}px) scale(${scale})`;
+          lbImg.style.transform = `translate(${translateX}px,${translateY}px) scale(${scale})`;
       }
-
       function setLightboxImageMotion(x = 0, y = 0, s = 1) {
         if (lbImg) lbImg.style.transform = `translate(${x}px,${y}px) scale(${s})`;
       }
-
       function resetTransform() {
         scale = 1;
         baseScale = 1;
@@ -2367,14 +2498,12 @@
           applyTransform();
         }
       }
-
       function resetLightboxBackdrop() {
-        const fallback = document.body.classList.contains("dark") ?
-          "26, 25, 23" :
-          "243, 233, 221";
+        const fallback = document.body.classList.contains("dark")
+          ? "26, 25, 23"
+          : "243, 233, 221";
         lb.style.setProperty("--lightbox-rgb", fallback);
       }
-
       function getDominantImageColor(img) {
         const canvas = document.createElement("canvas");
         const size = 56;
@@ -2398,9 +2527,9 @@
           if (
             (brightness > 0.96 && saturation < 0.08) ||
             (brightness < 0.06 && saturation < 0.08)
-          ) continue;
-          const key =
-            `${Math.round(r / 32)},${Math.round(g / 32)},${Math.round(b / 32)}`;
+          )
+            continue;
+          const key = `${Math.round(r / 32)},${Math.round(g / 32)},${Math.round(b / 32)}`;
           const item = buckets.get(key) || {
             count: 0,
             r: 0,
@@ -2426,7 +2555,6 @@
           b: Math.round(best.b / best.count),
         };
       }
-
       function updateLightboxBackdropFromImage(img, token) {
         try {
           const color = getDominantImageColor(img);
@@ -2439,7 +2567,6 @@
           if (token === lightboxColorToken) resetLightboxBackdrop();
         }
       }
-
       function sampleLightboxImageSource(src, token) {
         if (/^https?:\/\//i.test(src)) {
           const sampler = new Image();
@@ -2455,7 +2582,6 @@
           updateLightboxBackdropFromImage(lbImg, token);
         }
       }
-
       function updateLightboxImage(animate = true) {
         if (!lbImg) return;
         document.getElementById("lbPrevBtn").style.display =
@@ -2488,14 +2614,14 @@
             sampleLightboxImageSource(imageSrc, colorToken);
         }, 160);
       }
-
       function animateSwitchImage(targetIdx, direction = 1) {
         if (
           lightboxSwitching ||
           targetIdx < 0 ||
           targetIdx >= currentGallery.length ||
           targetIdx === currentIndex
-        ) return;
+        )
+          return;
         lightboxSwitching = true;
         const distance = Math.min(window.innerWidth * 0.26, 180);
         lbImg.classList.add("switching");
@@ -2521,7 +2647,6 @@
           }, 240);
         }, 170);
       }
-
       function openLightbox() {
         lightboxClosing = false;
         resetTransform();
@@ -2535,7 +2660,6 @@
         document.body.style.overflow = "hidden";
         updateLightboxImage(false);
       }
-
       function closeLightbox(exitDirection = "fade") {
         if (lightboxClosing) return;
         lightboxClosing = true;
@@ -2558,14 +2682,12 @@
           lightboxClosing = false;
         }, 230);
       }
-
       function showNext() {
         if (scale !== 1 || currentGallery.length <= 1) return;
         if (currentIndex < currentGallery.length - 1) {
           animateSwitchImage(currentIndex + 1, 1);
         }
       }
-
       function showPrev() {
         if (scale !== 1 || currentGallery.length <= 1) return;
         if (currentIndex > 0) {
@@ -2576,7 +2698,6 @@
       function ptDist(p1, p2) {
         return Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
       }
-
       function updatePtrCache(e) {
         for (let i = 0; i < pointerCache.length; i++) {
           if (pointerCache[i].pointerId === e.pointerId) {
@@ -2585,7 +2706,6 @@
           }
         }
       }
-
       function removePtrCache(e) {
         for (let i = 0; i < pointerCache.length; i++) {
           if (pointerCache[i].pointerId === e.pointerId) {
@@ -2641,7 +2761,8 @@
             }
             lbImg.style.transition = "transform 0.1s ease-out";
             applyTransform();
-          }, { passive: false },
+          },
+          { passive: false },
         );
 
         let dragStartX = 0,
@@ -2712,7 +2833,6 @@
             applyTransform();
           }
         });
-
         function handlePointerUp(e) {
           if (!isDragging) {
             removePtrCache(e);
@@ -2802,15 +2922,15 @@
         });
       }
 
-      // ---------- 搜索逻辑 ----------
+      // ---------- 搜索逻辑 (略 保持原样) ----------
       function getCleanTextForSearch(rawContent) {
-        let text = Array.isArray(rawContent) ?
-          rawContent.join("\n\n") :
-          rawContent || "";
+        /* ... 完整保留 ... */
+        let text = Array.isArray(rawContent)
+          ? rawContent.join("\n\n")
+          : rawContent || "";
         text = text.replace(/```[a-zA-Z0-9_-]*/g, "").replace(/`/g, "");
         return text;
       }
-
       function renderSearchResults(resetPage = true) {
         if (resetPage) searchPage = 1;
         const start = (searchPage - 1) * searchPerPage,
@@ -2820,9 +2940,9 @@
         pageR.forEach((post) => {
           const div = document.createElement("article");
           div.className = "post";
-          const raw = Array.isArray(post.content) ?
-            post.content.join("\n\n") :
-            post.content || "";
+          const raw = Array.isArray(post.content)
+            ? post.content.join("\n\n")
+            : post.content || "";
           let parsed = marked.parse(raw);
           if (currentSearchKeyword) {
             const regex = new RegExp(
@@ -2843,17 +2963,15 @@
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
             const navBtns2 =
-              post.images.length > 1 ?
-              `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>` :
-              "";
-            imagesHtml =
-              `<div class="post-images-wrap">${navBtns2}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+              post.images.length > 1
+                ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
+                : "";
+            imagesHtml = `<div class="post-images-wrap">${navBtns2}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
           }
           const hasAuth = !!getPublishPassword();
           let actionsHtml = "";
           if (hasAuth) {
-            actionsHtml =
-              `<div class="post-actions">
+            actionsHtml = `<div class="post-actions">
                 <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
                     <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                 </button>
@@ -2862,8 +2980,7 @@
                 </button>
             </div>`;
           }
-          div.innerHTML =
-            `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
+          div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
           <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
           searchResultsDiv.appendChild(div);
         });
@@ -2883,12 +3000,12 @@
                 renderSearchResults(false);
                 obs.unobserve(ldr);
               }
-            }, { root: searchModal, rootMargin: "200px" },
+            },
+            { root: searchModal, rootMargin: "200px" },
           );
           obs.observe(ldr);
         }
       }
-
       function performSearch() {
         const kw = modalSearchInput.value.trim().toLowerCase();
         currentSearchKeyword = kw;
@@ -2906,14 +3023,13 @@
           );
           if (!currentSearchResults.length)
             searchResultsDiv.innerHTML =
-            '<div class="search-loader">😢 没有找到相关手账</div>';
+              '<div class="search-loader">😢 没有找到相关手账</div>';
           else {
             searchResultsDiv.innerHTML = "";
             renderSearchResults(true);
           }
         }, 50);
       }
-
       function openSearchModal() {
         lastScrollY = window.scrollY;
         searchModal.classList.add("open");
@@ -2922,7 +3038,6 @@
         modalSearchInput.focus();
         performSearch();
       }
-
       function closeSearchModalFunc() {
         searchModal.classList.remove("open");
         document.body.style.overflow = "";
@@ -2931,47 +3046,40 @@
 
       // ---------- 发布功能 ----------
       function setPublishPassword(p) {
-        const e = new Date(
+        /* 简写保留完整 */ const e = new Date(
           Date.now() + PUBLISH_PWD_DAYS * 86400000,
         ).toUTCString();
-        document.cookie =
-          `${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`;
+        document.cookie = `${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`;
       }
-
       function getPublishPassword() {
         const m = document.cookie.match(
           new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`),
         );
         return m ? decodeURIComponent(m[1]) : "";
       }
-
       function clearPublishPassword() {
-        document.cookie =
-          `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+        document.cookie = `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
       }
-
       function getNowBeijingString() {
         const d = new Date(Date.now() + 8 * 3600000);
         const p = (n) => String(n).padStart(2, "0");
         return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`;
       }
-
       function insertNewPostToTop(post) {
         allPosts.unshift(post);
         filtered.unshift(post);
         const t = document.createElement("div");
         t.innerHTML = buildPostHTML(post);
         if (postsContainer) {
-          postsContainer.firstChild ?
-            postsContainer.insertBefore(
-              t.firstElementChild,
-              postsContainer.firstChild,
-            ) :
-            postsContainer.appendChild(t.firstElementChild);
+          postsContainer.firstChild
+            ? postsContainer.insertBefore(
+                t.firstElementChild,
+                postsContainer.firstChild,
+              )
+            : postsContainer.appendChild(t.firstElementChild);
           bindImagesInContainer(postsContainer);
         }
       }
-
       function addSelectedPublishFiles(files) {
         let added = 0;
         Array.from(files || []).forEach((f) => {
@@ -2988,16 +3096,14 @@
           showToast("请拖入图片文件", "error");
         }
       }
-
       function openPublishEditor() {
-        if (publishModal) publishModal.remove();
+        /* 略 原样保留 */ if (publishModal) publishModal.remove();
         selectedPublishFiles = [];
         publishPreviewDragIndex = null;
         const savedPwd = getPublishPassword();
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
-        publishModal.innerHTML =
-          `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">可点击选择，也可拖放图片到这里</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools"><button id="selectImg" class="pick-img-btn">选择照片</button><span id="imgCountText" class="publish-tip">可点击选择，也可拖放图片到这里</span></div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
         document.body.appendChild(publishModal);
         const close = () => {
           if (publishModal) {
@@ -3044,26 +3150,24 @@
         });
         document.getElementById("submitMemo").onclick = submitMemo;
         renderSelectedImages();
-
+        
         setTimeout(() => {
-          document.querySelector(".publish-textarea")?.focus();
-        }, 50);
+        document.querySelector(".publish-textarea")?.focus();
+    }, 50); // 用 setTimeout 延迟 50 毫秒可以确保弹窗在完全显示出来后再执行聚焦，体验最稳妥
       }
-
       function renderSelectedImages() {
         const wrap = document.getElementById("previewWrap"),
           ct = document.getElementById("imgCountText");
         if (!wrap || !ct) return;
-        ct.textContent = selectedPublishFiles.length ?
-          `已选择${selectedPublishFiles.length}张图片` :
-          "未选择图片";
+        ct.textContent = selectedPublishFiles.length
+          ? `已选择${selectedPublishFiles.length}张图片`
+          : "未选择图片";
         if (!selectedPublishFiles.length) {
           wrap.innerHTML =
             '<div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div>';
           return;
         }
-        wrap.innerHTML =
-          `<div class="preview-grid">${selectedPublishFiles.map((i, idx) => `<div class="preview-item" draggable="true" data-idx="${idx}"><img src="${i.previewUrl}" draggable="false"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
+        wrap.innerHTML = `<div class="preview-grid">${selectedPublishFiles.map((i, idx) => `<div class="preview-item" draggable="true" data-idx="${idx}"><img src="${i.previewUrl}" draggable="false"/><button class="preview-del" data-idx="${idx}">✕</button></div>`).join("")}</div>`;
         wrap.querySelectorAll(".preview-item").forEach((item) => {
           const idx = Number(item.dataset.idx);
           item.addEventListener("dragstart", (e) => {
@@ -3127,8 +3231,7 @@
           };
         });
       }
-
-      async function submitMemo() {
+            async function submitMemo() {
         const savedPwd = getPublishPassword();
         const pwdInput = document.getElementById("publishPwd");
         const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
@@ -3139,8 +3242,7 @@
         }
 
         const btn = document.getElementById("submitMemo");
-        if (btn) { btn.textContent = "发布中...";
-          btn.disabled = true; }
+        if(btn) { btn.textContent = "发布中..."; btn.disabled = true; }
         try {
           const newImgList = [];
           for (const item of selectedPublishFiles) {
@@ -3203,32 +3305,32 @@
         document.getElementById("cancelDeleteBtn").onclick = close;
 
         document.getElementById("confirmDeleteBtn").onclick = async () => {
-          close();
-          const pwd = getPublishPassword();
-          if (!pwd) {
-            return showToast("凭证已过期，请重新点击发布校验密码", "error");
-          }
-
-          try {
-            const res = await fetch(WORKER_URL, {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id, publishPassword: pwd })
-            });
-            const json = await res.json();
-            if (json.code === 200) {
-              setPublishPassword(pwd);
-              showToast("删除成功", "delete");
-              allPosts = allPosts.filter(p => p.id !== id);
-              filtered = filtered.filter(p => p.id !== id);
-              render(true);
-            } else {
-              if (json.code === 403) clearPublishPassword();
-              showToast(json.msg || "删除失败", "error");
+            close();
+            const pwd = getPublishPassword();
+            if (!pwd) {
+                return showToast("凭证已过期，请重新点击发布校验密码", "error");
             }
-          } catch (e) {
-            showToast("网络错误", "error");
-          }
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, publishPassword: pwd })
+                });
+                const json = await res.json();
+                if (json.code === 200) {
+                    setPublishPassword(pwd);
+                    showToast("删除成功", "delete");
+                    allPosts = allPosts.filter(p => p.id !== id);
+                    filtered = filtered.filter(p => p.id !== id);
+                    render(true);
+                } else {
+                    if (json.code === 403) clearPublishPassword();
+                    showToast(json.msg || "删除失败", "error");
+                }
+            } catch (e) {
+                showToast("网络错误", "error");
+            }
         };
       }
 
@@ -3246,13 +3348,11 @@
         publishPreviewDragIndex = null;
 
         const savedPwd = getPublishPassword();
-        const contentText = Array.isArray(post.content) ? post.content.join(
-          "\n") : (post.content || "");
+        const contentText = Array.isArray(post.content) ? post.content.join("\n") : (post.content || "");
 
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
-        publishModal.innerHTML =
-          `<div class="publish-panel" onclick="event.stopPropagation()">
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()">
             <div class="publish-top">
                 <h3 class="publish-title">编辑说说</h3>
                 <button id="closeMemo" class="publish-close">✕</button>
@@ -3289,16 +3389,14 @@
           if (publishModal) {
             publishModal.remove();
             publishModal = null;
-            selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i
-            .previewUrl));
+            selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
             selectedPublishFiles = [];
           }
         };
         publishModal.onclick = close;
         document.getElementById("closeMemo").onclick = close;
         document.getElementById("closeMemo2").onclick = close;
-        document.getElementById("selectImg").onclick = () => document
-          .getElementById("imgFile").click();
+        document.getElementById("selectImg").onclick = () => document.getElementById("imgFile").click();
         document.getElementById("imgFile").addEventListener("change", (e) => {
           addSelectedPublishFiles(e.target.files);
           e.target.value = "";
@@ -3307,16 +3405,14 @@
       }
 
       window.removeExistingImage = function(index) {
-        existingImagesForEdit.splice(index, 1);
-        const listDiv = document.getElementById('existingImagesList');
-        if (listDiv) {
-          listDiv.innerHTML = existingImagesForEdit.map((img, idx) =>
-            `<img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;" onclick="removeExistingImage(${idx})" title="点击移除" />`
-          ).join('');
-        }
-        if (existingImagesForEdit.length === 0) {
-          document.getElementById('existingImagesArea').style.display = 'none';
-        }
+          existingImagesForEdit.splice(index, 1);
+          const listDiv = document.getElementById('existingImagesList');
+          if (listDiv) {
+              listDiv.innerHTML = existingImagesForEdit.map((img, idx) => `<img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; cursor: pointer;" onclick="removeExistingImage(${idx})" title="点击移除" />`).join('');
+          }
+          if (existingImagesForEdit.length === 0) {
+              document.getElementById('existingImagesArea').style.display = 'none';
+          }
       };
 
       async function submitEditMemo() {
@@ -3325,14 +3421,12 @@
         const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
         const content = document.getElementById("memoContent").value.trim();
 
-        if (!pwd || (!content && !selectedPublishFiles.length && !
-            existingImagesForEdit.length)) {
+        if (!pwd || (!content && !selectedPublishFiles.length && !existingImagesForEdit.length)) {
           return showToast("请填写完整内容和密码", "error");
         }
 
         const btn = document.getElementById("submitEditMemo");
-        if (btn) { btn.textContent = "保存中...";
-          btn.disabled = true; }
+        if(btn) { btn.textContent = "保存中..."; btn.disabled = true; }
         try {
           const newImgList = [];
           for (const item of selectedPublishFiles) {
@@ -3379,7 +3473,7 @@
           }
         }
       }
-
+      
       function toBase64(file) {
         return new Promise((res, rej) => {
           const r = new FileReader();
@@ -3388,7 +3482,6 @@
           r.readAsDataURL(file);
         });
       }
-
       function showToast(m, t = "success", d = 2200) {
         let w = document.getElementById("toastWrap");
         const toast = document.createElement("div");
@@ -3438,7 +3531,7 @@
         backBtn.addEventListener("click", () => {
           scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
         });
-        handleScroll();
+        handleScroll(); // 初始检测一次
       }
 
       document.addEventListener("DOMContentLoaded", () => {
