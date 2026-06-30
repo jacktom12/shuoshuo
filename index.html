@@ -2670,39 +2670,56 @@ body {
             sampleLightboxImageSource(imageSrc, colorToken);
         }, 160);
       }
-      function animateSwitchImage(targetIdx, direction = 1) {
-        if (
-          lightboxSwitching ||
-          targetIdx < 0 ||
-          targetIdx >= currentGallery.length ||
-          targetIdx === currentIndex
-        )
-          return;
-        lightboxSwitching = true;
-        const distance = Math.min(window.innerWidth * 0.26, 180);
-        lbImg.classList.add("switching");
-        lbImg.style.opacity = "0";
-        setLightboxImageMotion(-direction * distance, 0, 0.96);
-        setTimeout(() => {
-          currentIndex = targetIdx;
-          updateLightboxImage(false);
-          lbImg.classList.add("switching");
-          lbImg.style.opacity = "0";
-          setLightboxImageMotion(direction * distance, 0, 0.96);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              lbImg.style.opacity = "1";
-              setLightboxImageMotion(0, 0, 1);
-            });
-          });
-          setTimeout(() => {
-            lbImg.classList.remove("switching");
-            lbImg.style.opacity = "";
-            resetTransform();
-            lightboxSwitching = false;
-          }, 240);
-        }, 170);
-      }
+       function animateSwitchImage(targetIdx, direction = 1) {
+  // 防止动画进行中重复点击，或越界
+  if (lightboxSwitching || targetIdx < 0 || targetIdx >= currentGallery.length || targetIdx === currentIndex) return;
+
+  // 强制重置缩放/平移，保证水平滑动干净利落
+  scale = 1;
+  translateX = 0;
+  translateY = 0;
+
+  lightboxSwitching = true;
+  const distance = Math.min(window.innerWidth * 0.3, 200); // 滑动距离
+  const duration = 300; // 动画时长（毫秒）
+
+  // ----- 1. 旧图滑出 -----
+  lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
+  lbImg.style.opacity = '0';
+  lbImg.style.transform = `translateX(${-direction * distance}px) scale(0.92)`;
+
+  // ----- 2. 等待滑出完成，切换图片并滑入 -----
+  setTimeout(() => {
+    // 更新索引和 UI
+    currentIndex = targetIdx;
+    document.getElementById('lbPrevBtn').style.display = currentIndex > 0 ? 'flex' : 'none';
+    document.getElementById('lbNextBtn').style.display = currentIndex < currentGallery.length - 1 ? 'flex' : 'none';
+    lbCounter.textContent = currentIndex + 1 + ' / ' + currentGallery.length;
+
+    // 获取新图片地址
+    const imageSrc = currentGallery[currentIndex];
+
+    // 瞬间切换图片，并将新图放在另一侧（滑入起始位置）
+    lbImg.style.transition = 'none';
+    lbImg.src = imageSrc;
+    lbImg.style.opacity = '0';
+    lbImg.style.transform = `translateX(${direction * distance}px) scale(0.92)`;
+
+    // 强制浏览器回流，确保起始位置生效
+    void lbImg.offsetHeight;
+
+    // 新图滑入中心
+    lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
+    lbImg.style.opacity = '1';
+    lbImg.style.transform = `translateX(0px) scale(1)`;
+
+    // 动画结束后解锁
+    setTimeout(() => {
+      lbImg.style.transition = '';   // 清空内联样式，恢复 CSS 控制
+      lightboxSwitching = false;
+    }, duration + 50);
+  }, duration + 30); // 略大于滑出时长，确保旧图彻底消失
+}
       function openLightbox() {
         lightboxClosing = false;
         resetTransform();
