@@ -2636,19 +2636,7 @@ body {
         }
       }
       function sampleLightboxImageSource(src, token) {
-        if (/^https?:\/\//i.test(src)) {
-          const sampler = new Image();
-          sampler.crossOrigin = "anonymous";
-          sampler.onload = () => updateLightboxBackdropFromImage(sampler, token);
-          sampler.onerror = () => {
-            if (token === lightboxColorToken) resetLightboxBackdrop();
-          };
-          sampler.src = src;
-          return;
-        }
-        if (lbImg.complete && lbImg.naturalWidth) {
-          updateLightboxBackdropFromImage(lbImg, token);
-        }
+         return;
       }
       function updateLightboxImage(animate = true) {
         if (!lbImg) return;
@@ -2661,8 +2649,7 @@ body {
         const imageSrc = currentGallery[currentIndex];
         const colorToken = ++lightboxColorToken;
         resetLightboxBackdrop();
-        lbImg.onload = () => sampleLightboxImageSource(imageSrc, colorToken);
-        lbImg.onerror = () => resetLightboxBackdrop();
+        
         lbImg.removeAttribute("crossorigin");
         if (!animate) {
           lbImg.src = imageSrc;
