@@ -460,7 +460,29 @@ body.dark .post-content ol > li::before {
   animation: none;
   clip-path: none;
 }
+/* 置顶专属前缀 Notice ! 的样式 */
+.pinned .notice-prefix {
+  color: #c98846; /* 截图里的橙色 */
+  font-weight: bold;
+}
 
+/* 置顶文章本身标题稍微调整，使其更贴合截图里的灰色描述感 */
+.pinned .post-title a {
+  color: #c98846; 
+}
+
+/* 置顶卡片的内部字体颜色调整 */
+.pinned .post-title a, 
+.pinned .post-title {
+  color: #c98846 !important; /* 截图中的橙色 */
+  font-size: 1.2em; /* 可选：让标题稍微大一点 */
+  font-weight: bold;
+}
+
+.pinned .post-content,
+.pinned .post-content p {
+  color: #a0a0a0 !important; /* 截图中的浅灰色 */
+}
 .pinned::before {
   content: "";
   position: absolute;
@@ -2484,13 +2506,12 @@ function stripPinKeyword(text) {
                 </button>
             </div>`;
         }
-  const pinBadge = isPinned ? `<div class="pin-badge"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="43" rx="5" ry="1.8" fill="#000000" opacity="0.18"></ellipse><circle cx="24" cy="18" r="12" fill="#E5AA70" stroke="#323232" stroke-width="2"></circle><circle cx="20" cy="14" r="3.5" fill="#FFF9E6" opacity="0.75"></circle><path d="M24 30 L24 40" stroke="#323232" stroke-width="2.5" stroke-linecap="round"></path><path d="M18 27 L24 40 L30 27 Z" fill="#D4924F" stroke="#323232" stroke-width="2" stroke-linejoin="round"></path></svg></div>` : '';
-  
-  const pinClass = isPinned ? ' pinned' : '';
-          return `<article class="post${pinClass}" id="post-${p.id}">
-    ${pinBadge}
+  const titleDisplay = isPinned ? `<span class="notice-prefix">Notice ! </span>${p.title}` : p.title;
+           return `<article class="post${pinClass}" id="post-${p.id}">
     <div class="post-header">
+     
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
+        <h2 class="post-title"><a href="https://tian.city/memo/${p.id}/" target="_blank">${titleDisplay}</a></h2>
       ${actionsHtml}
     </div>
     <div class="post-right">
