@@ -2374,8 +2374,8 @@ function isPinned(p) {
 }
 
 function getPinnedView(list) {
-  const pinned = list.filter(isPinned).slice(0, 1);
-  const rest = list.filter(p => !isPinned(p));
+  const pinned = list.filter(isPinned);   // 全部带关键词的都算置顶
+  const rest = list.filter(p => !isPinned(p));  // 用回按关键词过滤就没问题了,因为pinned本身就是全部
   return pinned.concat(rest);
 }
 
