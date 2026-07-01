@@ -447,30 +447,40 @@ body.dark .post-content ol > li::before {
   box-shadow: 1.5px 1.5px 0px var(--border);
 }
  
- .post.pinned {
+  .pinned {
   position: relative;
   margin-top: 20px;
-  padding: 18px 20px 18px 28px;
-  background: var(--paper);
-  border: 2px solid var(--border);
-  border-radius: var(--sketch-radius-1);
-  box-shadow: var(--p-shadow);
+  padding: 20px 24px 20px 40px;
+  background: var(--paper); /* 或 #ffffff */
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 柔和的阴影 */
+  border-left: none; /* 左侧由 before 元素接管 */
   transform: none;
   animation: none;
   clip-path: none;
 }
 
-.post.pinned::before {
+.pinned::before {
   content: "";
   position: absolute;
-  left: 0; top: 6px; bottom: 6px;
-  width: 10px;
-  background: repeating-radial-gradient(
-    circle at 0 6px,
-    var(--accent) 0 3px,
-    transparent 3px 12px
-  );
-  border-radius: 4px;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background-color: #cdb294; /* 匹配截图左侧波浪边缘的颜色 */
+  border-radius: 16px 0 0 16px;
+  
+  /* 使用 mask 创造半圆镂空的波浪边缘效果 */
+  -webkit-mask-image: radial-gradient(circle at -4px 10px, transparent 6px, black 6.5px);
+  -webkit-mask-size: 100% 20px;
+  -webkit-mask-position: 0 0;
+  -webkit-mask-repeat: repeat-y;
+  
+  mask-image: radial-gradient(circle at -4px 10px, transparent 6px, black 6.5px);
+  mask-size: 100% 20px;
+  mask-position: 0 0;
+  mask-repeat: repeat-y;
 }
 
 
