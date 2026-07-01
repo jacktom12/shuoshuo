@@ -2506,6 +2506,8 @@ function stripPinKeyword(text) {
                 </button>
             </div>`;
         }
+        const pinBadge = ''; 
+  const pinClass = isPinned ? ' pinned' : '';
   const titleDisplay = isPinned ? `<span class="notice-prefix">Notice ! </span>${p.title}` : p.title;
            return `<article class="post${pinClass}" id="post-${p.id}">
     <div class="post-header">
