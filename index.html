@@ -152,30 +152,7 @@ main {
   padding-top: 6px;
 }
 
-/* 导航下方的“打印出口” */
-#postsContainer::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(92%, 760px);
-  height: 30px;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(50, 50, 50, 0.06) 0px,
-      rgba(50, 50, 50, 0.06) 2px,
-      transparent 2px,
-      transparent 8px
-    ),
-    linear-gradient(180deg, rgba(255,249,230,0.96), rgba(243,233,221,0.98));
-  border-left: 2px solid var(--border);
-  border-right: 2px solid var(--border);
-  box-shadow: inset 0 6px 10px rgba(0,0,0,0.06);
-  z-index: 0;
-  pointer-events: none;
-}
+
 
 /* 让第一张像刚“打印”出来 */
 #postsContainer > .post:first-child {
@@ -2416,6 +2393,7 @@ body {
       </header>
       <button class="back-to-top" id="backToTopBtn" title="回到顶部">⬆︎</button>
       <main>
+		  <div id="postsContainer"></div>
          <div id="loader">正在检索记忆碎片...</div>
       </main>
     </div>
