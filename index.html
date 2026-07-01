@@ -672,7 +672,7 @@ body.dark .pin-badge-text svg {
         pointer-events: none;
         opacity: 0;
         z-index: -1;
- box-shadow: 0 0 0 2px var(--gold-glow);
+   box-shadow: 0 0 0 2px transparent, 8px 8px 0px var(--gold-glow);
         transition:
           opacity 0.22s ease,
           transform 0.22s ease;
@@ -700,14 +700,15 @@ body.dark .pin-badge-text svg {
         transform: rotate(-15deg) scale(0); /* 初始缩成0，比0.7更有弹出感 */
       }
 
-        .post:hover {
+         .post:hover {
+  transform: rotate(-1.5deg) skewX(-1deg) translate(-4px, -4px);
   border-color: var(--accent-dark);
   box-shadow: 6px 6px 0px var(--border);
 }
 
 .post:hover::before {
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: translate(4px, 4px);
 }
 
 .post:hover::after {
