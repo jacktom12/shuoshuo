@@ -318,6 +318,134 @@ body.dark {
 
 
 /* ===== 置顶卡片 ===== */
+
+/* ===== 标题 H1~H4 ===== */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  font-family: 'LXGW WenKai Screen', sans-serif;
+  font-weight: 900;
+  margin: 20px 0 12px;
+  line-height: 1.4;
+  position: relative;
+  display: inline-block;
+}
+
+.post-content h1 {
+  font-size: 1.5rem;
+  color: var(--ink);
+  background: var(--accent);
+  padding: 4px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-btn);
+  box-shadow: 3px 3px 0px var(--border);
+  transform: rotate(-1deg) skewX(-3deg);
+}
+
+.post-content h2 {
+  font-size: 1.3rem;
+  color: var(--accent-dark);
+  padding-bottom: 4px;
+  border-bottom: 3px solid var(--accent);
+  transform: rotate(-0.3deg);
+}
+
+.post-content h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 40%;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, var(--accent-dark), var(--accent-dark) 4px, transparent 4px, transparent 8px);
+}
+
+.post-content h3 {
+  font-size: 1.12rem;
+  color: var(--text);
+  padding-left: 14px;
+  border-left: 4px solid var(--accent);
+  transform: skewX(-1deg);
+}
+
+.post-content h4 {
+  font-size: 1rem;
+  color: var(--secondary-text);
+  text-decoration: underline wavy var(--accent) 2px;
+  text-underline-offset: 4px;
+}
+
+body.dark .post-content h1 {
+  box-shadow: 3px 3px 0px var(--border);
+}
+body.dark .post-content h2 {
+  border-bottom-color: var(--accent-dark);
+}
+body.dark .post-content h2::after {
+  background: repeating-linear-gradient(90deg, var(--accent), var(--accent) 4px, transparent 4px, transparent 8px);
+}
+
+@media (max-width: 768px) {
+  .post-content h1 { font-size: 1.25rem; padding: 3px 12px; }
+  .post-content h2 { font-size: 1.12rem; }
+  .post-content h3 { font-size: 1.02rem; }
+}
+/* ===== 无序 / 有序列表(非checkbox) ===== */
+.post-content ul > li:not(:has(input[type="checkbox"])),
+.post-content ol > li {
+  position: relative;
+  padding-left: 26px;
+}
+
+.post-content ul > li:not(:has(input[type="checkbox"]))::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.65em;
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-btn);
+  transform: rotate(-8deg) skewX(-4deg);
+}
+
+.post-content ol {
+  counter-reset: sketch-ol;
+}
+
+.post-content ol > li::before {
+  counter-increment: sketch-ol;
+  content: counter(sketch-ol);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-btn);
+  box-shadow: 1.5px 1.5px 0px var(--border);
+  transform: rotate(-4deg) skewX(-4deg);
+}
+
+.post-content ul > li:nth-child(even)::before,
+.post-content ol > li:nth-child(even)::before {
+  transform: rotate(6deg) skewX(3deg);
+}
+
+body.dark .post-content ul > li::before,
+body.dark .post-content ol > li::before {
+  box-shadow: 1.5px 1.5px 0px var(--border);
+}
 .post.pinned {
   order: -1;
   border-color: var(--accent-dark);
@@ -2239,22 +2367,25 @@ body {
       const modalSearchInput = document.getElementById("modalSearchInput");
       const searchResultsDiv = document.getElementById("searchResults");
 
-      // ---------- 工具函数 ----------
-      
-      function applyPinOrder(list) {
-  const idx = list.findIndex(p => {
-    const text = Array.isArray(p.content) ? p.content.join('') : p.content;
-    return text && text.includes(PIN_KEYWORD);
-  });
-  if (idx <= 0) return list; // 没有 或已经在最前
-  const pinned = list.splice(idx, 1)[0];
-  list.unshift(pinned);
-  return list;
+
+function isPinned(p) {
+  const text = Array.isArray(p.content) ? p.content.join('') : p.content;
+  return !!text && text.includes(PIN_KEYWORD);
+}
+
+function getPinnedView(list) {
+  const pinned = list.filter(isPinned).slice(0, 1);
+  const rest = list.filter(p => !isPinned(p));
+  return pinned.concat(rest);
 }
 
 function stripPinKeyword(text) {
   return text.split(PIN_KEYWORD).join('');
 }
+
+      // ---------- 工具函数 ----------
+      
+      
       function escapeRegExp(s) {
         return s.replace(/[.*+?^${}()|\\[\]]/g, "\\$&");
       }
@@ -2378,7 +2509,7 @@ function stripPinKeyword(text) {
             const json = await res.json();
             if (json.code === 200) {
                 allPosts = json.data || [];
-                allPosts = applyPinOrder(allPosts);
+               
             } else {
                 throw new Error(json.msg || "获取数据失败");
             }
@@ -2400,9 +2531,10 @@ function stripPinKeyword(text) {
       function render(reset = false) {
         if (!postsContainer) return;
         if (reset) postsContainer.innerHTML = "";
+         const ordered = getPinnedView(filtered);   // 👈 新增这一行
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
-        const show = filtered.slice(start, end);
+       const show = ordered.slice(start, end); 
         if (!show.length && reset) {
           postsContainer.innerHTML =
             '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>';
@@ -3236,7 +3368,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function insertNewPostToTop(post) {
         allPosts.unshift(post);
         filtered.unshift(post);
-        applyPinOrder(allPosts); applyPinOrder(filtered);
+     
         const t = document.createElement("div");
         t.innerHTML = buildPostHTML(post);
         if (postsContainer) {
@@ -3433,9 +3565,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const newPostItem = json.data;
             allPosts.unshift(newPostItem);
             filtered.unshift(newPostItem);
-            // 👇 在这两行 unshift 之后加:
-		applyPinOrder(allPosts);
-		applyPinOrder(filtered);
+            
             if (publishModal) {
               publishModal.remove();
               publishModal = null;
@@ -3624,9 +3754,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             if (idxAll > -1) allPosts[idxAll] = updatedPost;
             const idxFil = filtered.findIndex(p => p.id === currentEditId);
             if (idxFil > -1) filtered[idxFil] = updatedPost;
-// 👇 加这两行(编辑内容可能新增/删除了 #置顶 关键词,必须重新排序)
-  applyPinOrder(allPosts);
-  applyPinOrder(filtered);
+ 
             if (publishModal) {
               publishModal.remove();
               publishModal = null;
