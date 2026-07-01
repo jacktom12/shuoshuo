@@ -448,8 +448,10 @@ body.dark .post-content ol > li::before {
 }
  
  
-  .post.pinned {
-  margin-top: 20px;
+   .post.pinned {
+  position: relative;
+  margin-top: 26px;
+  padding-top: 24px;
   border-color: var(--accent-dark);
   background:
     linear-gradient(180deg, rgba(229,170,112,0.08), rgba(229,170,112,0.02)),
@@ -461,11 +463,12 @@ body.dark .post-content ol > li::before {
 
 .pin-badge {
   position: absolute;
-  top: 10px;
-  right: 12px;
-  left: auto;
-  transform: none;
-  z-index: 6;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  z-index: 8;
   pointer-events: none;
   filter: none;
   animation: none;
@@ -474,34 +477,30 @@ body.dark .post-content ol > li::before {
 .pin-badge-text {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 3px 10px;
+  min-width: 56px;
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.2;
   font-weight: 900;
   color: var(--ink);
   background: var(--accent);
   border: 2px solid var(--border);
   border-radius: 999px;
   box-shadow: 2px 2px 0 var(--border);
-  white-space: nowrap;
-}
-
-.pin-badge-text::before {
-  content: "📌";
-  font-size: 11px;
-  line-height: 1;
 }
 
 @media (max-width: 768px) {
-  .pin-badge {
-    top: 8px;
-    right: 10px;
+  .post.pinned {
+    margin-top: 22px;
+    padding-top: 20px;
   }
 
   .pin-badge-text {
     font-size: 11px;
-    padding: 1px 7px;
+    padding: 2px 8px;
+    min-width: 50px;
   }
 }
 
