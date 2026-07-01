@@ -448,106 +448,66 @@ body.dark .post-content ol > li::before {
 }
  
  
-  
-/* ==========================================
-   修正後：潮流手賬風置頂卡片（純五角星圖釘版）
-   ========================================== */
-.post.pinned {
+ .post.pinned {
   position: relative;
-  /* 頂部留出適當空間給小圖釘 */
-  margin-top: 36px !important; 
-  margin-bottom: 32px !important;
-  
-  background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 93%, var(--accent) 7%)) !important;
-  border: 3px solid var(--border) !important;
-  border-radius: var(--sketch-radius-1) !important;
-  
-  /* 微幅傾斜 */
-  transform: rotate(-1deg) skewX(-0.5deg) !important;
-  box-shadow: 6px 6px 0px var(--border) !important;
-  
-  /* 將 transition 套用到指定的屬性，避免 transform 動畫與 hover 衝突 */
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
-  clip-path: none !important; 
-  animation: noticeFloat 4s ease-in-out infinite !important;
+  margin-top: 46px;
+  border-color: var(--accent-dark);
+  background: var(--paper);
+  transform-origin: top center;
+  animation: pinSwing 4.5s ease-in-out infinite;
+  clip-path: polygon(
+    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
+    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
+    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
+    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
+    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
+    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
+  );
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
 }
 
-/* 懸停交互：卡片整體微調，保持相對平移，不與圖釘單獨衝突 */
-.post.pinned:hover {
-  transform: rotate(0.5deg) scale(1.01) translate(-2px, -2px) !important;
-  box-shadow: 8px 8px 0px var(--border) !important;
-}
-
-/* 📌 頂部正中央的小五角星圖釘（已縮小並下移，去除文字） */
-.post.pinned::before {
-  content: "★"; /* 改為純五角星符號 */
-  position: absolute;
-  top: -14px;  /* 向下移動，使其一半釘在卡片內，一半在卡片外 */
-  left: 50%;
-  transform: translateX(-50%) rotate(-5deg);
-  
-  /* 調整圖釘大小 */
-  font-size: 1.4rem; 
-  color: var(--accent);
-  
-  /* 給五角星加上手繪風黑框，與主體風格統一 */
-  text-shadow: 
-    -2px -2px 0 var(--border),  
-     2px -2px 0 var(--border),
-    -2px  2px 0 var(--border),
-     2px  2px 0 var(--border),
-     3px  3px 0px rgba(0,0,0,0.15); /* 小陰影 */
-  
-  z-index: 10;
-  pointer-events: none; /* 防止滑鼠懸停在圖釘上時干擾卡片觸發 hover */
-}
-
-/* 徹底移除原本用來放文字的 ::after 偽元素，防止重疊 */
-.post.pinned::after {
-  display: none !important;
-}
-
-/* 內部頂部標題與時間容器調整 */
-.post.pinned .post-header {
-  margin-top: 10px !important;
-  border-bottom: 2px dashed var(--border) !important; 
-  padding-bottom: 8px !important;
-}
-
-/* 置頂卡片內部的時間標籤 */
-.post.pinned .post-time {
-  background: var(--accent) !important; 
-  color: var(--ink) !important;
-}
-
-/* 💡 手機端適配 */
-@media (max-width: 768px) {
-  .post.pinned {
-    margin-top: 30px !important;
-    padding: 18px 16px !important; 
-    transform: rotate(-0.5deg) !important; 
-    box-shadow: 4px 4px 0px var(--border) !important; 
-  }
-  .post.pinned::before {
-    font-size: 1.2rem;
-    top: -12px;
-  }
-}
-
-/* 🌙 深色模式適配 */
 body.dark .post.pinned {
-  background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 90%, var(--accent) 10%)) !important;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
 }
 
-/* 🎬 輕量級動態效果 */
-@keyframes noticeFloat {
-  0%, 100% { transform: rotate(-1deg) translateY(0); }
-  50%      { transform: rotate(-0.7deg) translateY(-2px); }
+@keyframes pinSwing {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50%      { transform: rotate(1.1deg); }
+}
+
+.pin-badge {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  z-index: 6;
+  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
+  pointer-events: none;
+  animation: pinPulse 2.6s ease-in-out infinite;
+}
+
+.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+@keyframes pinPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.08); }
+}
+
+.post.pinned .post-header { margin-top: 8px; }
+
+@media (max-width: 768px) {
+  .post.pinned { margin-top: 36px; }
+  .pin-badge { width: 34px; height: 34px; top: -22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .post.pinned { animation: none !important; }
+  .post.pinned, .pin-badge { animation: none; }
 }
+ 
+ body.dark .pin-badge svg path { fill: #DAA06D; }
+
 
 
 
