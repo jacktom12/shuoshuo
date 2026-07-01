@@ -203,6 +203,72 @@ main {
   z-index: -1;
   pointer-events: none;
 }
+
+body.dark #postsContainer::before {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(243, 233, 221, 0.06) 0px,
+      rgba(243, 233, 221, 0.06) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(180deg, rgba(45,42,38,0.96), rgba(26,25,23,0.98));
+  border-left: 2px solid var(--border);
+  border-right: 2px solid var(--border);
+  box-shadow: inset 0 6px 10px rgba(255,255,255,0.03);
+}
+
+body.dark #postsContainer > .post:first-child::before {
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0 10px,
+      rgba(243,233,221,0.08) 10px 12px
+    ),
+    linear-gradient(180deg, rgba(45,42,38,0.95), rgba(45,42,38,0.6));
+  border-top: 2px solid rgba(243,233,221,0.16);
+}
+		
+@media (max-width: 768px) {
+  .topbar {
+    padding-bottom: 2px;
+  }
+
+  #postsContainer {
+    padding-top: 4px;
+  }
+
+  #postsContainer::before {
+    top: -8px;
+    width: calc(100% - 16px);
+    height: 22px;
+  }
+
+  #postsContainer > .post:first-child::before {
+    top: -14px;
+    left: 12px;
+    right: 12px;
+    height: 14px;
+    border-radius: 6px 6px 0 0;
+  }
+}
+		@media (max-width: 480px) {
+  #postsContainer::before {
+    height: 18px;
+    top: -6px;
+  }
+
+  #postsContainer > .post:first-child::before {
+    top: -11px;
+    left: 10px;
+    right: 10px;
+    height: 11px;
+  }
+}
+
+
+		
       .topbar-inner {
           position: relative;
         display: flex;
