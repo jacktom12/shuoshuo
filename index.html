@@ -448,128 +448,106 @@ body.dark .post-content ol > li::before {
 }
  
  
-  /* ==========================================
-   全新美化：潮流手賬公告欄置頂卡片
+  
+/* ==========================================
+   修正後：潮流手賬風置頂卡片（純五角星圖釘版）
    ========================================== */
 .post.pinned {
   position: relative;
-  /* 增加頂部間距，為公告欄的"大頭針/膠帶"留出視覺空間 */
-  margin-top: 42px !important; 
+  /* 頂部留出適當空間給小圖釘 */
+  margin-top: 36px !important; 
   margin-bottom: 32px !important;
   
-  /* 公告欄專屬質感底色：比普通卡片更有亮點 */
   background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 93%, var(--accent) 7%)) !important;
   border: 3px solid var(--border) !important;
   border-radius: var(--sketch-radius-1) !important;
   
-  /* 手機端微幅傾斜（角度太大的話，手機上兩側文字會切到），手作感拉滿 */
+  /* 微幅傾斜 */
   transform: rotate(-1deg) skewX(-0.5deg) !important;
-  
-  /* 增強陰影，營造公告板懸浮浮雕感 */
   box-shadow: 6px 6px 0px var(--border) !important;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
   
-  /* 移除原本容易在手機上切到文字、導致邊距怪異的 clip-path 鋸齒 */
+  /* 將 transition 套用到指定的屬性，避免 transform 動畫與 hover 衝突 */
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
   clip-path: none !important; 
   animation: noticeFloat 4s ease-in-out infinite !important;
 }
 
-/* 懸停交互：公告卡片會有微微回彈和陰影加深效果 */
+/* 懸停交互：卡片整體微調，保持相對平移，不與圖釘單獨衝突 */
 .post.pinned:hover {
   transform: rotate(0.5deg) scale(1.01) translate(-2px, -2px) !important;
   box-shadow: 8px 8px 0px var(--border) !important;
 }
 
-/* 頂部正中央：精緻的手繪復古雙色膠帶 */
+/* 📌 頂部正中央的小五角星圖釘（已縮小並下移，去除文字） */
 .post.pinned::before {
-  content: "";
+  content: "★"; /* 改為純五角星符號 */
   position: absolute;
-  top: -22px;
+  top: -14px;  /* 向下移動，使其一半釘在卡片內，一半在卡片外 */
   left: 50%;
-  transform: translateX(-50%) rotate(-3deg);
-  width: 90px;
-  height: 28px;
-  background: var(--accent);
-  border: 2px solid var(--border);
-  opacity: 0.85;
-  z-index: 5;
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+  transform: translateX(-50%) rotate(-5deg);
   
-  /* 撕紙風邊緣 */
-  clip-path: polygon(
-    0% 0%, 5% 12%, 0% 25%, 8% 38%, 0% 50%, 6% 65%, 0% 78%, 7% 90%, 0% 100%,
-    100% 100%, 94% 88%, 100% 75%, 93% 60%, 100% 45%, 95% 30%, 100% 15%, 94% 0%
-  );
+  /* 調整圖釘大小 */
+  font-size: 1.4rem; 
+  color: var(--accent);
+  
+  /* 給五角星加上手繪風黑框，與主體風格統一 */
+  text-shadow: 
+    -2px -2px 0 var(--border),  
+     2px -2px 0 var(--border),
+    -2px  2px 0 var(--border),
+     2px  2px 0 var(--border),
+     3px  3px 0px rgba(0,0,0,0.15); /* 小陰影 */
+  
+  z-index: 10;
+  pointer-events: none; /* 防止滑鼠懸停在圖釘上時干擾卡片觸發 hover */
 }
 
-/* 膠帶上的斜線裝飾紋理 */
+/* 徹底移除原本用來放文字的 ::after 偽元素，防止重疊 */
 .post.pinned::after {
-  content: "✦ 公告 Pinned ✦";
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-3deg);
-  z-index: 6;
-  font-size: 0.75rem;
-  font-weight: 900;
-  color: var(--ink);
-  white-space: nowrap;
-  letter-spacing: 1px;
+  display: none !important;
 }
 
 /* 內部頂部標題與時間容器調整 */
 .post.pinned .post-header {
-  margin-top: 14px !important;
-  border-bottom: 2px dashed var(--border) !important; /* 公告欄虛線分界線 */
+  margin-top: 10px !important;
+  border-bottom: 2px dashed var(--border) !important; 
   padding-bottom: 8px !important;
 }
 
-/* 置頂卡片內部的時間標籤微調 */
+/* 置頂卡片內部的時間標籤 */
 .post.pinned .post-time {
-  background: var(--accent) !important; /* 公告欄使用主色調高亮 */
+  background: var(--accent) !important; 
   color: var(--ink) !important;
 }
 
-/* 💡 手機端完美適配 (Responsive Layout) */
+/* 💡 手機端適配 */
 @media (max-width: 768px) {
   .post.pinned {
-    margin-top: 36px !important;
-    padding: 18px 16px !important; /* 縮減內邊距，把更多網頁寬度留給文字 */
-    transform: rotate(-0.5deg) !important; /* 手機上角度減半，防止視覺傾斜過度 */
-    box-shadow: 4px 4px 0px var(--border) !important; /* 減輕陰影厚度 */
+    margin-top: 30px !important;
+    padding: 18px 16px !important; 
+    transform: rotate(-0.5deg) !important; 
+    box-shadow: 4px 4px 0px var(--border) !important; 
   }
   .post.pinned::before {
-    width: 75px;
-    height: 24px;
-    top: -18px;
-  }
-  .post.pinned::after {
-    top: -16px;
-    font-size: 0.7rem;
+    font-size: 1.2rem;
+    top: -12px;
   }
 }
 
-/* 🌙 深色模式適配 (Dark Mode) */
+/* 🌙 深色模式適配 */
 body.dark .post.pinned {
-  /* 完美接入你原有的暗黑變數系統，自動反色 */
   background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 90%, var(--accent) 10%)) !important;
-  box-shadow: 6px 6px 0px var(--border) !important;
-}
-body.dark .post.pinned::before {
-  background: var(--accent-dark); /* 暗黑模式下膠帶顏色稍微調深，增加厚重感 */
 }
 
-/* 🎬 輕量級動態效果：微幅呼吸浮動（不晃眼，極具高級質感） */
+/* 🎬 輕量級動態效果 */
 @keyframes noticeFloat {
   0%, 100% { transform: rotate(-1deg) translateY(0); }
-  50%      { transform: rotate(-0.7deg) translateY(-3px); }
+  50%      { transform: rotate(-0.7deg) translateY(-2px); }
 }
 
-/* 如果用戶開啟了系統的「減少動態效果」則關閉動畫 */
 @media (prefers-reduced-motion: reduce) {
   .post.pinned { animation: none !important; }
 }
-
 
 
 
