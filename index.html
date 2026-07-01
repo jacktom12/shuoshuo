@@ -446,23 +446,24 @@ body.dark .post-content ul > li::before,
 body.dark .post-content ol > li::before {
   box-shadow: 1.5px 1.5px 0px var(--border);
 }
- /* ===== 置顶卡片:钉在墙上的撕纸便签 ===== */
-.post.pinned {
+ 
+ 
+ .post.pinned {
   position: relative;
-  margin-top: 44px;
+  margin-top: 46px;
   border-color: var(--accent-dark);
   background: var(--paper);
   transform-origin: top center;
   animation: pinSwing 4.5s ease-in-out infinite;
   clip-path: polygon(
-    0% 3%, 4% 0%, 9% 2%, 14% 0%, 19% 2.5%, 24% 0%, 29% 2%, 34% 0%,
-    39% 2.5%, 44% 0%, 49% 2%, 54% 0%, 59% 2.5%, 64% 0%, 69% 2%, 74% 0%,
-    79% 2.5%, 84% 0%, 89% 2%, 94% 0%, 100% 3%,
-    100% 97%, 96% 100%, 91% 98%, 86% 100%, 81% 97.5%, 76% 100%, 71% 98%,
-    66% 100%, 61% 97.5%, 56% 100%, 51% 98%, 46% 100%, 41% 97.5%, 36% 100%,
-    31% 98%, 26% 100%, 21% 97.5%, 16% 100%, 11% 98%, 6% 100%, 0% 97%
+    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
+    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
+    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
+    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
+    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
+    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
   );
-  box-shadow: 0 14px 28px rgba(0,0,0,0.18), 0 0 0 2px transparent;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
 }
 
 body.dark .post.pinned {
@@ -474,40 +475,37 @@ body.dark .post.pinned {
   50%      { transform: rotate(1.1deg); }
 }
 
-/* 图钉图标 */
 .pin-badge {
   position: absolute;
-  top: -26px;
+  top: -30px;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   z-index: 6;
-  filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.35));
+  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
   pointer-events: none;
   animation: pinPulse 2.6s ease-in-out infinite;
 }
 
-.pin-badge svg { width: 100%; height: 100%; display: block; }
+.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
 @keyframes pinPulse {
   0%, 100% { transform: translateX(-50%) scale(1); }
-  50%      { transform: translateX(-50%) scale(1.06); }
+  50%      { transform: translateX(-50%) scale(1.08); }
 }
 
-/* 卡片顶部预留空间给图钉,避免遮住时间标签 */
-.post.pinned .post-header {
-  margin-top: 6px;
-}
+.post.pinned .post-header { margin-top: 8px; }
 
 @media (max-width: 768px) {
-  .post.pinned { margin-top: 34px; }
-  .pin-badge { width: 32px; height: 32px; top: -20px; }
+  .post.pinned { margin-top: 36px; }
+  .pin-badge { width: 34px; height: 34px; top: -22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .post.pinned, .pin-badge { animation: none; }
 }
+ 
  body.dark .pin-badge svg path { fill: #DAA06D; }
 
 
@@ -2497,15 +2495,8 @@ function stripPinKeyword(text) {
                 </button>
             </div>`;
         }
-  const pinBadge = isPinned ? `
-<div class="pin-badge">
-  <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="20" cy="36" rx="4" ry="1.5" fill="#000" opacity="0.15"/>
-    <path d="M20 6 C13 6 9 11 9 17 C9 22 13 25 17 26 L14 34 L20 30 L26 34 L23 26 C27 25 31 22 31 17 C31 11 27 6 20 6 Z"
-          fill="#E5AA70" stroke="#323232" stroke-width="1.8" stroke-linejoin="round"/>
-    <circle cx="16" cy="14" r="3" fill="#FFF9E6" opacity="0.7"/>
-  </svg>
-</div>` : '';
+  const pinBadge = isPinned ? `<div class="pin-badge"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="43" rx="5" ry="1.8" fill="#000000" opacity="0.18"></ellipse><circle cx="24" cy="18" r="12" fill="#E5AA70" stroke="#323232" stroke-width="2"></circle><circle cx="20" cy="14" r="3.5" fill="#FFF9E6" opacity="0.75"></circle><path d="M24 30 L24 40" stroke="#323232" stroke-width="2.5" stroke-linecap="round"></path><path d="M18 27 L24 40 L30 27 Z" fill="#D4924F" stroke="#323232" stroke-width="2" stroke-linejoin="round"></path></svg></div>` : '';
+  
   const pinClass = isPinned ? ' pinned' : '';
           return `<article class="post${pinClass}" id="post-${p.id}">
     ${pinBadge}
