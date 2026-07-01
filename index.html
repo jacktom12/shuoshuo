@@ -448,7 +448,7 @@ body.dark .post-content ol > li::before {
 }
  
  
-   .post.pinned {
+    .post.pinned {
   position: relative;
   margin-top: 26px;
   padding-top: 24px;
@@ -466,10 +466,10 @@ body.dark .post-content ol > li::before {
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: auto;
-  height: auto;
   z-index: 8;
   pointer-events: none;
+  width: auto;
+  height: auto;
   filter: none;
   animation: none;
 }
@@ -478,17 +478,33 @@ body.dark .post-content ol > li::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  padding: 4px 10px;
   white-space: nowrap;
-  padding: 3px 10px;
-  min-width: 56px;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 900;
-  color: var(--ink);
-  background: var(--accent);
+  color: var(--text);
+  background: var(--paper);
   border: 2px solid var(--border);
   border-radius: 999px;
-  box-shadow: 2px 2px 0 var(--border);
+  box-shadow: 3px 3px 0 var(--border);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.pin-badge-text svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  display: block;
+  color: var(--accent-dark);
+}
+
+body.dark .pin-badge-text svg {
+  color: var(--accent);
+}
+
+.post.pinned .post-header {
+  margin-top: 0;
 }
 
 @media (max-width: 768px) {
@@ -498,22 +514,17 @@ body.dark .post-content ol > li::before {
   }
 
   .pin-badge-text {
+    gap: 5px;
+    padding: 3px 8px;
     font-size: 11px;
-    padding: 2px 8px;
-    min-width: 50px;
+  }
+
+  .pin-badge-text svg {
+    width: 13px;
+    height: 13px;
+    flex-basis: 13px;
   }
 }
-
-body.dark .post.pinned {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
-}
-
-@keyframes pinSwing {
-  0%, 100% { transform: rotate(-1.1deg); }
-  50%      { transform: rotate(1.1deg); }
-}
- 
-.post.pinned .post-header { margin-top: 8px; }
 
   
 
@@ -2497,9 +2508,15 @@ function stripPinKeyword(text) {
                 </button>
             </div>`;
         }
-   const pinBadge = isPinned ? `
-  <div class="pin-badge">
-    <span class="pin-badge-text">Notice</span>
+    const pinBadge = isPinned ? `
+  <div class="pin-badge" aria-hidden="true">
+    <span class="pin-badge-text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15.5 3.5c.8.8.8 2.1 0 2.9l-1.2 1.2 2.8 2.8c.4.4.4 1 0 1.4l-1 1c-.2.2-.4.3-.7.3h-2.2l-1.5 1.5v4.7l-.8.8-.8-.8v-4.7L9 13.3H6.8c-.3 0-.5-.1-.7-.3l-1-1c-.4-.4-.4-1 0-1.4l2.8-2.8-1.2-1.2c-.8-.8-.8-2.1 0-2.9" />
+        <path d="M9.8 8.2l6 6" />
+      </svg>
+      <span>置顶</span>
+    </span>
   </div>
 ` : '';
   
