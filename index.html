@@ -448,65 +448,127 @@ body.dark .post-content ol > li::before {
 }
  
  
- .post.pinned {
+  /* ==========================================
+   全新美化：潮流手賬公告欄置頂卡片
+   ========================================== */
+.post.pinned {
   position: relative;
-  margin-top: 46px;
-  border-color: var(--accent-dark);
-  background: var(--paper);
-  transform-origin: top center;
-  animation: pinSwing 4.5s ease-in-out infinite;
-  clip-path: polygon(
-    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
-    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
-    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
-    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
-    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
-    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
-  );
-  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+  /* 增加頂部間距，為公告欄的"大頭針/膠帶"留出視覺空間 */
+  margin-top: 42px !important; 
+  margin-bottom: 32px !important;
+  
+  /* 公告欄專屬質感底色：比普通卡片更有亮點 */
+  background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 93%, var(--accent) 7%)) !important;
+  border: 3px solid var(--border) !important;
+  border-radius: var(--sketch-radius-1) !important;
+  
+  /* 手機端微幅傾斜（角度太大的話，手機上兩側文字會切到），手作感拉滿 */
+  transform: rotate(-1deg) skewX(-0.5deg) !important;
+  
+  /* 增強陰影，營造公告板懸浮浮雕感 */
+  box-shadow: 6px 6px 0px var(--border) !important;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+  
+  /* 移除原本容易在手機上切到文字、導致邊距怪異的 clip-path 鋸齒 */
+  clip-path: none !important; 
+  animation: noticeFloat 4s ease-in-out infinite !important;
 }
 
-body.dark .post.pinned {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
+/* 懸停交互：公告卡片會有微微回彈和陰影加深效果 */
+.post.pinned:hover {
+  transform: rotate(0.5deg) scale(1.01) translate(-2px, -2px) !important;
+  box-shadow: 8px 8px 0px var(--border) !important;
 }
 
-@keyframes pinSwing {
-  0%, 100% { transform: rotate(-1.1deg); }
-  50%      { transform: rotate(1.1deg); }
-}
-
-.pin-badge {
+/* 頂部正中央：精緻的手繪復古雙色膠帶 */
+.post.pinned::before {
+  content: "";
   position: absolute;
-  top: -30px;
+  top: -22px;
   left: 50%;
-  transform: translateX(-50%);
-  width: 44px;
-  height: 44px;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 90px;
+  height: 28px;
+  background: var(--accent);
+  border: 2px solid var(--border);
+  opacity: 0.85;
+  z-index: 5;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+  
+  /* 撕紙風邊緣 */
+  clip-path: polygon(
+    0% 0%, 5% 12%, 0% 25%, 8% 38%, 0% 50%, 6% 65%, 0% 78%, 7% 90%, 0% 100%,
+    100% 100%, 94% 88%, 100% 75%, 93% 60%, 100% 45%, 95% 30%, 100% 15%, 94% 0%
+  );
+}
+
+/* 膠帶上的斜線裝飾紋理 */
+.post.pinned::after {
+  content: "✦ 公告 Pinned ✦";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
   z-index: 6;
-  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
-  pointer-events: none;
-  animation: pinPulse 2.6s ease-in-out infinite;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--ink);
+  white-space: nowrap;
+  letter-spacing: 1px;
 }
 
-.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
-
-@keyframes pinPulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50%      { transform: translateX(-50%) scale(1.08); }
+/* 內部頂部標題與時間容器調整 */
+.post.pinned .post-header {
+  margin-top: 14px !important;
+  border-bottom: 2px dashed var(--border) !important; /* 公告欄虛線分界線 */
+  padding-bottom: 8px !important;
 }
 
-.post.pinned .post-header { margin-top: 8px; }
+/* 置頂卡片內部的時間標籤微調 */
+.post.pinned .post-time {
+  background: var(--accent) !important; /* 公告欄使用主色調高亮 */
+  color: var(--ink) !important;
+}
 
+/* 💡 手機端完美適配 (Responsive Layout) */
 @media (max-width: 768px) {
-  .post.pinned { margin-top: 36px; }
-  .pin-badge { width: 34px; height: 34px; top: -22px; }
+  .post.pinned {
+    margin-top: 36px !important;
+    padding: 18px 16px !important; /* 縮減內邊距，把更多網頁寬度留給文字 */
+    transform: rotate(-0.5deg) !important; /* 手機上角度減半，防止視覺傾斜過度 */
+    box-shadow: 4px 4px 0px var(--border) !important; /* 減輕陰影厚度 */
+  }
+  .post.pinned::before {
+    width: 75px;
+    height: 24px;
+    top: -18px;
+  }
+  .post.pinned::after {
+    top: -16px;
+    font-size: 0.7rem;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .post.pinned, .pin-badge { animation: none; }
+/* 🌙 深色模式適配 (Dark Mode) */
+body.dark .post.pinned {
+  /* 完美接入你原有的暗黑變數系統，自動反色 */
+  background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--paper) 90%, var(--accent) 10%)) !important;
+  box-shadow: 6px 6px 0px var(--border) !important;
 }
- 
- body.dark .pin-badge svg path { fill: #DAA06D; }
+body.dark .post.pinned::before {
+  background: var(--accent-dark); /* 暗黑模式下膠帶顏色稍微調深，增加厚重感 */
+}
+
+/* 🎬 輕量級動態效果：微幅呼吸浮動（不晃眼，極具高級質感） */
+@keyframes noticeFloat {
+  0%, 100% { transform: rotate(-1deg) translateY(0); }
+  50%      { transform: rotate(-0.7deg) translateY(-3px); }
+}
+
+/* 如果用戶開啟了系統的「減少動態效果」則關閉動畫 */
+@media (prefers-reduced-motion: reduce) {
+  .post.pinned { animation: none !important; }
+}
 
 
 
