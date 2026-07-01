@@ -2501,7 +2501,7 @@ function stripPinKeyword(text) {
           return `<article class="post${pinClass}" id="post-${p.id}">
     ${pinBadge}
     <div class="post-header">
-      <span class="post-time" style="background:${randomColorBlock()}">${showTime}</span>
+       <span class="post-time">${randomColorBlock()} ${showTime}</span>
       ${actionsHtml}
     </div>
     <div class="post-right">
