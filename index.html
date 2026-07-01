@@ -447,66 +447,45 @@ body.dark .post-content ol > li::before {
   box-shadow: 1.5px 1.5px 0px var(--border);
 }
  
- 
  .post.pinned {
   position: relative;
-  margin-top: 46px;
-  border-color: var(--accent-dark);
+  margin-top: 20px;
+  padding: 18px 20px 18px 28px;
   background: var(--paper);
-  transform-origin: top center;
-  animation: pinSwing 4.5s ease-in-out infinite;
-  clip-path: polygon(
-    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
-    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
-    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
-    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
-    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
-    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
-  );
-  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-1);
+  box-shadow: var(--p-shadow);
+  transform: none;
+  animation: none;
+  clip-path: none;
 }
 
-body.dark .post.pinned {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
-}
-
-@keyframes pinSwing {
-  0%, 100% { transform: rotate(-1.1deg); }
-  50%      { transform: rotate(1.1deg); }
-}
-
-.pin-badge {
+.post.pinned::before {
+  content: "";
   position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 44px;
-  height: 44px;
-  z-index: 6;
-  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
-  pointer-events: none;
-  animation: pinPulse 2.6s ease-in-out infinite;
+  left: 0; top: 6px; bottom: 6px;
+  width: 10px;
+  background: repeating-radial-gradient(
+    circle at 0 6px,
+    var(--accent) 0 3px,
+    transparent 3px 12px
+  );
+  border-radius: 4px;
 }
 
-.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
-@keyframes pinPulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50%      { transform: translateX(-50%) scale(1.08); }
+ @media (max-width: 768px) {
+  .post.pinned { padding: 14px 16px 14px 22px; margin-top: 14px; }
+  .post.pinned::before { width: 8px; }
 }
 
-.post.pinned .post-header { margin-top: 8px; }
-
-@media (max-width: 768px) {
-  .post.pinned { margin-top: 36px; }
-  .pin-badge { width: 34px; height: 34px; top: -22px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .post.pinned, .pin-badge { animation: none; }
-}
  
- body.dark .pin-badge svg path { fill: #DAA06D; }
+ 
+
+ 
+
+ 
+ 
 
 
 
