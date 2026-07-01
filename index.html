@@ -447,77 +447,66 @@ body.dark .post-content ol > li::before {
   box-shadow: 1.5px 1.5px 0px var(--border);
 }
  
-  .pinned {
+ 
+ .post.pinned {
   position: relative;
-  margin-top: 20px;
-  padding: 20px 24px 20px 40px;
-  background: var(--paper); /* 或 #ffffff */
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 柔和的阴影 */
-  border-left: none; /* 左侧由 before 元素接管 */
-  transform: none;
-  animation: none;
-  clip-path: none;
-}
-/* 置顶专属前缀 Notice ! 的样式 */
-.pinned .notice-prefix {
-  color: #c98846; /* 截图里的橙色 */
-  font-weight: bold;
-}
-
-/* 置顶文章本身标题稍微调整，使其更贴合截图里的灰色描述感 */
-.pinned .post-title a {
-  color: #c98846; 
+  margin-top: 46px;
+  border-color: var(--accent-dark);
+  background: var(--paper);
+  transform-origin: top center;
+  animation: pinSwing 4.5s ease-in-out infinite;
+  clip-path: polygon(
+    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
+    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
+    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
+    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
+    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
+    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
+  );
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
 }
 
-/* 置顶卡片的内部字体颜色调整 */
-.pinned .post-title a, 
-.pinned .post-title {
-  color: #c98846 !important; /* 截图中的橙色 */
-  font-size: 1.2em; /* 可选：让标题稍微大一点 */
-  font-weight: bold;
+body.dark .post.pinned {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
 }
 
-.pinned .post-content,
-.pinned .post-content p {
-  color: #a0a0a0 !important; /* 截图中的浅灰色 */
+@keyframes pinSwing {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50%      { transform: rotate(1.1deg); }
 }
-.pinned::before {
-  content: "";
+
+.pin-badge {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 16px;
-  background-color: #cdb294; /* 匹配截图左侧波浪边缘的颜色 */
-  border-radius: 16px 0 0 16px;
-  
-  /* 使用 mask 创造半圆镂空的波浪边缘效果 */
-  -webkit-mask-image: radial-gradient(circle at -4px 10px, transparent 6px, black 6.5px);
-  -webkit-mask-size: 100% 20px;
-  -webkit-mask-position: 0 0;
-  -webkit-mask-repeat: repeat-y;
-  
-  mask-image: radial-gradient(circle at -4px 10px, transparent 6px, black 6.5px);
-  mask-size: 100% 20px;
-  mask-position: 0 0;
-  mask-repeat: repeat-y;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  z-index: 6;
+  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
+  pointer-events: none;
+  animation: pinPulse 2.6s ease-in-out infinite;
 }
 
+.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
- @media (max-width: 768px) {
-  .post.pinned { padding: 14px 16px 14px 22px; margin-top: 14px; }
-  .post.pinned::before { width: 8px; }
+@keyframes pinPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.08); }
 }
 
- 
- 
+.post.pinned .post-header { margin-top: 8px; }
 
- 
+@media (max-width: 768px) {
+  .post.pinned { margin-top: 36px; }
+  .pin-badge { width: 34px; height: 34px; top: -22px; }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  .post.pinned, .pin-badge { animation: none; }
+}
  
- 
+ body.dark .pin-badge svg path { fill: #DAA06D; }
 
 
 
@@ -2506,14 +2495,13 @@ function stripPinKeyword(text) {
                 </button>
             </div>`;
         }
-        const pinBadge = ''; 
+  const pinBadge = isPinned ? `<div class="pin-badge"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="43" rx="5" ry="1.8" fill="#000000" opacity="0.18"></ellipse><circle cx="24" cy="18" r="12" fill="#E5AA70" stroke="#323232" stroke-width="2"></circle><circle cx="20" cy="14" r="3.5" fill="#FFF9E6" opacity="0.75"></circle><path d="M24 30 L24 40" stroke="#323232" stroke-width="2.5" stroke-linecap="round"></path><path d="M18 27 L24 40 L30 27 Z" fill="#D4924F" stroke="#323232" stroke-width="2" stroke-linejoin="round"></path></svg></div>` : '';
+  
   const pinClass = isPinned ? ' pinned' : '';
-  const titleDisplay = isPinned ? `<span class="notice-prefix">Notice ! </span>${p.title}` : p.title;
-           return `<article class="post${pinClass}" id="post-${p.id}">
+          return `<article class="post${pinClass}" id="post-${p.id}">
+    ${pinBadge}
     <div class="post-header">
-     
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
-        <h2 class="post-title"><a href="https://tian.city/memo/${p.id}/" target="_blank">${titleDisplay}</a></h2>
       ${actionsHtml}
     </div>
     <div class="post-right">
