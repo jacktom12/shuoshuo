@@ -2322,6 +2322,7 @@ function stripPinKeyword(text) {
            let text = Array.isArray(p.content) ? p.content.join('') : p.content;
   const isPinned = text.includes(PIN_KEYWORD);
   if (isPinned) text = stripPinKeyword(text);
+  const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
         if (p.images && p.images.length) {
