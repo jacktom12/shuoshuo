@@ -316,6 +316,58 @@ body.dark {
         );
       }
 
+
+/* ===== 置顶卡片 ===== */
+.post.pinned {
+  order: -1;
+  border-color: var(--accent-dark);
+  box-shadow: 6px 6px 0px var(--accent-dark), 0 0 22px var(--gold-glow);
+  background-image:
+    repeating-linear-gradient(transparent, transparent 28px, rgba(0,0,0,0.03) 28px, rgba(0,0,0,0.05) 30px),
+    linear-gradient(135deg, color-mix(in srgb, var(--paper) 90%, var(--accent) 10%), var(--paper));
+  animation: pinGlow 2.4s ease-in-out infinite;
+}
+body.dark .post.pinned {
+  box-shadow: 6px 6px 0px var(--accent-dark), 0 0 22px rgba(218,160,109,0.35);
+}
+@keyframes pinGlow {
+  0%, 100% { box-shadow: 6px 6px 0px var(--accent-dark), 0 0 14px var(--gold-glow); }
+  50%      { box-shadow: 6px 6px 0px var(--accent-dark), 0 0 26px var(--gold-glow); }
+}
+.pin-badge {
+  position: absolute;
+  top: -14px;
+  left: 18px;
+  background: var(--accent);
+  color: var(--ink) !important;
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-btn);
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  transform: rotate(-4deg) skewX(-6deg);
+  box-shadow: 3px 3px 0px var(--border);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+.pin-badge::before { content: "📌"; font-size: 0.9rem; }
+body.dark .pin-badge { box-shadow: 3px 3px 0px var(--border); }
+
+@media (max-width: 768px) {
+  .pin-badge { top: -12px; left: 12px; font-size: 0.75rem; padding: 3px 10px; }
+}
+
+
+
+
+
+
+
+
       .post:nth-child(even) {
         border-radius: var(--sketch-radius-2);
         transform: rotate(0.6deg) skewX(0.5deg);
@@ -2137,6 +2189,7 @@ body {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
       }
       // ---------- 数据层 ----------
+      const PIN_KEYWORD = '#置顶';
       let allPosts = [],
         filtered = [],
         page = 1;
@@ -2187,6 +2240,21 @@ body {
       const searchResultsDiv = document.getElementById("searchResults");
 
       // ---------- 工具函数 ----------
+      
+      function applyPinOrder(list) {
+  const idx = list.findIndex(p => {
+    const text = Array.isArray(p.content) ? p.content.join('') : p.content;
+    return text && text.includes(PIN_KEYWORD);
+  });
+  if (idx <= 0) return list; // 没有 或已经在最前
+  const pinned = list.splice(idx, 1)[0];
+  list.unshift(pinned);
+  return list;
+}
+
+function stripPinKeyword(text) {
+  return text.split(PIN_KEYWORD).join('');
+}
       function escapeRegExp(s) {
         return s.replace(/[.*+?^${}()|\\[\]]/g, "\\$&");
       }
@@ -2251,8 +2319,9 @@ body {
       }
 
             function buildPostHTML(p) {
-        const text = Array.isArray(p.content) ? p.content.join("\n\n") : p.content || "";
-        const parsed = typeof marked !== "undefined" ? marked.parse(text) : text;
+           let text = Array.isArray(p.content) ? p.content.join('') : p.content;
+  const isPinned = text.includes(PIN_KEYWORD);
+  if (isPinned) text = stripPinKeyword(text);
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
         if (p.images && p.images.length) {
@@ -2275,14 +2344,19 @@ body {
                 </button>
             </div>`;
         }
-
-        return `<article class="post" id="post-${p.id}">
-          <div class="post-header">
-            <span class="post-time">${randomColorBlock()} ${showTime}</span>
-            ${actionsHtml}
-          </div>
-          <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>
-        </article>`;
+ const pinBadge = isPinned ? `<div class="pin-badge">置顶</div>` : '';
+  const pinClass = isPinned ? ' pinned' : '';
+          return `<article class="post${pinClass}" id="post-${p.id}">
+    ${pinBadge}
+    <div class="post-header">
+      <span class="post-time" style="background:${randomColorBlock()}">${showTime}</span>
+      ${actionsHtml}
+    </div>
+    <div class="post-right">
+      <div class="post-content">${parsed}</div>
+      ${imagesHtml}
+    </div>
+  </article>`;
       }
 
       // ---------- 数据加载 ----------
@@ -2303,6 +2377,7 @@ body {
             const json = await res.json();
             if (json.code === 200) {
                 allPosts = json.data || [];
+                allPosts = applyPinOrder(allPosts);
             } else {
                 throw new Error(json.msg || "获取数据失败");
             }
@@ -3160,6 +3235,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function insertNewPostToTop(post) {
         allPosts.unshift(post);
         filtered.unshift(post);
+        applyPinOrder(allPosts); applyPinOrder(filtered);
         const t = document.createElement("div");
         t.innerHTML = buildPostHTML(post);
         if (postsContainer) {
@@ -3356,6 +3432,9 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const newPostItem = json.data;
             allPosts.unshift(newPostItem);
             filtered.unshift(newPostItem);
+            // 👇 在这两行 unshift 之后加:
+		applyPinOrder(allPosts);
+		applyPinOrder(filtered);
             if (publishModal) {
               publishModal.remove();
               publishModal = null;
@@ -3544,7 +3623,9 @@ lbImg.onerror = () => resetLightboxBackdrop();
             if (idxAll > -1) allPosts[idxAll] = updatedPost;
             const idxFil = filtered.findIndex(p => p.id === currentEditId);
             if (idxFil > -1) filtered[idxFil] = updatedPost;
-
+// 👇 加这两行(编辑内容可能新增/删除了 #置顶 关键词,必须重新排序)
+  applyPinOrder(allPosts);
+  applyPinOrder(filtered);
             if (publishModal) {
               publishModal.remove();
               publishModal = null;
