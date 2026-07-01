@@ -448,147 +448,66 @@ body.dark .post-content ol > li::before {
 }
  
  
-  /* 置顶电影票卡片核心样式 - 替换原有.post.pinned */
-.post.pinned {
+ .post.pinned {
   position: relative;
   margin-top: 46px;
   border-color: var(--accent-dark);
-  background: linear-gradient(135deg, var(--paper), color-mix(in srgb, var(--accent) 5%, var(--paper)));
-  /* 电影票左右锯齿撕边的clip-path（手绘不规则锯齿） */
+  background: var(--paper);
+  transform-origin: top center;
+  animation: pinSwing 4.5s ease-in-out infinite;
   clip-path: polygon(
-    0% 0%, 
-    5% 2%, 10% 0%, 15% 2%, 20% 0%, 25% 2%, 30% 0%, 35% 2%, 40% 0%, 45% 2%, 50% 0%, 55% 2%, 60% 0%, 65% 2%, 70% 0%, 75% 2%, 80% 0%, 85% 2%, 90% 0%, 95% 2%, 100% 0%, 
-    100% 100%, 
-    95% 98%, 90% 100%, 85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%, 55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%, 25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 0% 100%
+    0% 8%, 5% 2%, 10% 9%, 15% 1%, 20% 8%, 25% 2%, 30% 9%, 35% 1%,
+    40% 8%, 45% 2%, 50% 9%, 55% 1%, 60% 8%, 65% 2%, 70% 9%, 75% 1%,
+    80% 8%, 85% 2%, 90% 9%, 95% 1%, 100% 8%,
+    100% 93%, 95% 99%, 90% 92%, 85% 99%, 80% 91%, 75% 99%, 70% 92%,
+    65% 99%, 60% 91%, 55% 99%, 50% 92%, 45% 99%, 40% 91%, 35% 99%,
+    30% 92%, 25% 99%, 20% 91%, 15% 99%, 10% 92%, 5% 99%, 0% 92%
   );
-  /* 电影票轻微晃动动画（替代原有pinSwing） */
-  animation: ticketSwing 5s ease-in-out infinite;
-  box-shadow: 
-    0 8px 0 var(--border), /* 票根底部厚阴影 */
-    0 14px 28px rgba(0,0,0,0.18);
-  /* 电影票内部分割线（伪元素实现） */
-  padding: 24px 24px 36px; /* 底部留出票码区域 */
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
 }
 
-/* 暗黑模式电影票阴影 */
 body.dark .post.pinned {
-  box-shadow: 
-    0 8px 0 var(--border),
-    0 14px 28px rgba(0,0,0,0.5), 
-    0 0 24px rgba(218,160,109,0.2);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 0 24px rgba(218,160,109,0.2);
 }
 
-/* 电影票专属晃动动画（比原有更轻柔，贴合票根质感） */
-@keyframes ticketSwing {
-  0%, 100% { transform: rotate(-0.8deg) skewX(-1deg); }
-  50%      { transform: rotate(0.8deg) skewX(1deg); }
+@keyframes pinSwing {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50%      { transform: rotate(1.1deg); }
 }
 
-/* 电影票内部分割虚线（手绘撕痕效果） */
-.post.pinned::before {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 60px;
-  height: 4px;
-  /* 手绘不规则虚线 */
-  background: repeating-linear-gradient(
-    90deg, 
-    var(--border), 
-    var(--border) 8px, 
-    transparent 8px, 
-    transparent 16px
-  );
-  opacity: 0.8;
-  transform: rotate(-0.5deg);
-  z-index: 1;
-}
-
-/* 电影票底部票码区域（伪元素添加手绘编号） */
-.post.pinned::after {
-  content: "🎫 " attr(data-ticket-id); /* 用data属性传票码，默认显示🎫 */
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 16px;
-  font-size: 0.75rem;
-  font-weight: 900;
-  color: var(--secondary-text);
-  text-align: center;
-  transform: rotate(-1deg) skewX(-2deg);
-  letter-spacing: 2px; /* 票码字符间距 */
-  z-index: 1;
-}
-/* 替换原有pin-badge为电影票打孔印章 */
 .pin-badge {
   position: absolute;
-  top: -18px; /* 上移贴合票根顶部 */
+  top: -30px;
   left: 50%;
   transform: translateX(-50%);
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   z-index: 6;
-  filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.35));
+  filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.35));
   pointer-events: none;
-  animation: ticketPulse 2.6s ease-in-out infinite;
-  /* 打孔圆孔样式 */
-  background: var(--bg);
-  border: 3px solid var(--border);
-  border-radius: 50%; /* 圆形打孔 */
-  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.2);
+  animation: pinPulse 2.6s ease-in-out infinite;
 }
 
-/* 打孔徽章的脉冲动画（比原有更柔和） */
-@keyframes ticketPulse {
+.pin-badge svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+@keyframes pinPulse {
   0%, 100% { transform: translateX(-50%) scale(1); }
-  50%      { transform: translateX(-50%) scale(1.1); }
+  50%      { transform: translateX(-50%) scale(1.08); }
 }
 
-/* 暗黑模式打孔徽章配色 */
-body.dark .pin-badge {
-  background: var(--bg);
-  border-color: var(--accent);
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.1);
+.post.pinned .post-header { margin-top: 8px; }
+
+@media (max-width: 768px) {
+  .post.pinned { margin-top: 36px; }
+  .pin-badge { width: 34px; height: 34px; top: -22px; }
 }
 
-/* 移除原有pin-badge的svg，改用纯css打孔 */
-.pin-badge svg {
-  display: none;
+@media (prefers-reduced-motion: reduce) {
+  .post.pinned, .pin-badge { animation: none; }
 }
+ 
+ body.dark .pin-badge svg path { fill: #DAA06D; }
 
-/* 置顶卡片头部（适配电影票片名区） */
-.post.pinned .post-header {
-  margin-top: 12px;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 2;
-}
-
-/* 电影票风格的时间标签（改成“放映时间”样式） */
-.post.pinned .post-time {
-  background: var(--accent); /* 暖橙贴合票根 */
-  color: var(--ink);
-  padding: 4px 16px;
-  font-size: 0.85rem;
-  transform: rotate(-3deg) skewX(-4deg);
-  border-radius: var(--sketch-radius-btn);
-  /* 电影票标签的手绘阴影 */
-  box-shadow: 2px 2px 0 var(--border);
-}
-
-/* 时间标签前缀改成🎬 */
-.post.pinned .post-time::before {
-  content: "🎬 // ";
-  color: var(--ink);
-}
-
-/* 置顶卡片内容区（避开票根分割线） */
-.post.pinned .post-content {
-  position: relative;
-  z-index: 2;
-  padding-bottom: 16px; /* 避开底部票码 */
-}
 
 
 
