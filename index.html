@@ -2822,6 +2822,44 @@ body {
         }
       }
 
+
+
+      /* ===== compact grid row sizing ===== */
+      .scrapbook-grid {
+        align-items: start !important;
+        justify-items: stretch !important;
+        grid-auto-rows: auto !important;
+      }
+
+      .scrapbook-grid[data-grid-count="2"] {
+        width: min(100%, 244px) !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-auto-rows: 1fr !important;
+      }
+
+      .scrapbook-grid[data-grid-count="2"] .scrapbook-grid-item:nth-child(n+3) {
+        display: none !important;
+      }
+
+      .scrapbook-grid[data-grid-count="2"] .scrapbook-grid-item {
+        aspect-ratio: 1 / 1 !important;
+        align-self: start !important;
+      }
+
+      .scrapbook-grid[data-grid-count="4"] {
+        width: min(100%, 244px) !important;
+      }
+
+      @media (max-width: 768px) {
+        .scrapbook-grid[data-grid-count="2"] {
+          width: min(100%, 216px) !important;
+        }
+
+        .scrapbook-grid[data-grid-count="4"] {
+          width: min(100%, 216px) !important;
+        }
+      }
+
 </style>
 <style id="handwritten-card-overrides">
   :root {
@@ -5157,7 +5195,8 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
       const previewImages = images.slice(0, 6);
       const extra = images.length - 6;
-      return `<div class="scrapbook-grid" data-preview-count="${images.length}" data-grid-count="${previewImages.length}">${previewImages.map((src, index) => {
+      const gridRows = previewImages.length <= 2 ? 1 : (previewImages.length <= 4 ? 2 : 2);
+      return `<div class="scrapbook-grid" data-preview-count="${images.length}" data-grid-count="${previewImages.length}" style="grid-template-rows: repeat(${gridRows}, minmax(0, auto));">${previewImages.map((src, index) => {
         const plusClass = extra > 0 && index === 5 ? ' plus' : '';
         const plusAttr = extra > 0 && index === 5 ? ` data-plus="+${extra}"` : '';
         return `<div class="scrapbook-grid-item${plusClass}"${plusAttr} data-preview-index="${index}"><img src="${src}" alt=""></div>`;
