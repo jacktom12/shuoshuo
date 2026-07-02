@@ -423,8 +423,6 @@ body.dark #postsContainer > .post:first-child::before {
    METAPHOR CARD V3 - 核心不规则涂鸦卡片
    ========================================== */
       .post {
-        break-inside: avoid;
-        page-break-inside: avoid;
         margin: 28px 0;
         padding: 24px;
         background: var(--paper);
@@ -2249,17 +2247,211 @@ body {
 }
 
 
-/* 内容区链接 —— 手绘风格 */
-.post-content a {
-  color: var(--accent-dark);
-  text-decoration: underline dashed var(--accent);
-  font-weight: 600;
-  transition: color 0.2s;
-}
 
-.post-content a:hover {
-  color: var(--accent);
-}
+      /* ===== 2026-07 menu + flat card polish ===== */
+      :root {
+        --glass-border: rgba(255, 255, 255, 0.35);
+        --menu-accent: rgba(0, 122, 255, 0.26);
+        --menu-accent-strong: rgba(0, 122, 255, 0.82);
+        --menu-text-light: rgba(255, 255, 255, 0.92);
+        --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .topbar { display: none !important; }
+
+      main {
+        padding-top: 16px !important;
+        padding-bottom: calc(112px + var(--safe-bottom)) !important;
+      }
+
+      .menu {
+        position: fixed;
+        left: 50%;
+        bottom: calc(12px + var(--safe-bottom));
+        transform: translateX(-50%);
+        width: calc(100% - 20px);
+        max-width: 520px;
+        backdrop-filter: blur(12px) saturate(180%) contrast(200%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(200%);
+        background: var(--menu-accent);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 8px;
+        border-radius: 999px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        z-index: 6000;
+      }
+
+      .menu::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 2px 2px 5px -2px rgba(255, 255, 255, 0.4), inset -2px -2px 5px 2px rgba(255, 255, 255, 0.26), inset 0 -2px 0 rgba(255, 255, 255, 0.18);
+        pointer-events: none;
+      }
+
+      .menu .menu-item {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1 0;
+        min-width: 0;
+        color: var(--menu-text-light);
+        text-decoration: none;
+        padding: 10px 6px;
+        border-radius: 999px;
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.18s var(--ease-spring), color 0.18s var(--ease-spring), transform 0.18s var(--ease-spring), box-shadow 0.3s ease-in-out;
+      }
+
+      .menu .menu-item:hover,
+      .menu .menu-item:focus-visible {
+        background-color: rgba(255, 255, 255, 0.28);
+        box-shadow: inset 2px 2px 5px -2px rgba(255, 255, 255, 0.4), inset -2px -1px 5px 0 rgba(255, 255, 255, 0.34), inset 0 -2px 0 rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .menu .menu-item svg {
+        width: 1.4rem;
+        height: 1.4rem;
+      }
+
+      .menu .menu-item span {
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1;
+        margin-top: 4px;
+      }
+
+      .menu .menu-item.active {
+        background: rgba(255, 255, 255, 0.56);
+        color: var(--menu-accent-strong);
+      }
+
+      .menu .menu-item:active {
+        transform: scale(0.98);
+      }
+
+      body.dark .menu {
+        background: rgba(47, 87, 157, 0.42);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+      }
+
+      body.dark .menu .menu-item {
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      body.dark .menu .menu-item.active {
+        background: rgba(255, 255, 255, 0.14);
+        color: #a8cbff;
+      }
+
+      #backToTopBtn {
+        bottom: calc(94px + var(--safe-bottom)) !important;
+      }
+
+      .post,
+      #postsContainer .post {
+        transform: none !important;
+        box-shadow: none !important;
+        border-radius: 22px !important;
+        border-color: var(--border) !important;
+      }
+
+      .post:hover,
+      #postsContainer .post:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        border-color: var(--border) !important;
+      }
+
+      #postsContainer .post::after,
+      #postsContainer .post:hover::after {
+        display: none !important;
+      }
+
+      .post-images img,
+      .post-images img:hover {
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .post-image-single {
+        margin: 14px 0 4px;
+      }
+
+      .post-image-single .post-images-wrap {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1.5px solid color-mix(in srgb, var(--border) 72%, transparent);
+        background: color-mix(in srgb, var(--paper) 92%, white 8%);
+        padding: 10px;
+      }
+
+      .post-image-single .post-images {
+        padding: 0 !important;
+      }
+
+      .post-image-single .img-slide {
+        display: block;
+      }
+
+      .post-image-single .post-images.single-image img,
+      .post-image-single .post-images img {
+        display: block;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 520px;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 0 !important;
+      }
+
+      .post-image-single .img-dots {
+        display: none !important;
+      }
+
+      .post-image-dual {
+        align-items: start;
+      }
+
+      @media (max-width: 740px) {
+        .menu {
+          width: calc(100% - 16px);
+          gap: 6px;
+          padding: 7px;
+        }
+
+        .menu .menu-item {
+          padding: 9px 4px;
+        }
+
+        .menu .menu-item span {
+          font-size: 0.74rem;
+        }
+
+        .post-image-single .post-images-wrap {
+          padding: 8px;
+          border-radius: 16px;
+        }
+
+        .post-image-single .post-images.single-image img,
+        .post-image-single .post-images img {
+          max-height: 360px;
+          border-radius: 12px;
+        }
+      }
 
 </style>
   
@@ -2890,66 +3082,34 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
     </svg>
 
     <div class="app-container">
-      <header class="topbar">
-        <div class="topbar-inner">
-          <div class="blog-brand" id="logoTitle">WEN</div>
-          <div class="topbar-right">
-            <!-- 搜索按钮 -->
-            <button class="topbar-icon" id="openSearchBtn" title="搜索">
-              <svg
-                width="1.2em"
-                height="1.2em"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="10" cy="10" r="7"></circle>
-                <line x1="21" y1="21" x2="15" y2="15"></line>
-              </svg>
-            </button>
-
-            <!-- 主题切换按钮（放一个图标，JS里再换另一个） -->
-            <button class="topbar-icon" id="themeToggleBtn" title="切换主题">
-              <svg
-                id="themeIcon"
-                width="1.2em"
-                height="1.2em"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                ></path>
-              </svg>
-            </button>
-
-            <!-- 发布按钮 -->
-            <button class="topbar-icon" id="openPublishBtn" title="发布">
-              <svg
-                width="1.2em"
-                height="1.2em"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M17 3a2.85 2.83 0 0 0 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
+      <div id="logoTitle" class="sr-only">WEN</div>
+      <nav class="menu" aria-label="快捷菜单">
+        <button type="button" class="menu-item active" id="homeNavBtn" title="主页">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"></path>
+            <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z"></path>
+          </svg>
+          <span>主页</span>
+        </button>
+        <button type="button" class="menu-item" id="openSearchBtn" title="搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd" d="M10.5 3a7.5 7.5 0 1 0 4.673 13.367l4.23 4.23a.75.75 0 1 0 1.06-1.06l-4.23-4.23A7.5 7.5 0 0 0 10.5 3Zm-6 7.5a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z" clip-rule="evenodd"></path>
+          </svg>
+          <span>搜索</span>
+        </button>
+        <button type="button" class="menu-item" id="themeToggleBtn" title="切换主题">
+          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span>主题</span>
+        </button>
+        <button type="button" class="menu-item" id="openPublishBtn" title="发布">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path d="M12 4.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6A.75.75 0 0 1 12 4.5Z"></path>
+          </svg>
+          <span>发布</span>
+        </button>
+      </nav>
       <button class="back-to-top" id="backToTopBtn" title="回到顶部">⬆︎</button>
       <main>
         <div id="postsContainer"></div>
@@ -3011,16 +3171,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
       };
 
       marked.setOptions({ breaks: true, gfm: true });
-      marked.use({
-        renderer: {
-          link(token) {
-            const href = token.href || '';
-            const title = token.title ? ` title="${token.title}"` : '';
-            const text = token.text || '';
-            return `<a href="${href}" target="_blank" rel="noopener noreferrer"${title}>${text}</a>`;
-          }
-        }
-      });
       const COLOR_BLOCKS = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "⬛", "⬜"];
       function randomColorBlock() {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
@@ -3066,6 +3216,101 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
         "https://datas.199105.xyz";
       const PUBLISH_PWD_KEY = "memo_publish_pwd";
       const PUBLISH_PWD_DAYS = 30;
+
+      const MOCK_POSTS = [
+        {
+          id: "mock-1",
+          date: "2026-06-28 08:30",
+          content: "#置顶\n## 在展光里，遇见更好的自己\n清晨的阳光透过窗帘洒进房间，\n一杯热咖啡，一本喜欢的书，\n把今天写成轻轻发亮的一页。",
+          images: []
+        },
+        {
+          id: "mock-2",
+          date: "2026-06-24 19:12",
+          content: "## 慢下来的周末\n没有赶路，也没有安排太多事。\n只是把沙发、电影、热饮和一点点发呆，\n拼成了一个很舒服的晚上。",
+          images: [
+            "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80"
+          ]
+        },
+        {
+          id: "mock-3",
+          date: "2026-06-20 14:05",
+          content: "## 旅行的意义\n去不同的地方，看不同的风景，\n遇见不同的人，也遇见另一个自己。\n有时候一段路程，真的会把心情慢慢整理好。",
+          images: [
+            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+            "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80",
+            "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80"
+          ]
+        },
+        {
+          id: "mock-4",
+          date: "2026-06-18 11:40",
+          content: "## 桌面的一角\n今天把工作区重新整理了一下，\n屏幕边上的便签、键盘旁的小摆件，\n忽然让写代码这件事变得更柔软了。",
+          images: [
+            "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80",
+            "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
+            "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
+            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=900&q=80"
+          ]
+        }
+        
+        ,
+{
+  id: "mock-5",
+  date: "2026-06-15 09:20",
+  content: "## 一杯茶的时间\n下午的阳光刚好，泡一杯茶，翻几页闲书。\n生活的松弛感，往往就藏在这些不赶时间的小事里。",
+  images: []
+},
+{
+  id: "mock-6",
+  date: "2026-06-12 21:05",
+  content: "## 深夜的代码\n又是一个改bug到凌晨的夜晚，\n但看到功能跑起来的那一刻，一切都值得。",
+  images: [
+    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=900&q=80"
+  ]
+},
+{
+  id: "mock-7",
+  date: "2026-06-10 16:40",
+  content: "## 猫咪的午后\n阳台上晒太阳的猫咪，慢慢眨着眼睛，\n好像在说时间可以再慢一点。",
+  images: [
+    "https://images.unsplash.com/photo-1494256997604-768d1f608cac?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=900&q=80"
+  ]
+},
+{
+  id: "mock-8",
+  date: "2026-06-08 12:15",
+  content: "## 城市漫步\n没有目的地的散步，路过的每一条街，\n都藏着一点点意外的风景。",
+  images: [
+    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80"
+  ]
+},
+{
+  id: "mock-9",
+  date: "2026-06-05 08:00",
+  content: "## 早餐的仪式感\n哪怕再忙，也要认真吃一顿早餐，\n一天的心情，往往从这里开始。",
+  images: [
+    "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=900&q=80"
+  ]
+},
+{
+  id: "mock-10",
+  date: "2026-06-02 19:30",
+  content: "## 雨天的窗\n窗外淅淅沥沥地下着雨，\n室内的灯光暖黄，一切都刚刚好。",
+  images: []
+}
+      ];
+
+      function getMockPosts() {
+        return MOCK_POSTS.map(post => ({
+          ...post,
+          images: Array.isArray(post.images) ? [...post.images] : []
+        }));
+      }
+
 
       const loaderDom = document.getElementById("loader");
       const postsContainer = document.getElementById("postsContainer");
@@ -3167,8 +3412,12 @@ function stripPinKeyword(text) {
         let imagesHtml = "";
         if (p.images && p.images.length) {
           const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
-          const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(p) : "";
-          imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+          if (p.images.length === 1) {
+            imagesHtml = `<div class="post-image-single"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
+          } else {
+            const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(p) : "";
+            imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+          }
         }
 
         const hasAuth = !!getPublishPassword();
@@ -3215,24 +3464,30 @@ function stripPinKeyword(text) {
         isLoading = true;
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
+        const isLocalPreview = ["file:", "about:"].includes(location.protocol) || /localhost|127\.0\.0\.1/.test(location.hostname);
         try {
-          const res = await fetch(`${WORKER_URL}/api/get-memos`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            }
-          });
-          if (!res.ok) throw new Error("网络响应错误");
-          const json = await res.json();
-          if (json.code === 200) {
-            allPosts = json.data || [];
+          if (isLocalPreview) {
+            allPosts = getMockPosts();
           } else {
-            throw new Error(json.msg || "获取数据失败");
+            const res = await fetch(`${WORKER_URL}/api/get-memos`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              }
+            });
+            if (!res.ok) throw new Error("网络响应错误");
+            const json = await res.json();
+            if (json.code === 200) {
+              allPosts = json.data || [];
+              if (!allPosts.length) allPosts = getMockPosts();
+            } else {
+              throw new Error(json.msg || "获取数据失败");
+            }
           }
         } catch (err) {
           console.error(err);
-          showToast("加载失败，请检查网络或配置", "error");
-          allPosts = [];
+          allPosts = getMockPosts();
+          showToast("在线数据不可用，已切换为本地演示数据", "error");
         }
 
         filtered = [...allPosts];
@@ -4558,6 +4813,24 @@ lbImg.onerror = () => resetLightboxBackdrop();
         });
         handleScroll(); // 初始检测一次
       }
+
+
+      const menuHomeBtn = document.getElementById("homeNavBtn");
+      if (menuHomeBtn) {
+        menuHomeBtn.onclick = (e) => {
+          e.preventDefault();
+          const scrollContainer = document.querySelector("main");
+          if (scrollContainer) scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+        };
+      }
+
+      const menuButtons = document.querySelectorAll('.menu .menu-item');
+      const setActiveMenu = (id) => {
+        menuButtons.forEach(btn => btn.classList.toggle('active', btn.id === id || (id === 'homeNavBtn' && btn.id === 'homeNavBtn')));
+      };
+      document.getElementById("openSearchBtn")?.addEventListener('click', () => setActiveMenu('openSearchBtn'));
+      document.getElementById("themeToggleBtn")?.addEventListener('click', () => setActiveMenu('themeToggleBtn'));
+      document.getElementById("openPublishBtn")?.addEventListener('click', () => setActiveMenu('openPublishBtn'));
 
       document.addEventListener("DOMContentLoaded", () => {
         init();
