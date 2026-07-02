@@ -2645,6 +2645,76 @@ body {
         content: none !important;
       }
 
+
+
+      /* ===== scrapbook 6-grid preview ===== */
+      .post-image-dual .scrapbook-preview-host,
+      .search-results .post-image-dual .scrapbook-preview-host {
+        display: block;
+        width: 100%;
+        margin: 2px 0 0;
+      }
+
+      .scrapbook-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        width: min(100%, 360px);
+        margin: 0 auto;
+      }
+
+      .scrapbook-grid-item {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        background: var(--paper);
+        box-shadow: 3px 3px 0 rgba(50, 50, 50, 0.22);
+      }
+
+      body.dark .scrapbook-grid-item {
+        box-shadow: 3px 3px 0 rgba(243, 233, 221, 0.12);
+      }
+
+      .scrapbook-grid-item img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        filter: brightness(var(--img-brightness));
+      }
+
+      .scrapbook-grid-item.plus::after {
+        content: attr(data-plus);
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.42);
+        color: #fff;
+        font-size: 1.05rem;
+        font-weight: 900;
+        letter-spacing: 0.3px;
+      }
+
+      @media (max-width: 768px) {
+        .scrapbook-grid {
+          gap: 8px;
+          width: min(100%, 320px);
+        }
+
+        .scrapbook-grid-item {
+          border-radius: 14px;
+        }
+
+        .scrapbook-grid-item.plus::after {
+          font-size: 0.98rem;
+        }
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
@@ -5064,16 +5134,16 @@ lbImg.onerror = () => resetLightboxBackdrop();
     function buildScrapbookPreview(item) {
       const images = Array.isArray(item && item.images) ? item.images.filter(Boolean) : [];
       if (!images.length) return '';
-      const seed = Math.random() > 0.5 ? 'single-a' : 'single-b';
-      const variant = Math.random() > 0.5 ? 'variant-a' : 'variant-b';
       if (images.length === 1) {
-        return `<div class="scrapbook-stack" data-preview-count="1"><div class="scrapbook-photo ${seed} clip" data-preview-index="0"><img src="${images[0]}" alt=""></div></div>`;
+        return `<div class="scrapbook-stack" data-preview-count="1"><div class="scrapbook-photo ${Math.random() > 0.5 ? 'single-a' : 'single-b'} clip" data-preview-index="0"><img src="${images[0]}" alt=""></div></div>`;
       }
-      const extra = images.length - 2;
-      return `<div class="scrapbook-stack" data-preview-count="${images.length}">
-        <div class="scrapbook-photo ${variant} first" data-preview-index="0"><img src="${images[0]}" alt=""></div>
-        <div class="scrapbook-photo ${variant} second ${extra > 0 ? 'plus' : ''}" ${extra > 0 ? `data-plus="+${extra}"` : ''} data-preview-index="1"><img src="${images[1]}" alt=""></div>
-      </div>`;
+      const previewImages = images.slice(0, 6);
+      const extra = images.length - 6;
+      return `<div class="scrapbook-grid" data-preview-count="${images.length}">${previewImages.map((src, index) => {
+        const plusClass = extra > 0 && index === 5 ? ' plus' : '';
+        const plusAttr = extra > 0 && index === 5 ? ` data-plus="+${extra}"` : '';
+        return `<div class="scrapbook-grid-item${plusClass}"${plusAttr} data-preview-index="${index}"><img src="${src}" alt=""></div>`;
+      }).join('')}</div>`;
     }
 
     function bindScrapbookPreviewClicks(root) {
@@ -5081,15 +5151,15 @@ lbImg.onerror = () => resetLightboxBackdrop();
         if (host.dataset.boundPreviewClick) return;
         host.dataset.boundPreviewClick = '1';
         host.addEventListener('click', (e) => {
-          const clicked = e.target.closest('.scrapbook-photo');
+          const clicked = e.target.closest('.scrapbook-photo, .scrapbook-grid-item');
           if (!clicked) return;
           const card = host.closest('.post, article');
           const imgs = [...(card ? card.querySelectorAll('.scrapbook-gallery-source img') : [])];
           if (!imgs.length) return;
           const index = Number(clicked.dataset.previewIndex || 0);
           currentGallery = imgs.map(i => i.src);
-currentIndex = index;
-if (typeof openLightbox === 'function') openLightbox();
+          currentIndex = Math.max(0, Math.min(index, currentGallery.length - 1));
+          if (typeof openLightbox === 'function') openLightbox();
         });
       });
     }
