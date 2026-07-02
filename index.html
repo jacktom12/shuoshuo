@@ -3516,6 +3516,11 @@ body {
   position: relative;
   display: block;
   padding: 16px 4px 0;
+  min-height: 320px;
+}
+
+#postsContainer:not(.masonry-ready) .post {
+  opacity: 0;
 }
 
 #postsContainer .post {
@@ -3527,7 +3532,7 @@ body {
   transform: none !important;
   box-sizing: border-box;
   will-change: top, left, width;
-  transition: top 0.22s ease, left 0.22s ease, width 0.22s ease;
+  transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, opacity 0.18s ease;
 }
 
 #postsContainer .post .post-right {
@@ -3918,12 +3923,28 @@ function stripPinKeyword(text) {
       }
 
       let masonryRaf = 0;
+      let masonrySettleTimer = null;
+
+      function startMasonrySettle(duration = 1600) {
+        const started = performance.now();
+        if (masonrySettleTimer) clearInterval(masonrySettleTimer);
+        scheduleMasonry();
+        masonrySettleTimer = setInterval(() => {
+          scheduleMasonry();
+          if (performance.now() - started >= duration) {
+            clearInterval(masonrySettleTimer);
+            masonrySettleTimer = null;
+          }
+        }, 120);
+      }
+
       function layoutMasonry() {
         const container = document.getElementById("postsContainer");
         if (!container) return;
         const items = Array.from(container.querySelectorAll(".post"));
         if (!items.length) {
           container.style.height = "0px";
+          container.classList.remove("masonry-ready");
           return;
         }
 
@@ -3962,6 +3983,7 @@ function stripPinKeyword(text) {
         });
 
         container.style.height = `${Math.max(...heights) - gap}px`;
+        container.classList.add("masonry-ready");
       }
 
       function scheduleMasonry() {
@@ -4108,7 +4130,10 @@ function stripPinKeyword(text) {
 
       function render(reset = false) {
         if (!postsContainer) return;
-        if (reset) postsContainer.innerHTML = "";
+        if (reset) {
+          postsContainer.classList.remove("masonry-ready");
+          postsContainer.innerHTML = "";
+        }
         const ordered = sortPostsByDateDesc(filtered);
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
@@ -4128,13 +4153,13 @@ function stripPinKeyword(text) {
         bindImagesInContainer(postsContainer);
         if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
         requestAnimationFrame(() => {
-          scheduleMasonry();
+          startMasonrySettle();
           postsContainer.querySelectorAll("img").forEach((img) => {
             if (img.dataset.masonryBound) return;
             img.dataset.masonryBound = "true";
             if (!img.complete) {
-              img.addEventListener("load", scheduleMasonry, { passive: true });
-              img.addEventListener("error", scheduleMasonry, { passive: true });
+              img.addEventListener("load", startMasonrySettle, { passive: true });
+              img.addEventListener("error", startMasonrySettle, { passive: true });
             }
           });
         });
@@ -5433,8 +5458,11 @@ lbImg.onerror = () => resetLightboxBackdrop();
         }, d);
       }
 
-      window.addEventListener("resize", scheduleMasonry, { passive: true });
-      window.addEventListener("load", scheduleMasonry, { passive: true });
+      window.addEventListener("resize", startMasonrySettle, { passive: true });
+      window.addEventListener("load", startMasonrySettle, { passive: true });
+      if (document.fonts?.ready) {
+        document.fonts.ready.then(() => startMasonrySettle()).catch(() => {});
+      }
 
       // ---------- 事件绑定 + 回到顶部按钮修复 ----------
       const openSearchBtnEl = document.getElementById("openSearchBtn");
