@@ -3002,6 +3002,19 @@ body {
         z-index: 200100 !important;
       }
 
+
+
+      /* ===== search back to top always-visible in modal ===== */
+      @media (max-width: 768px) {
+        #searchBackToTopBtn {
+          right: 14px !important;
+          bottom: 18px !important;
+          width: 50px !important;
+          height: 50px !important;
+          border-radius: 16px !important;
+        }
+      }
+
 </style>
 <style id="handwritten-card-overrides">
   :root {
@@ -4749,14 +4762,14 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function updateSearchBackToTop() {
         if (!searchModal || !searchBackToTopBtn) return;
         const open = searchModal.classList.contains("open");
-        const scrolled = searchModal.scrollTop > 260;
+        const scrolled = window.scrollY > 260;
         searchBackToTopBtn.classList.toggle("show", open && scrolled);
       }
 
-      if (searchModal && searchBackToTopBtn) {
-        searchModal.addEventListener("scroll", updateSearchBackToTop, { passive: true });
+      if (searchBackToTopBtn) {
+        window.addEventListener("scroll", updateSearchBackToTop, { passive: true });
         searchBackToTopBtn.addEventListener("click", () => {
-          searchModal.scrollTo({ top: 0, behavior: "smooth" });
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
 
@@ -4787,7 +4800,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function openSearchModal() {
         lastScrollY = window.scrollY;
         searchModal.classList.add("open");
-          updateSearchBackToTop();
+          requestAnimationFrame(updateSearchBackToTop);
         document.body.style.overflow = "hidden";
         modalSearchInput.value = "";
         modalSearchInput.focus();
