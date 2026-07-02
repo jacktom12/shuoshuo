@@ -494,6 +494,20 @@ body.dark .post-content h2::after {
   background: repeating-linear-gradient(90deg, var(--accent), var(--accent) 4px, transparent 4px, transparent 8px);
 }
 
+/* 内容区链接 —— 手绘风格 */
+.post-content a {
+  color: var(--accent-dark);        /* 暗黑模式下自动变为 #e5aa70（亮橙） */
+  text-decoration: underline wavy var(--accent); /* 波浪下划线更手绘 */
+  font-weight: 600;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.post-content a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent-dark);
+}
+
+		
 @media (max-width: 768px) {
   .post-content h1 { font-size: 1.25rem; padding: 3px 12px; }
   .post-content h2 { font-size: 1.12rem; }
