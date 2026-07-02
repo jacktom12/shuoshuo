@@ -3110,6 +3110,7 @@ body {
 
 
 
+
 <style id="layout-stack-overrides">
   .post-right.post-body-text-only,
   .post-right.single-photo-layout,
@@ -3117,10 +3118,7 @@ body {
     display: block !important;
   }
 
-  .post-right.single-photo-layout .post-content,
-  .post-right.post-body-with-images .post-content,
-  .post-right.post-body-text-only .post-content {
-    order: initial !important;
+  .post-right .post-content {
     width: 100% !important;
     margin: 0 0 14px 0 !important;
     padding: 0 !important;
@@ -3128,9 +3126,7 @@ body {
     align-self: start !important;
   }
 
-  .post-right.single-photo-layout .post-image-dual,
-  .post-right.post-body-with-images .post-image-dual {
-    order: initial !important;
+  .post-right .post-image-dual {
     display: block !important;
     width: 100% !important;
     margin: 6px 0 0 0 !important;
@@ -3148,16 +3144,19 @@ body {
     align-items: flex-start !important;
   }
 
+  .scrapbook-stack {
+    margin: 0 !important;
+    position: relative;
+  }
+
   .scrapbook-stack.single-layout {
     width: min(100%, 248px) !important;
     height: 224px !important;
-    margin: 0 !important;
   }
 
   .scrapbook-stack.multi-layout {
-    width: min(100%, 248px) !important;
-    height: 178px !important;
-    margin: 0 !important;
+    width: min(100%, 300px) !important;
+    height: 220px !important;
   }
 
   .scrapbook-stack.single-layout .scrapbook-photo.single-a {
@@ -3174,22 +3173,40 @@ body {
     transform: rotate(4deg) !important;
   }
 
-  .scrapbook-stack.multi-layout .scrapbook-photo.variant-a.first,
-  .scrapbook-stack.multi-layout .scrapbook-photo.variant-b.first,
-  .scrapbook-stack.multi-count-2 .scrapbook-photo.first {
-    left: 14px !important;
-    top: 14px !important;
+  .scrapbook-stack.multi-layout .scrapbook-photo.first {
+    left: 10px !important;
+    top: 12px !important;
     width: 114px !important;
     transform: rotate(-6deg) !important;
   }
 
-  .scrapbook-stack.multi-layout .scrapbook-photo.variant-a.second,
-  .scrapbook-stack.multi-layout .scrapbook-photo.variant-b.second,
-  .scrapbook-stack.multi-count-2 .scrapbook-photo.second {
-    left: 108px !important;
-    top: 22px !important;
+  .scrapbook-stack.multi-layout .scrapbook-photo.second {
+    left: 118px !important;
+    top: 12px !important;
     width: 114px !important;
     transform: rotate(5deg) !important;
+  }
+
+  .scrapbook-stack.multi-layout .scrapbook-photo.third {
+    left: 28px !important;
+    top: 92px !important;
+    width: 114px !important;
+    transform: rotate(-4deg) !important;
+    display: none;
+  }
+
+  .scrapbook-stack.multi-layout .scrapbook-photo.fourth {
+    left: 136px !important;
+    top: 92px !important;
+    width: 114px !important;
+    transform: rotate(4deg) !important;
+    display: none;
+  }
+
+  .scrapbook-stack.multi-count-3 .scrapbook-photo.third,
+  .scrapbook-stack.multi-count-4 .scrapbook-photo.third,
+  .scrapbook-stack.multi-count-4 .scrapbook-photo.fourth {
+    display: block !important;
   }
 
   .single-decor {
@@ -3197,24 +3214,23 @@ body {
   }
 
   @media (max-width: 760px) {
-    .post-right.single-photo-layout .post-content,
-    .post-right.post-body-with-images .post-content,
-    .post-right.post-body-text-only .post-content {
+    .post-right .post-content {
       margin-bottom: 12px !important;
     }
 
     .scrapbook-stack.single-layout,
     .scrapbook-stack.multi-layout {
-      width: min(100%, 220px) !important;
       margin: 0 auto 0 0 !important;
     }
 
     .scrapbook-stack.single-layout {
+      width: min(100%, 220px) !important;
       height: 190px !important;
     }
 
     .scrapbook-stack.multi-layout {
-      height: 160px !important;
+      width: min(100%, 228px) !important;
+      height: 176px !important;
     }
 
     .scrapbook-stack.single-layout .scrapbook-photo.single-a {
@@ -3229,20 +3245,28 @@ body {
       width: 146px !important;
     }
 
-    .scrapbook-stack.multi-layout .scrapbook-photo.variant-a.first,
-    .scrapbook-stack.multi-layout .scrapbook-photo.variant-b.first,
-    .scrapbook-stack.multi-count-2 .scrapbook-photo.first {
-      left: 10px !important;
-      top: 12px !important;
-      width: 96px !important;
+    .scrapbook-stack.multi-layout .scrapbook-photo.first {
+      left: 8px !important;
+      top: 10px !important;
+      width: 88px !important;
     }
 
-    .scrapbook-stack.multi-layout .scrapbook-photo.variant-a.second,
-    .scrapbook-stack.multi-layout .scrapbook-photo.variant-b.second,
-    .scrapbook-stack.multi-count-2 .scrapbook-photo.second {
-      left: 86px !important;
-      top: 18px !important;
-      width: 96px !important;
+    .scrapbook-stack.multi-layout .scrapbook-photo.second {
+      left: 80px !important;
+      top: 10px !important;
+      width: 88px !important;
+    }
+
+    .scrapbook-stack.multi-layout .scrapbook-photo.third {
+      left: 24px !important;
+      top: 72px !important;
+      width: 88px !important;
+    }
+
+    .scrapbook-stack.multi-layout .scrapbook-photo.fourth {
+      left: 98px !important;
+      top: 72px !important;
+      width: 88px !important;
     }
   }
 </style>
@@ -3663,7 +3687,7 @@ function stripPinKeyword(text) {
       ${actionsHtml}
     </div>
     <div class="post-right ${bodyClass}">
-      ${imageCount === 1 ? `${imagesHtml}<div class="post-content">${parsed}</div>` : `<div class="post-content">${parsed}</div>${imagesHtml}`}
+      <div class="post-content">${parsed}</div>${imagesHtml}
     </div>
   </article>`;
       }
@@ -4450,7 +4474,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             </div>`;
           }
           div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-          <div class="post-right ${bodyClass}">${imageCount === 1 ? `${imagesHtml}<div class="post-content">${parsed}</div>` : `<div class="post-content">${parsed}</div>${imagesHtml}`}</div>`;
+          <div class="post-right ${bodyClass}"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
