@@ -2010,6 +2010,55 @@
         }
       }
 
+    
+
+      /* ===== image layout restore fixes ===== */
+      .post-image-single,
+      .search-results .post-image-single {
+        width: 100%;
+        margin: 6px 0 2px;
+      }
+
+      .post-image-single .scrapbook-gallery-source,
+      .search-results .post-image-single .scrapbook-gallery-source,
+      .post-right.single-media .scrapbook-gallery-source {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .post-right.single-media {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 14px !important;
+      }
+
+      .post-right.single-media .post-content {
+        width: 100% !important;
+      }
+
+      .search-results .post-image-dual,
+      .search-results .post-right.single-media,
+      .search-results .post-right.single-media .post-content {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+      }
+
+      .search-results .post-image-dual {
+        gap: 14px !important;
+      }
+
+      .search-results .post-image-dual .scrapbook-gallery-source,
+      .search-results .post-image-dual .scrapbook-preview-host,
+      .post-image-dual .scrapbook-gallery-source,
+      .post-image-dual .scrapbook-preview-host {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
     </style>
   
 <style id="handwritten-card-overrides">
