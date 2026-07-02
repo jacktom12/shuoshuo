@@ -2627,32 +2627,41 @@ body {
 
 
 
-      /* ===== Glassmorphism V1 ===== */
+      /* ===== Threads Style Clean V1 ===== */
       :root {
-        --glass-bg: rgba(255, 249, 238, 0.42);
-        --glass-bg-strong: rgba(255, 249, 238, 0.58);
-        --glass-surface: rgba(255, 253, 247, 0.28);
-        --glass-border: rgba(72, 58, 44, 0.14);
-        --glass-highlight: rgba(255, 255, 255, 0.52);
-        --glass-shadow: 0 18px 42px rgba(89, 69, 49, 0.14);
-        --glass-blur: 20px;
-        --glass-saturate: 150%;
+        --bg: #f7f7f8;
+        --paper: #ffffff;
+        --text: #111111;
+        --ink: #111111;
+        --secondary-text: #6f6f73;
+        --accent: #111111;
+        --accent-dark: #111111;
+        --border: #e6e6e9;
+        --thread-shadow: 0 2px 10px rgba(17, 17, 17, 0.04);
       }
 
       body.dark {
-        --glass-bg: rgba(34, 35, 41, 0.48);
-        --glass-bg-strong: rgba(34, 35, 41, 0.62);
-        --glass-surface: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.12);
-        --glass-highlight: rgba(255, 255, 255, 0.16);
-        --glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
-        --glass-saturate: 135%;
+        --bg: #101114;
+        --paper: #18191d;
+        --text: #f5f5f7;
+        --ink: #f5f5f7;
+        --secondary-text: #a7a7ad;
+        --accent: #f5f5f7;
+        --accent-dark: #f5f5f7;
+        --border: #2a2c31;
+        --thread-shadow: 0 6px 24px rgba(0, 0, 0, 0.24);
       }
 
-      .app-container {
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      html, body {
+        overflow-x: hidden !important;
       }
 
+      body {
+        background: var(--bg) !important;
+        color: var(--text) !important;
+      }
+
+      body::before,
       #postsContainer::before,
       .doodle-star,
       .doodle-heart,
@@ -2660,931 +2669,365 @@ body {
       .doodle-plane,
       .doodle-clip,
       .doodle-moon,
-      .doodle-leaf {
-        display: none !important;
-      }
-
-      .post,
-      .search-results .post,
-      .publish-panel,
-      .search-modal-content,
-      .publish-field,
-      .post-image-single .post-images-wrap,
-      .search-results .post-image-single .post-images-wrap {
-        background: linear-gradient(180deg, var(--glass-bg-strong), var(--glass-bg)) !important;
-        border: 1px solid var(--glass-border) !important;
-        box-shadow: var(--glass-shadow) !important;
-        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-      }
-
-      .post::before,
-      .publish-panel::before,
-      .search-modal-content::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(180deg, var(--glass-highlight), rgba(255,255,255,0.04) 26%, transparent 60%);
-        pointer-events: none;
-      }
-
-      .post,
-      .search-results .post {
-        border-radius: 28px !important;
-        overflow: hidden;
-      }
-
-      .post::after,
-      .search-results .post::after,
-      #postsContainer .post::after,
-      #postsContainer .post:hover::after {
+      .doodle-leaf,
+      .pin-badge,
+      .pin-badge-text svg {
         display: none !important;
         content: none !important;
       }
 
-      .post:hover,
-      .search-results .post:hover {
-        transform: translateY(-2px) !important;
-        border-color: rgba(208, 154, 98, 0.28) !important;
-        box-shadow: 0 24px 50px rgba(89, 69, 49, 0.18) !important;
+      .app-container {
+        max-width: 760px !important;
+        background: transparent !important;
+        overflow-y: auto !important;
       }
 
-      body.dark .post:hover,
-      body.dark .search-results .post:hover {
-        box-shadow: 0 20px 48px rgba(0,0,0,0.34) !important;
+      #postsContainer {
+        display: block !important;
+        column-count: 1 !important;
+        column-gap: 0 !important;
+        padding: 0 0 120px !important;
+      }
+
+      .post,
+      .search-results .post {
+        background: var(--paper) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 24px !important;
+        box-shadow: var(--thread-shadow) !important;
+        margin: 0 0 14px !important;
+        padding: 16px 16px 14px !important;
+        transform: none !important;
+        overflow: hidden !important;
+      }
+
+      .post:hover,
+      .search-results .post:hover {
+        transform: none !important;
+        box-shadow: var(--thread-shadow) !important;
+      }
+
+      .post::before,
+      .post::after,
+      .search-results .post::before,
+      .search-results .post::after {
+        display: none !important;
+        content: none !important;
       }
 
       .post-header,
       .publish-top,
       .search-modal-header {
+        margin-bottom: 12px !important;
+        padding-bottom: 10px !important;
+        border-bottom: 1px solid var(--border) !important;
         background: transparent !important;
-        border-bottom: 1px solid rgba(50, 50, 50, 0.08) !important;
       }
 
-      body.dark .post-header,
-      body.dark .publish-top,
-      body.dark .search-modal-header {
-        border-bottom-color: rgba(255,255,255,0.08) !important;
+      .post-time {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        color: var(--secondary-text) !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
       }
 
-      .post-time,
-      .pin-badge-text,
       .post-action-btn,
       .topbar-icon,
-      .search-bar button,
-      .close-search-btn,
-      .publish-submit,
-      .publish-cancel,
-      .pick-img-btn,
       .theme-option,
-      .search-loader.more-btn {
-        background: linear-gradient(180deg, rgba(255,255,255,0.52), rgba(255,255,255,0.22)) !important;
-        border: 1px solid var(--glass-border) !important;
-        box-shadow: 0 8px 20px rgba(89, 69, 49, 0.10) !important;
-        backdrop-filter: blur(14px) saturate(140%);
-        -webkit-backdrop-filter: blur(14px) saturate(140%);
+      .close-search-btn {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 999px !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        box-shadow: none !important;
       }
 
-      body.dark .post-time,
-      body.dark .pin-badge-text,
-      body.dark .post-action-btn,
-      body.dark .topbar-icon,
-      body.dark .search-bar button,
-      body.dark .close-search-btn,
-      body.dark .publish-submit,
-      body.dark .publish-cancel,
-      body.dark .pick-img-btn,
-      body.dark .theme-option,
-      body.dark .search-loader.more-btn {
-        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05)) !important;
+      .post-action-btn:hover,
+      .topbar-icon:hover,
+      .theme-option:hover,
+      .close-search-btn:hover {
+        background: rgba(17,17,17,0.05) !important;
+        border-color: var(--border) !important;
       }
 
-      .post-content mark,
-      .post-content .highlight,
-      .search-results .post-content span[style*="background-color: var(--accent)"] {
-        border-radius: 12px !important;
+      body.dark .post-action-btn:hover,
+      body.dark .topbar-icon:hover,
+      body.dark .theme-option:hover,
+      body.dark .close-search-btn:hover {
+        background: rgba(255,255,255,0.06) !important;
       }
 
-      .search-modal {
-        background: rgba(243, 233, 221, 0.36) !important;
-        backdrop-filter: blur(12px) saturate(130%);
-        -webkit-backdrop-filter: blur(12px) saturate(130%);
+      .post-right,
+      .post-right.single-media,
+      .search-results .post-right,
+      .post-image-dual {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: stretch !important;
+        grid-template-columns: none !important;
       }
 
-      body.dark .search-modal {
-        background: rgba(16, 17, 22, 0.54) !important;
+      .post-content,
+      .search-results .post-content {
+        font-size: 1rem !important;
+        line-height: 1.72 !important;
+        color: var(--text) !important;
       }
 
-      .search-modal-content,
-      .publish-panel {
-        position: relative;
-        border-radius: 32px !important;
+      .post-content h1,
+      .post-content h2,
+      .post-content h3,
+      .post-content h4 {
+        display: block !important;
+        margin: 0 0 10px !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        color: var(--text) !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em;
       }
 
-      .search-bar input,
-      .publish-input,
-      .publish-textarea,
-      #previewWrap,
-      .publish-drop-zone {
-        background: rgba(255, 255, 255, 0.28) !important;
-        border: 1px solid var(--glass-border) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.26);
+      .post-content a {
+        color: #2563eb !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
       }
 
-      body.dark .search-bar input,
-      body.dark .publish-input,
-      body.dark .publish-textarea,
-      body.dark #previewWrap,
-      body.dark .publish-drop-zone {
-        background: rgba(255,255,255,0.05) !important;
+      body.dark .post-content a {
+        color: #8ab4ff !important;
       }
 
-      .search-results {
-        max-width: 760px !important;
+      .post-content blockquote,
+      .post-content pre {
+        background: #f5f5f6 !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 16px !important;
+        box-shadow: none !important;
       }
 
-      .search-results .post-image-dual .scrapbook-preview-host,
-      .post-image-dual .scrapbook-preview-host {
-        width: 100%;
+      body.dark .post-content blockquote,
+      body.dark .post-content pre {
+        background: #14161a !important;
+      }
+
+      .post-content ul > li::before,
+      .post-content ol > li::before {
+        box-shadow: none !important;
+      }
+
+      .post-images img,
+      .post-image-single .post-images img,
+      .post-image-single .post-images.single-image img,
+      .scrapbook-photo {
+        border-radius: 18px !important;
+        border: 1px solid var(--border) !important;
+        box-shadow: none !important;
+      }
+
+      .post-image-single .post-images-wrap,
+      .search-results .post-image-single .post-images-wrap {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
       }
 
       .scrapbook-stack,
       .search-results .scrapbook-stack {
-        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
-        border-radius: 24px;
-      }
-
-      .scrapbook-photo {
-        border: 1px solid var(--glass-border) !important;
-        box-shadow: 0 10px 24px rgba(0,0,0,.12) !important;
-      }
-
-      .search-modal-header button:hover,
-      .post-action-btn:hover,
-      .topbar-icon:hover,
-      .search-bar button:hover,
-      .publish-submit:hover,
-      .publish-cancel:hover,
-      .pick-img-btn:hover,
-      .theme-option:hover,
-      .close-search-btn:hover,
-      .search-loader.more-btn:hover {
-        transform: translateY(-1px) !important;
-      }
-
-      .post-content a {
-        text-decoration-thickness: 1.5px;
-        text-underline-offset: 3px;
-      }
-
-      @media (max-width: 768px) {
-        .post,
-        .search-results .post,
-        .publish-panel,
-        .search-modal-content {
-          border-radius: 24px !important;
-        }
-      }
-
-
-
-      /* ===== iOS Glass Blog V2 ===== */
-      :root {
-        --bg: #ece8e2;
-        --paper: rgba(255, 255, 255, 0.22);
-        --text: #202126;
-        --ink: #202126;
-        --secondary-text: #5f6572;
-        --accent: #c78b52;
-        --accent-dark: #b27742;
-        --border: rgba(30, 34, 42, 0.10);
-        --img-brightness: 1;
-        --lightbox-bg: rgba(20, 22, 28, 0.84);
-        --lightbox-btn-bg: rgba(255,255,255,0.14);
-        --lightbox-btn-color: #ffffff;
-      }
-
-      body.dark {
-        --bg: #111318;
-        --paper: rgba(26, 28, 34, 0.34);
-        --text: #f4f6fb;
-        --ink: #f4f6fb;
-        --secondary-text: #b7bcc8;
-        --accent: #ffd088;
-        --accent-dark: #ffd088;
-        --border: rgba(255,255,255,0.10);
-        --img-brightness: 0.9;
-        --lightbox-bg: rgba(10, 12, 16, 0.92);
-        --lightbox-btn-bg: rgba(255,255,255,0.12);
-        --lightbox-btn-color: #ffffff;
-      }
-
-      body {
-        background-color: var(--bg) !important;
-        color: var(--text) !important;
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      body.dark::before {
-        background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
-      }
-
-      .app-container,
-      main,
-      #postsContainer {
-        position: relative;
-        z-index: 1;
-      }
-
-      .app-container {
-        max-width: 780px !important;
+        width: min(100%, 288px) !important;
+        height: 194px !important;
+        margin: 0 auto !important;
         background: transparent !important;
       }
 
-      #postsContainer {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 18px !important;
-        column-count: 1 !important;
-        padding: 16px 0 0 !important;
-      }
-
-      #postsContainer .post {
-        break-inside: avoid !important;
-        margin: 0 !important;
-      }
-
-      .post,
-      .search-results .post,
-      .publish-panel,
-      .search-modal-content,
-      .theme-menu,
-      .post-image-single .post-images-wrap,
-      .search-results .post-image-single .post-images-wrap {
-        background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.18)) !important;
-        border: 1px solid rgba(255,255,255,0.22) !important;
-        box-shadow: 0 22px 56px rgba(22, 24, 30, 0.12) !important;
-        backdrop-filter: blur(26px) saturate(160%) !important;
-        -webkit-backdrop-filter: blur(26px) saturate(160%) !important;
-        border-radius: 30px !important;
-      }
-
-      body.dark .post,
-      body.dark .search-results .post,
-      body.dark .publish-panel,
-      body.dark .search-modal-content,
-      body.dark .theme-menu,
-      body.dark .post-image-single .post-images-wrap,
-      body.dark .search-results .post-image-single .post-images-wrap {
-        background: linear-gradient(180deg, rgba(42,46,56,0.52), rgba(24,27,34,0.42)) !important;
-        border-color: rgba(255,255,255,0.10) !important;
-        box-shadow: 0 22px 56px rgba(0,0,0,0.28) !important;
-      }
-
-      .post::before,
-      .search-results .post::before,
-      .publish-panel::before,
-      .search-modal-content::before,
-      .theme-menu::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.08) 22%, transparent 58%);
-        pointer-events: none;
-      }
-
-      body.dark .post::before,
-      body.dark .search-results .post::before,
-      body.dark .publish-panel::before,
-      body.dark .search-modal-content::before,
-      body.dark .theme-menu::before {
-        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03) 22%, transparent 58%);
-      }
-
-      .post,
-      .search-results .post {
-        padding: 20px 22px !important;
-        overflow: hidden !important;
-        transform: none !important;
-      }
-
-      .post:hover,
-      .search-results .post:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 24px 60px rgba(22, 24, 30, 0.16) !important;
-      }
-
-      body.dark .post:hover,
-      body.dark .search-results .post:hover {
-        box-shadow: 0 24px 60px rgba(0,0,0,0.34) !important;
-      }
-
-      .post::after,
-      .search-results .post::after,
-      #postsContainer::before,
-      .pin-badge,
-      .pin-badge-text svg,
-      .post-content h1::before,
-      .post-content h2::before,
-      .post-content h3::before,
-      .post-content h4::before {
+      .scrapbook-gallery-source {
         display: none !important;
-        content: none !important;
-      }
-
-      .post-header,
-      .publish-top,
-      .search-modal-header {
-        margin-bottom: 14px !important;
-        padding-bottom: 12px !important;
-        border-bottom: 1px solid rgba(15, 18, 24, 0.08) !important;
-        background: transparent !important;
-      }
-
-      body.dark .post-header,
-      body.dark .publish-top,
-      body.dark .search-modal-header {
-        border-bottom-color: rgba(255,255,255,0.08) !important;
-      }
-
-      .post-time,
-      .pin-badge-text,
-      .post-action-btn,
-      .search-bar button,
-      .close-search-btn,
-      .publish-submit,
-      .publish-cancel,
-      .pick-img-btn,
-      .theme-option,
-      .search-loader.more-btn,
-      .menu .menu-item {
-        border-radius: 16px !important;
-        border: 1px solid rgba(255,255,255,0.24) !important;
-        background: linear-gradient(180deg, rgba(255,255,255,0.50), rgba(255,255,255,0.22)) !important;
-        box-shadow: 0 8px 22px rgba(30, 35, 44, 0.08) !important;
-        backdrop-filter: blur(14px) saturate(160%) !important;
-        -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-      }
-
-      body.dark .post-time,
-      body.dark .pin-badge-text,
-      body.dark .post-action-btn,
-      body.dark .search-bar button,
-      body.dark .close-search-btn,
-      body.dark .publish-submit,
-      body.dark .publish-cancel,
-      body.dark .pick-img-btn,
-      body.dark .theme-option,
-      body.dark .search-loader.more-btn,
-      body.dark .menu .menu-item {
-        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)) !important;
-        border-color: rgba(255,255,255,0.10) !important;
       }
 
       .menu {
+        width: calc(100% - 24px) !important;
         max-width: 560px !important;
-        background: rgba(255,255,255,0.30) !important;
-        border: 1px solid rgba(255,255,255,0.24) !important;
-        box-shadow: 0 18px 40px rgba(22, 24, 30, 0.10) !important;
-        backdrop-filter: blur(24px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+        padding: 8px !important;
+        gap: 4px !important;
+        background: rgba(255,255,255,0.94) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 999px !important;
+        box-shadow: 0 10px 30px rgba(17,17,17,0.08) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
       }
 
       body.dark .menu {
-        background: rgba(28,31,38,0.42) !important;
-        border-color: rgba(255,255,255,0.10) !important;
+        background: rgba(24,25,29,0.92) !important;
       }
 
       .menu::after { display: none !important; }
+
+      .menu .menu-item {
+        min-width: 0 !important;
+        flex: 1 1 0 !important;
+        padding: 10px 6px !important;
+        border-radius: 999px !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        color: var(--secondary-text) !important;
+      }
+
       .menu .menu-item.active {
-        background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.30)) !important;
-        color: var(--accent-dark) !important;
+        background: #f0f1f3 !important;
+        color: var(--text) !important;
       }
 
       body.dark .menu .menu-item.active {
-        background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08)) !important;
-        color: var(--accent) !important;
+        background: #23252b !important;
+        color: var(--text) !important;
+      }
+
+      .menu .menu-item:hover {
+        background: rgba(17,17,17,0.04) !important;
+      }
+
+      body.dark .menu .menu-item:hover {
+        background: rgba(255,255,255,0.05) !important;
+      }
+
+      .menu .menu-item svg {
+        width: 1.35rem !important;
+        height: 1.35rem !important;
+      }
+
+      .menu .menu-item span {
+        margin-top: 4px !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
       }
 
       .search-modal {
-        background: rgba(236, 232, 226, 0.22) !important;
-        backdrop-filter: blur(16px) saturate(120%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+        background: rgba(17,17,17,0.16) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
       }
 
-      body.dark .search-modal {
-        background: rgba(10, 12, 16, 0.44) !important;
+      .search-modal-content,
+      .publish-panel,
+      .theme-menu {
+        background: var(--paper) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 18px 48px rgba(17,17,17,0.12) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      body.dark .search-modal-content,
+      body.dark .publish-panel,
+      body.dark .theme-menu {
+        background: #18191d !important;
+        box-shadow: 0 18px 48px rgba(0,0,0,0.28) !important;
       }
 
       .search-modal-content,
       .publish-panel {
-        position: relative !important;
-        border-radius: 34px !important;
+        width: min(680px, calc(100vw - 24px)) !important;
+        padding: 18px !important;
       }
 
       .search-bar,
       .publish-field,
       .publish-drop-zone,
       #previewWrap {
-        background: rgba(255,255,255,0.14) !important;
-        border: 1px solid rgba(255,255,255,0.16) !important;
-        border-radius: 24px !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.18) !important;
-      }
-
-      body.dark .search-bar,
-      body.dark .publish-field,
-      body.dark .publish-drop-zone,
-      body.dark #previewWrap {
-        background: rgba(255,255,255,0.04) !important;
-        border-color: rgba(255,255,255,0.08) !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
       }
 
       .search-bar input,
       .publish-input,
       .publish-textarea {
-        background: rgba(255,255,255,0.44) !important;
-        border: 1px solid rgba(19, 22, 29, 0.08) !important;
-        border-radius: 18px !important;
+        background: #f3f4f6 !important;
+        border: 1px solid transparent !important;
+        border-radius: 16px !important;
         box-shadow: none !important;
       }
 
       body.dark .search-bar input,
       body.dark .publish-input,
       body.dark .publish-textarea {
-        background: rgba(255,255,255,0.06) !important;
-        border-color: rgba(255,255,255,0.08) !important;
+        background: #111216 !important;
+        border-color: #252830 !important;
       }
 
-      .post-content,
-      .search-results .post-content {
-        font-size: 1.03rem !important;
-        line-height: 1.84 !important;
-        color: var(--text) !important;
-      }
-
-      .post-content h1,
-      .post-content h2,
-      .post-content h3,
-      .post-content h4 {
-        display: block !important;
-        padding: 0 !important;
-        margin: 0 0 10px !important;
-        background: transparent !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        font-weight: 700 !important;
-        color: var(--text) !important;
-      }
-
-      .post-content h1 { font-size: 1.22rem !important; }
-      .post-content h2 { font-size: 1.14rem !important; }
-      .post-content h3 { font-size: 1.08rem !important; }
-      .post-content h4 { font-size: 1rem !important; }
-
-      .post-content blockquote,
-      .post-content pre,
-      .post-content code,
-      .post-content ul > li::before,
-      .post-content ol > li::before {
-        box-shadow: none !important;
-      }
-
-      .post-content blockquote,
-      .post-content pre {
-        border-radius: 18px !important;
-        border: 1px solid rgba(15, 18, 24, 0.08) !important;
-        background: rgba(255,255,255,0.20) !important;
-      }
-
-      body.dark .post-content blockquote,
-      body.dark .post-content pre {
-        border-color: rgba(255,255,255,0.08) !important;
-        background: rgba(255,255,255,0.04) !important;
-      }
-
-      .post-content a {
-        color: #3a78ff !important;
-        text-decoration: underline !important;
-        text-decoration-color: rgba(58, 120, 255, 0.42) !important;
-        font-weight: 600 !important;
-      }
-
-      body.dark .post-content a {
-        color: #8fc2ff !important;
-        text-decoration-color: rgba(143, 194, 255, 0.54) !important;
-      }
-
-      .post-image-dual,
-      .search-results .post-right,
-      .post-right,
-      .post-right.single-media {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 14px !important;
-        align-items: stretch !important;
-        grid-template-columns: none !important;
-      }
-
-      .post-image-dual .scrapbook-preview-host,
-      .search-results .post-image-dual .scrapbook-preview-host,
-      .post-image-dual .post-images-wrap,
-      .search-results .post-image-dual .post-images-wrap,
-      .post-image-single,
-      .post-image-single .post-images-wrap {
-        width: 100% !important;
-        margin: 0 !important;
-      }
-
-      .scrapbook-stack,
-      .search-results .scrapbook-stack {
-        width: min(100%, 320px) !important;
-        margin: 0 auto !important;
-        height: 208px !important;
-        background: rgba(255,255,255,0.08) !important;
-        border-radius: 26px !important;
-      }
-
-      .scrapbook-photo {
-        border: 1px solid rgba(255,255,255,0.40) !important;
-        border-radius: 14px !important;
-        box-shadow: 0 12px 26px rgba(18,20,26,.16) !important;
-        background: rgba(255,255,255,0.82) !important;
-      }
-
-      .scrapbook-photo::before,
-      .scrapbook-photo.clip::after {
-        opacity: 0.78 !important;
-      }
-
-      .post-images img,
-      .post-image-single .post-images img,
-      .post-image-single .post-images.single-image img {
-        border-radius: 20px !important;
-        border: 1px solid rgba(255,255,255,0.34) !important;
-        box-shadow: 0 12px 26px rgba(20,24,32,0.14) !important;
-      }
-
-      .search-results {
-        max-width: 820px !important;
-      }
-
-      .close-search-btn,
+      .pick-img-btn,
       .search-bar button,
       .publish-submit,
       .publish-cancel,
-      .pick-img-btn,
-      .post-action-btn,
-      .theme-option,
-      .menu .menu-item,
       .search-loader.more-btn {
-        transform: none !important;
-      }
-
-      .close-search-btn:hover,
-      .search-bar button:hover,
-      .publish-submit:hover,
-      .publish-cancel:hover,
-      .pick-img-btn:hover,
-      .post-action-btn:hover,
-      .theme-option:hover,
-      .menu .menu-item:hover,
-      .search-loader.more-btn:hover {
-        transform: translateY(-1px) !important;
-      }
-
-      @media (max-width: 768px) {
-        .app-container { max-width: 100% !important; }
-        .post,
-        .search-results .post,
-        .publish-panel,
-        .search-modal-content {
-          border-radius: 28px !important;
-          padding: 18px !important;
-        }
-        .search-modal-content,
-        .publish-panel { border-radius: 28px !important; }
-        .scrapbook-stack,
-        .search-results .scrapbook-stack {
-          width: min(100%, 280px) !important;
-          height: 192px !important;
-        }
-      }
-
-
-
-      /* ===== Threads / Instagram Glass V3 ===== */
-      :root {
-        --bg: #f6f4ef;
-        --paper: rgba(255,255,255,0.22);
-        --text: #16181c;
-        --ink: #16181c;
-        --secondary-text: #6f7582;
-        --accent: #8a5d37;
-        --accent-dark: #8a5d37;
-        --border: rgba(22, 24, 28, 0.08);
-      }
-
-      body.dark {
-        --bg: #0f1115;
-        --paper: rgba(20, 22, 27, 0.30);
-        --text: #f5f7fb;
-        --ink: #f5f7fb;
-        --secondary-text: #b2b8c4;
-        --accent: #f0d3a6;
-        --accent-dark: #f0d3a6;
-        --border: rgba(255,255,255,0.08);
-      }
-
-      .app-container {
-        max-width: 1200px !important;
-      }
-
-      #postsContainer {
-        display: block !important;
-        column-count: 3 !important;
-        column-gap: 18px !important;
-        padding: 12px 6px 0 !important;
-      }
-
-      #postsContainer .post {
-        display: inline-block !important;
-        width: 100% !important;
-        margin: 0 0 18px !important;
-        break-inside: avoid !important;
-      }
-
-      @media (max-width: 980px) {
-        #postsContainer { column-count: 2 !important; }
-      }
-
-      @media (max-width: 680px) {
-        #postsContainer { column-count: 1 !important; }
-      }
-
-      .post,
-      .search-results .post {
-        padding: 18px 18px 16px !important;
-        border-radius: 22px !important;
-        border: 1px solid rgba(255,255,255,0.16) !important;
-        background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.16)) !important;
-        box-shadow: 0 14px 34px rgba(28, 31, 38, 0.08) !important;
-        backdrop-filter: blur(18px) saturate(150%) !important;
-        -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
-      }
-
-      body.dark .post,
-      body.dark .search-results .post {
-        background: linear-gradient(180deg, rgba(34,37,44,0.52), rgba(18,20,26,0.38)) !important;
-        border-color: rgba(255,255,255,0.08) !important;
-        box-shadow: 0 14px 34px rgba(0,0,0,0.24) !important;
-      }
-
-      .post::before,
-      .search-results .post::before {
-        background: linear-gradient(180deg, rgba(255,255,255,0.36), rgba(255,255,255,0.06) 24%, transparent 56%) !important;
-      }
-
-      .post-header {
-        margin-bottom: 12px !important;
-        padding-bottom: 10px !important;
-      }
-
-      .post-time {
-        padding: 8px 14px !important;
-        border-radius: 999px !important;
-        font-size: 0.98rem !important;
-      }
-
-      .post-action-btn {
-        width: 42px !important;
-        height: 42px !important;
-        border-radius: 999px !important;
-      }
-
-      .menu {
-        width: auto !important;
-        max-width: none !important;
-        padding: 6px !important;
-        gap: 6px !important;
-        background: rgba(255,255,255,0.26) !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        border-radius: 999px !important;
-        box-shadow: 0 12px 28px rgba(22,24,28,0.10) !important;
-        backdrop-filter: blur(18px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-      }
-
-      body.dark .menu {
-        background: rgba(24,26,31,0.42) !important;
-        border-color: rgba(255,255,255,0.08) !important;
-      }
-
-      .menu .menu-item {
-        flex: 0 0 auto !important;
-        min-width: 132px !important;
-        padding: 12px 22px !important;
-        border-radius: 999px !important;
-        background: transparent !important;
-        border: 0 !important;
+        border-radius: 14px !important;
+        border: 1px solid var(--border) !important;
         box-shadow: none !important;
+        min-height: 46px !important;
       }
 
-      .menu .menu-item.active {
-        background: rgba(255,255,255,0.62) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 12px rgba(22,24,28,0.06) !important;
+      .publish-submit,
+      .search-bar button {
+        background: #111111 !important;
+        color: #ffffff !important;
       }
 
-      body.dark .menu .menu-item.active {
-        background: rgba(255,255,255,0.12) !important;
+      .publish-cancel,
+      .pick-img-btn,
+      .search-loader.more-btn {
+        background: #ffffff !important;
+        color: var(--text) !important;
       }
 
-      .menu .menu-item:hover {
-        background: rgba(255,255,255,0.32) !important;
+      body.dark .publish-submit,
+      body.dark .search-bar button {
+        background: #f5f5f7 !important;
+        color: #111111 !important;
       }
 
-      body.dark .menu .menu-item:hover {
-        background: rgba(255,255,255,0.08) !important;
-      }
-
-      .menu .menu-item svg {
-        width: 1.45rem !important;
-        height: 1.45rem !important;
-      }
-
-      .menu .menu-item span {
-        margin-top: 5px !important;
-        font-size: 0.92rem !important;
-        font-weight: 700 !important;
-      }
-
-      @media (max-width: 768px) {
-        .menu {
-          width: calc(100% - 22px) !important;
-          max-width: 720px !important;
-          justify-content: space-between !important;
-        }
-        .menu .menu-item {
-          min-width: 0 !important;
-          flex: 1 1 0 !important;
-          padding: 10px 8px !important;
-        }
-        .menu .menu-item span {
-          font-size: 0.84rem !important;
-        }
-      }
-
-      .publish-mask {
-        background: rgba(16, 18, 24, 0.38) !important;
-        backdrop-filter: blur(12px) saturate(115%) !important;
-        -webkit-backdrop-filter: blur(12px) saturate(115%) !important;
-      }
-
-      .publish-panel {
-        width: min(680px, calc(100vw - 28px)) !important;
-        padding: 18px !important;
-        border-radius: 28px !important;
-        background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.56)) !important;
-        border: 1px solid rgba(255,255,255,0.24) !important;
-        box-shadow: 0 20px 52px rgba(15,18,24,0.18) !important;
-        backdrop-filter: blur(26px) saturate(160%) !important;
-        -webkit-backdrop-filter: blur(26px) saturate(160%) !important;
-      }
-
-      body.dark .publish-panel {
-        background: linear-gradient(180deg, rgba(30,33,40,0.88), rgba(20,22,28,0.72)) !important;
-        border-color: rgba(255,255,255,0.10) !important;
-        box-shadow: 0 24px 56px rgba(0,0,0,0.32) !important;
-      }
-
-      .publish-panel::before,
-      .search-modal-content::before {
-        background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.05) 24%, transparent 56%) !important;
-      }
-
-      .publish-top,
-      .search-modal-header {
-        margin-bottom: 14px !important;
-        padding-bottom: 12px !important;
-      }
-
-      .publish-title,
-      .search-modal-header h3 {
-        font-size: 1.4rem !important;
-        letter-spacing: -0.02em;
-      }
-
-      .publish-field,
-      .publish-drop-zone,
-      #previewWrap,
-      .search-bar {
-        background: rgba(255,255,255,0.18) !important;
-        border: 1px solid rgba(255,255,255,0.16) !important;
-        border-radius: 18px !important;
-        box-shadow: none !important;
-      }
-
-      body.dark .publish-field,
-      body.dark .publish-drop-zone,
-      body.dark #previewWrap,
-      body.dark .search-bar {
-        background: rgba(255,255,255,0.04) !important;
-        border-color: rgba(255,255,255,0.08) !important;
-      }
-
-      .publish-input,
-      .publish-textarea,
-      .search-bar input {
-        border-radius: 16px !important;
-        background: rgba(255,255,255,0.72) !important;
-      }
-
-      body.dark .publish-input,
-      body.dark .publish-textarea,
-      body.dark .search-bar input {
-        background: rgba(255,255,255,0.06) !important;
+      body.dark .publish-cancel,
+      body.dark .pick-img-btn,
+      body.dark .search-loader.more-btn {
+        background: #1b1d22 !important;
+        color: var(--text) !important;
       }
 
       .publish-footer {
         display: grid !important;
         grid-template-columns: 1fr 120px !important;
-        gap: 12px !important;
-      }
-
-      .publish-submit,
-      .publish-cancel,
-      .pick-img-btn,
-      .search-bar button,
-      .close-search-btn,
-      .search-loader.more-btn {
-        border-radius: 16px !important;
-        min-height: 48px !important;
-      }
-
-      .publish-submit {
-        background: #ffffff !important;
-        color: #111317 !important;
-      }
-
-      .publish-cancel {
-        background: rgba(255,255,255,0.56) !important;
-      }
-
-      body.dark .publish-submit {
-        background: rgba(255,255,255,0.16) !important;
-        color: #ffffff !important;
-      }
-
-      body.dark .publish-cancel {
-        background: rgba(255,255,255,0.08) !important;
-      }
-
-      .search-modal-content {
-        width: min(760px, calc(100vw - 28px)) !important;
-        padding: 18px !important;
-        border-radius: 28px !important;
+        gap: 10px !important;
       }
 
       .search-results {
         max-width: 100% !important;
       }
 
-      .post-content h1,
-      .post-content h2,
-      .post-content h3,
-      .post-content h4 {
-        font-weight: 800 !important;
-        letter-spacing: -0.015em;
-      }
-
-      .post-image-dual,
-      .post-right,
-      .search-results .post-right,
-      .post-right.single-media {
-        gap: 12px !important;
-      }
-
-      .scrapbook-stack,
-      .search-results .scrapbook-stack {
-        width: min(100%, 292px) !important;
-        height: 196px !important;
-        background: transparent !important;
-      }
-
-      .scrapbook-photo {
-        border-radius: 12px !important;
-        box-shadow: 0 10px 24px rgba(18,20,26,.14) !important;
+      @media (max-width: 768px) {
+        .app-container { max-width: 100% !important; }
+        .post,
+        .search-results .post,
+        .search-modal-content,
+        .publish-panel {
+          border-radius: 20px !important;
+          padding: 14px !important;
+        }
       }
 
 </style>
