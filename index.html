@@ -760,6 +760,7 @@ body.dark .pin-badge-text svg {
       .post-content p {
         margin-top: 0;
         margin-bottom: 8px;
+        text-align: left;
       }
        .post-content blockquote {
   margin: 18px 0;
@@ -2283,20 +2284,20 @@ body {
   }
 
   #postsContainer {
-    padding-top: 34px;
+    padding-top: 22px;
   }
 
   .post:first-child {
-    margin-top: 10px;
+    margin-top: 4px;
   }
 
   .post {
     position: relative;
     overflow: visible;
-    margin: 0 0 26px;
-    padding: 26px 26px 22px;
+    margin: 0 0 20px;
+    padding: 22px 22px 18px;
     border: 3px solid var(--hw-line);
-    border-radius: 30px;
+    border-radius: 28px;
     background: linear-gradient(180deg, var(--hw-paper), var(--hw-paper-2));
     box-shadow: var(--hw-shadow-soft);
     transform: none;
@@ -2318,8 +2319,8 @@ body {
   .post::after {
     content: "";
     position: absolute;
-    inset: 12px;
-    border-radius: 22px;
+    inset: 10px;
+    border-radius: 20px;
     border: 1px solid var(--hw-line-soft);
     pointer-events: none;
     opacity: 1;
@@ -2343,7 +2344,7 @@ body {
     border-color: var(--hw-accent);
     background: linear-gradient(180deg, color-mix(in srgb, var(--hw-paper) 88%, var(--hw-accent) 12%), var(--hw-paper-2));
     box-shadow: var(--hw-shadow-soft);
-    padding-top: 28px;
+    padding-top: 24px;
   }
 
   body.dark .post.pinned {
@@ -2352,8 +2353,8 @@ body {
 
   .pin-badge {
     position: absolute;
-    left: 18px;
-    top: -22px;
+    left: 16px;
+    top: -18px;
     transform: rotate(-9deg);
     z-index: 8;
     pointer-events: none;
@@ -2363,15 +2364,15 @@ body {
   .pin-badge-text {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
+    gap: 7px;
+    padding: 8px 14px;
     border: 3px solid var(--hw-line);
-    border-radius: 4px 20px 4px 16px;
+    border-radius: 4px 18px 4px 14px;
     background: var(--hw-pin);
-    box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    box-shadow: 0 8px 16px rgba(0,0,0,.18);
     color: #22190f;
     font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 1;
     font-weight: 700;
   }
@@ -2384,7 +2385,7 @@ body {
   }
 
   .pin-badge-text span:last-child {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .post-header {
@@ -2418,9 +2419,9 @@ body {
 
   .post-right {
     display: grid;
-    grid-template-columns: minmax(0, 1.28fr) minmax(180px, .92fr);
-    gap: 24px;
-    align-items: center;
+    grid-template-columns: minmax(0, 1.38fr) minmax(160px, .78fr);
+    gap: 18px;
+    align-items: start;
     min-width: 0;
     overflow: visible;
     transform: none !important;
@@ -2428,9 +2429,14 @@ body {
 
   .post-content {
     min-width: 0;
-    font-size: 1.05rem;
-    line-height: 1.82;
+    align-self: start;
+    justify-self: stretch;
+    width: 100%;
+    margin-top: 4px;
+    font-size: 1rem;
+    line-height: 1.76;
     color: var(--hw-text);
+    text-align: left;
   }
 
   body.dark .post-content,
@@ -2470,14 +2476,14 @@ body {
 
   .scrapbook-stack {
     position: relative;
-    width: min(100%, 288px);
-    height: 194px;
+    width: min(100%, 250px);
+    height: 172px;
     margin-left: auto;
   }
 
   .scrapbook-photo {
     position: absolute;
-    width: clamp(110px, 44%, 142px);
+    width: clamp(96px, 42%, 126px);
     aspect-ratio: 4 / 5;
     object-fit: cover;
     background: #fefbf6;
@@ -2509,40 +2515,40 @@ body {
   }
 
   .scrapbook-photo.single-a {
-    left: 56px;
-    top: 18px;
-    width: 160px;
+    left: 52px;
+    top: 14px;
+    width: 140px;
     transform: rotate(-6deg);
   }
 
   .scrapbook-photo.single-b {
-    left: 82px;
-    top: 16px;
-    width: 148px;
+    left: 72px;
+    top: 14px;
+    width: 132px;
     transform: rotate(6deg);
   }
 
   .scrapbook-photo.variant-a.first {
-    left: 18px;
-    top: 16px;
+    left: 16px;
+    top: 14px;
     transform: rotate(-5deg);
   }
 
   .scrapbook-photo.variant-a.second {
-    right: 10px;
-    top: 24px;
+    right: 8px;
+    top: 22px;
     transform: rotate(5deg);
   }
 
   .scrapbook-photo.variant-b.first {
-    left: 26px;
-    top: 12px;
+    left: 22px;
+    top: 10px;
     transform: rotate(4deg);
   }
 
   .scrapbook-photo.variant-b.second {
-    right: 12px;
-    top: 34px;
+    right: 10px;
+    top: 28px;
     transform: rotate(-7deg);
   }
 
@@ -2566,7 +2572,7 @@ body {
     background: rgba(17, 13, 9, 0.42);
     color: #fff7eb;
     font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: .6px;
   }
@@ -2587,34 +2593,189 @@ body {
 
   @media (max-width: 760px) {
     .post {
-      padding: 22px 18px 18px;
-      margin-bottom: 22px;
+      padding: 20px 16px 16px;
+      margin-bottom: 18px;
     }
 
     .post-right {
       grid-template-columns: 1fr;
-      gap: 18px;
+      gap: 14px;
+      align-items: start;
     }
 
     .scrapbook-stack {
-      width: min(100%, 248px);
-      height: 184px;
+      width: min(100%, 224px);
+      height: 164px;
       margin: 0 auto;
     }
 
-    .scrapbook-photo.single-a { left: 42px; width: 148px; }
-    .scrapbook-photo.single-b { left: 56px; width: 142px; }
+    .scrapbook-photo.single-a { left: 34px; width: 132px; }
+    .scrapbook-photo.single-b { left: 48px; width: 126px; }
 
     .pin-badge {
-      top: -18px;
-      left: 10px;
+      top: -16px;
+      left: 8px;
     }
 
     .pin-badge-text,
     .pin-badge-text span:last-child {
-      font-size: 21px;
+      font-size: 18px;
     }
   }
+</style>
+
+
+<style id="handwritten-header-overrides">
+  .topbar {
+    padding-top: calc(var(--safe-top) + 10px);
+    padding-bottom: 18px;
+  }
+
+  .topbar-inner {
+    margin: 0 14px;
+    padding: 10px 16px 14px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transform: none;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .topbar-inner:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .topbar-inner::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 2px dashed rgba(71, 54, 39, .55);
+  }
+
+  body.dark .topbar-inner::after {
+    border-bottom-color: rgba(244, 215, 148, .45);
+  }
+
+  .topbar-inner::before {
+    content: '✦';
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    transform: translateX(-50%);
+    font-size: 14px;
+    line-height: 1;
+    color: var(--accent);
+    background: var(--bg);
+    padding: 0 8px;
+  }
+
+  .blog-brand {
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    transform: translateX(-50%);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--ink) !important;
+    text-transform: none;
+    letter-spacing: 1px;
+    text-shadow: none;
+  }
+
+  .blog-brand::after {
+    content: '';
+    display: block;
+    width: min(180px, 88%);
+    height: 4px;
+    margin: 6px auto 0;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: .9;
+    transform: rotate(-1.5deg);
+  }
+
+  .blog-brand:hover,
+  .blog-brand:active {
+    background: transparent;
+    box-shadow: none;
+    transform: translateX(-50%);
+  }
+
+  .topbar-right {
+    margin-left: auto;
+    gap: 10px;
+  }
+
+  .topbar-icon {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transform: none;
+    padding: 4px 6px;
+    min-width: 40px;
+    min-height: 40px;
+    color: var(--ink);
+  }
+
+  .topbar-icon:hover,
+  .topbar-icon:active {
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    color: var(--accent-dark);
+  }
+
+  #openPublishBtn {
+    display: none !important;
+  }
+
+  @media (max-width: 760px) {
+    .topbar {
+      padding-bottom: 14px;
+    }
+
+    .topbar-inner {
+      margin: 0 10px;
+      padding: 8px 8px 12px;
+    }
+
+    .blog-brand {
+      font-size: clamp(24px, 8vw, 36px);
+      top: 1px;
+    }
+
+    .blog-brand::after {
+      width: min(132px, 78%);
+      height: 3px;
+      margin-top: 4px;
+    }
+
+    .topbar-right {
+      gap: 4px;
+    }
+
+    .topbar-icon {
+      min-width: 34px;
+      min-height: 34px;
+      padding: 2px 4px;
+    }
+  }
+</style>
+
+
+<style id="handwritten-fix-overrides">
+  .post-content, .post-content * { text-align: left !important; }
+  .post-right > .post-content:only-child { padding-right: 6px; }
+  .post-image-dual { align-self: start; }
 </style>
 
 </head>
@@ -2726,7 +2887,7 @@ body {
     <div class="app-container">
       <header class="topbar">
         <div class="topbar-inner">
-          <div class="blog-brand" id="logoTitle">WEN</div>
+          <div class="blog-brand" id="logoTitle">Handwritten Blog</div>
           <div class="topbar-right">
             <!-- 搜索按钮 -->
             <button class="topbar-icon" id="openSearchBtn" title="搜索">
@@ -3434,65 +3595,50 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
        function animateSwitchImage(targetIdx, direction = 1) {
   if (lightboxSwitching || targetIdx < 0 || targetIdx >= currentGallery.length || targetIdx === currentIndex) return;
-
   scale = 1;
   translateX = 0;
   translateY = 0;
-
   lightboxSwitching = true;
-  const distance = Math.min(window.innerWidth * 0.3, 200);
-  const duration = 320;
-
-  // ----- 1. 旧图滑出 -----
+  const distance = Math.min(window.innerWidth * 0.28, 180);
+  const duration = 220;
   lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
   lbImg.style.opacity = '0';
-  lbImg.style.transform = `translateX(${-direction * distance}px) scale(0.92)`;
-
+  lbImg.style.transform = `translateX(${-direction * distance}px) scale(0.96)`;
   setTimeout(() => {
     currentIndex = targetIdx;
-    // 更新按钮和计数
-    document.getElementById('lbPrevBtn').style.display = currentIndex > 0 ? 'flex' : 'none';
-    document.getElementById('lbNextBtn').style.display = currentIndex < currentGallery.length - 1 ? 'flex' : 'none';
-    lbCounter.textContent = currentIndex + 1 + ' / ' + currentGallery.length;
-
-    const imageSrc = currentGallery[currentIndex];
-
-    // 🧠 关键：清除旧 onload，防止冲突
-    lbImg.onload = null;
-    // 🧠 关键：不重置背景色！保留旧图颜色，让它自然过渡到新色
-
-    // 新图起始位置（从另一侧滑入）
+    updateLightboxImage(false);
     lbImg.style.transition = 'none';
-    lbImg.src = imageSrc;
     lbImg.style.opacity = '0';
-    lbImg.style.transform = `translateX(${direction * distance}px) scale(0.92)`;
-    void lbImg.offsetHeight; // 强制回流
-
-    // 🧠 关键：图片加载完成后，触发颜色提取（此时背景会从旧色平滑渐变到新色）
-    lbImg.onload = function() {
-      // 增加 token 防止旧回调覆盖新回调
-      sampleLightboxImageSource(imageSrc, ++lightboxColorToken);
-    };
-    // 如果加载失败，保持旧色不做变化，也不会闪
-    lbImg.onerror = function() {
-      // 什么都不做，保留旧色背景
-    };
-
-    // 新图滑入中心
+    lbImg.style.transform = `translateX(${direction * distance}px) scale(0.96)`;
+    void lbImg.offsetHeight;
     lbImg.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${duration}ms ease`;
     lbImg.style.opacity = '1';
-    lbImg.style.transform = `translateX(0px) scale(1)`;
-
+    lbImg.style.transform = 'translateX(0px) scale(1)';
     setTimeout(() => {
       lbImg.style.transition = '';
       lightboxSwitching = false;
-    }, duration + 50);
-  }, duration + 30);
+    }, duration + 40);
+  }, duration);
 }
-      function openLightbox() {
+      function openLightbox(images = [], startIndex = 0) {
+        const normalized = Array.isArray(images)
+          ? images.map((item) => {
+              if (!item) return "";
+              if (typeof item === "string") return item;
+              return item.getAttribute ? item.getAttribute("src") || "" : String(item);
+            }).filter(Boolean)
+          : [];
+        if (!normalized.length) return;
+        currentGallery = normalized;
+        currentIndex = Math.max(0, Math.min(startIndex, currentGallery.length - 1));
         lightboxClosing = false;
+        lightboxSwitching = false;
+        pointerCache = [];
+        isPointerDown = false;
         resetTransform();
         resetLightboxBackdrop();
+        lbImg.onload = null;
+        lbImg.onerror = null;
         lb.style.display = "flex";
         lb.style.opacity = "0";
         lb.style.transition = "opacity 0.2s ease, background 0.38s ease";
@@ -3518,10 +3664,18 @@ lbImg.onerror = () => resetLightboxBackdrop();
           lb.style.transition = "";
           lbImg.classList.remove("exit-animate", "switching");
           lbImg.style.opacity = "";
+          lbImg.onload = null;
+          lbImg.onerror = null;
+          lbImg.removeAttribute("src");
+          currentGallery = [];
+          currentIndex = 0;
           if (!searchModal.classList.contains("open"))
             document.body.style.overflow = "";
           resetTransform();
           lightboxClosing = false;
+          lightboxSwitching = false;
+          pointerCache = [];
+          isPointerDown = false;
         }, 230);
       }
       function showNext() {
