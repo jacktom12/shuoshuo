@@ -3593,7 +3593,7 @@ body {
 #postsContainer .post:hover::after {
   display: none !important;
 }
-	.app-container,
+.app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -3603,6 +3603,7 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
+	
 </style>
 </head>
 <body>
@@ -4134,7 +4135,12 @@ function stripPinKeyword(text) {
           postsContainer.classList.remove("masonry-ready");
           postsContainer.innerHTML = "";
         }
-        const ordered = sortPostsByDateDesc(filtered);
+        const ordered = (() => {
+          const sorted = sortPostsByDateDesc(filtered);
+          const pinned = sorted.filter(isPinned);
+          const rest = sorted.filter((p) => !isPinned(p));
+          return [...pinned, ...rest];
+        })();
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
        const show = ordered.slice(start, end); 
