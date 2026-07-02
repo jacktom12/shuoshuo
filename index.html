@@ -2743,6 +2743,26 @@ body {
         }
       }
 
+
+
+      /* ===== Mobile font + hover consistency fixes ===== */
+      @media (max-width: 768px) {
+        .post-content,
+        #postsContainer .post .post-content,
+        .search-results .post-content {
+          font-size: 18px !important;
+          line-height: 1.86 !important;
+        }
+      }
+
+      body:not(.dark) .post:hover {
+        transform: none !important;
+        border-color: var(--border) !important;
+        box-shadow:
+          0 0 18px rgba(229, 170, 112, 0.22),
+          0 0 36px rgba(229, 170, 112, 0.10) !important;
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
