@@ -86,7 +86,7 @@
       body {
       margin: 0;
         background-color: var(--bg);
-        background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/wallpaperlight.png');
+        background-image: url('https://images.weserv.nl/?url=https://raw.githubusercontent.com/jacktom12/blogpic3/main/light.png');
         
         /* 电脑端策略：固定背景，保持图案比例并自适应屏幕高度，横向平铺填满空白 */
         background-size: auto 100vh; /* 高度撑满屏幕，宽度等比例缩放 */
@@ -2922,6 +2922,33 @@ body {
           height: auto !important;
           aspect-ratio: 1 / 1 !important;
         }
+      }
+
+
+
+      /* ===== solid card background restore ===== */
+      #postsContainer .post,
+      .search-results .post,
+      .post {
+        background-color: #fff9e6 !important;
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 28px,
+          rgba(0, 0, 0, 0.03) 28px,
+          rgba(0, 0, 0, 0.05) 30px
+        ) !important;
+      }
+
+      body.dark #postsContainer .post,
+      body.dark .search-results .post,
+      body.dark .post {
+        background-color: #23211e !important;
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 28px,
+          rgba(255, 255, 255, 0.04) 28px,
+          rgba(255, 255, 255, 0.055) 30px
+        ) !important;
       }
 
 </style>
