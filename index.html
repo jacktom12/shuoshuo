@@ -423,6 +423,8 @@ body.dark #postsContainer > .post:first-child::before {
    METAPHOR CARD V3 - 核心不规则涂鸦卡片
    ========================================== */
       .post {
+        break-inside: avoid;
+        page-break-inside: avoid;
         margin: 28px 0;
         padding: 24px;
         background: var(--paper);
@@ -3008,7 +3010,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
         updateThemeIcon(isDark);
       };
 
-      
       marked.setOptions({ breaks: true, gfm: true });
       marked.use({
         renderer: {
@@ -3020,7 +3021,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
           }
         }
       });
-
       const COLOR_BLOCKS = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "⬛", "⬜"];
       function randomColorBlock() {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
@@ -3066,10 +3066,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
         "https://datas.199105.xyz";
       const PUBLISH_PWD_KEY = "memo_publish_pwd";
       const PUBLISH_PWD_DAYS = 30;
-
-      ));
-      }
-
 
       const loaderDom = document.getElementById("loader");
       const postsContainer = document.getElementById("postsContainer");
