@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -3093,6 +3094,18 @@ body {
         height: 0 !important;
       }
 
+
+
+      /* ===== hidden horizontal scroller usability ===== */
+      #existingImagesList {
+        cursor: grab;
+        touch-action: pan-x;
+        scroll-behavior: smooth;
+      }
+      #existingImagesList:active {
+        cursor: grabbing;
+      }
+
 </style>
 <style id="handwritten-card-overrides">
   :root {
@@ -3610,7 +3623,8 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
   box-shadow: 5px 5px 0px var(--border) !important;
   border-color: var(--accent-dark) !important;
 }
-.app-container,
+
+	.app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -3620,6 +3634,7 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
+
 </style>
 </head>
 <body>
@@ -4928,6 +4943,19 @@ lbImg.onerror = () => resetLightboxBackdrop();
         if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
         }
       }
+      function enhanceHorizontalScroller(el) {
+        if (!el || el.dataset.enhancedScroller) return;
+        el.dataset.enhancedScroller = "true";
+        el.addEventListener("wheel", (e) => {
+          const canScroll = el.scrollWidth > el.clientWidth + 2;
+          if (!canScroll) return;
+          const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+          if (!delta) return;
+          e.preventDefault();
+          el.scrollLeft += delta;
+        }, { passive: false });
+      }
+
       function addSelectedPublishFiles(files) {
         let added = 0;
         Array.from(files || []).forEach((f) => {
@@ -5245,6 +5273,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
         publishModal.onclick = close;
         document.getElementById("closeMemo").onclick = close;
         document.getElementById("closeMemo2").onclick = close;
+        enhanceHorizontalScroller(document.getElementById("existingImagesList"));
         document.getElementById("selectImg").onclick = () => document.getElementById("imgFile").click();
         document.getElementById("imgFile").addEventListener("change", (e) => {
           addSelectedPublishFiles(e.target.files);
