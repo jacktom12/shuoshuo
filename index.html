@@ -267,7 +267,6 @@ body.dark #postsContainer > .post:first-child::before {
   }
 }
 
-
 		
       .topbar-inner {
           position: relative;
@@ -367,34 +366,6 @@ body.dark #postsContainer > .post:first-child::before {
       }
 
       /* 发布按钮大胶囊 */
-      .publish-pill {
-        background: #ffffff;
-        border: 2px solid var(--border);
-        color: #323232 !important;
-        padding: 6px 18px;
-        font-size: 0.9rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        transform: rotate(-1deg) skewX(-6deg);
-        cursor: pointer;
-        border-radius: var(--sketch-radius-btn);
-        box-shadow: 3px 3px 0px var(--accent);
-        transition: all 0.15s ease;
-      }
-      body.dark .publish-pill {
-        background: #2d2a26;
-        color: var(--text) !important;
-      }
-      .publish-pill:hover {
-        background: var(--accent);
-        color: var(--ink) !important;
-        transform: rotate(-2deg) translateY(-2px);
-        box-shadow: 4px 4px 0px var(--border);
-      }
-      .publish-pill:active {
-        transform: translate(2px, 2px);
-        box-shadow: 0px 0px 0px var(--border);
-      }
 
       main {
         padding: 0 16px;
@@ -446,7 +417,6 @@ body.dark #postsContainer > .post:first-child::before {
           rgba(0, 0, 0, 0.05) 30px
         );
       }
-
 
 /* ===== 置顶卡片 ===== */
 
@@ -623,9 +593,9 @@ body.dark .post-content ol > li::before {
 }
 
 .pin-badge-text svg {
-  width: 14px;
-  height: 14px;
-  flex: 0 0 14px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
   display: block;
   color: var(--accent-dark);
 }
@@ -651,9 +621,9 @@ body.dark .pin-badge-text svg {
   }
 
   .pin-badge-text svg {
-    width: 13px;
-    height: 13px;
-    flex-basis: 13px;
+    width: 15px;
+    height: 15px;
+    flex-basis: 15px;
   }
 }
 
@@ -1907,58 +1877,7 @@ body {
       }
 
       /* 漂浮装饰（手账风格） */
-      .doodle-star,
-      .doodle-sparkle,
-      .doodle-swirl {
-        position: fixed;
-        z-index: 9999;
-        pointer-events: none;
-        width: 48px;
-        height: 48px;
-        opacity: 0.7;
-      }
-      .doodle-star {
-        top: 20px;
-        left: 20px;
-        animation: float-star 5s ease-in-out infinite;
-      }
-      .doodle-sparkle {
-        bottom: 30px;
-        right: 30px;
-        width: 40px;
-        height: 40px;
-        animation: float-sparkle 6s ease-in-out infinite 1s;
-      }
-      .doodle-swirl {
-        top: 40%;
-        right: 15px;
-        width: 32px;
-        height: 32px;
-        animation: float-swirl 7s ease-in-out infinite 2s;
-      }
-      @keyframes float-star {
-        0%,
-        100% {
-          transform: translateY(0) rotate(-15deg);
-        }
-        50% {
-          transform: translateY(-8px) rotate(-10deg);
-        }
-      }
-      @keyframes float-sparkle {
-        0%,
-        100% {
-          transform: translateY(0) rotate(10deg);
-        }
-        50% {
-          transform: translateY(-8px) rotate(15deg);
-        }
-      }
-      @keyframes float-swirl {
-        0%,
-        100% {
-          transform: translateY(0) rotate(0deg);
-        }
+
         50% {
           transform: translateY(-8px) rotate(5deg);
         }
@@ -2246,8 +2165,6 @@ body {
   color: #fc8181;
 }
 
-
-
       /* ===== 2026-07 final visual fixes ===== */
       :root {
         --menu-paper-bg: rgba(243, 233, 221, 0.84);
@@ -2381,8 +2298,6 @@ body {
           border-radius: 12px !important;
         }
       }
-
-
 
       .sr-only {
         position: absolute !important;
@@ -2550,8 +2465,6 @@ body {
         .post-image-single .post-images.single-image img { max-height: 360px !important; border-radius: 12px !important; }
       }
 
-
-
       .search-results .post-content-only {
         display: block !important;
         width: 100% !important;
@@ -2562,8 +2475,6 @@ body {
         max-width: 100% !important;
         margin: 0 !important;
       }
-
-
 
       .search-results .post-right {
         display: flex !important;
@@ -2600,8 +2511,6 @@ body {
         margin: 0 auto !important;
       }
 
-
-
       .search-loader.more-btn {
         display: block;
         width: 100%;
@@ -2625,11 +2534,10 @@ body {
         border-color: rgba(255,255,255,.14);
       }
 
-
-
-      /* ===== Mobile readability fixes ===== */
+      /* ===== 2026-07 consolidated fixes ===== */
       @media (max-width: 768px) {
         .post-content,
+        #postsContainer .post .post-content,
         .search-results .post-content {
           font-size: 18px !important;
           line-height: 1.86 !important;
@@ -2657,47 +2565,6 @@ body {
           max-width: 100% !important;
           flex: none !important;
           margin: 0 !important;
-          overflow: visible !important;
-        }
-
-        .scrapbook-preview-host,
-        .search-results .scrapbook-preview-host {
-          width: 100% !important;
-          display: flex !important;
-          justify-content: center !important;
-          margin-bottom: 2px !important;
-        }
-
-        .scrapbook-stack,
-        .search-results .scrapbook-stack {
-          width: min(100%, 280px) !important;
-          height: 192px !important;
-          margin: 0 auto !important;
-        }
-
-        .post-right .post-content,
-        .post-right.single-media .post-content,
-        .search-results .post-right .post-content {
-          width: 100% !important;
-          min-width: 0 !important;
-          flex: none !important;
-          clear: both !important;
-        }
-
-        .post-images,
-        .post-images-wrap,
-        .img-slide {
-          overflow: hidden !important;
-        }
-      }
-
-
-
-      /* ===== iPhone Safari multi-image overlap fix ===== */
-      @media (max-width: 768px) {
-        .post-image-dual,
-        .search-results .post-image-dual {
-          display: block !important;
           overflow: visible !important;
         }
 
@@ -2736,36 +2603,23 @@ body {
         .post-right .post-content,
         .post-right.single-media .post-content,
         .search-results .post-right .post-content {
+          width: 100% !important;
+          min-width: 0 !important;
+          flex: none !important;
+          clear: both !important;
           display: block !important;
           position: relative !important;
           z-index: 0 !important;
           margin-top: 0 !important;
         }
-      }
 
-
-
-      /* ===== Mobile font + hover consistency fixes ===== */
-      @media (max-width: 768px) {
-        .post-content,
-        #postsContainer .post .post-content,
-        .search-results .post-content {
-          font-size: 18px !important;
-          line-height: 1.86 !important;
+        .post-images,
+        .post-images-wrap,
+        .img-slide {
+          overflow: hidden !important;
         }
       }
 
-      body:not(.dark) .post:hover {
-        transform: none !important;
-        border-color: var(--border) !important;
-        box-shadow:
-          0 0 18px rgba(229, 170, 112, 0.22),
-          0 0 36px rgba(229, 170, 112, 0.10) !important;
-      }
-
-
-
-      /* ===== Light hover simplification ===== */
       body:not(.dark) #postsContainer .post,
       body:not(.dark) .post {
         box-shadow: 4px 4px 0px rgba(50, 50, 50, 0.92) !important;
@@ -3188,7 +3042,6 @@ body {
   font-size: 10px;
 }
 </style>
-
 
 <style id="masonry-override">
 /* ========= 瀑布流卡片 + 图片居中顶部 · 最终稳妥版 ========= */
@@ -3640,7 +3493,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
         }));
       }
 
-
       const loaderDom = document.getElementById("loader");
       const postsContainer = document.getElementById("postsContainer");
       const lb = document.getElementById("p5Lightbox");
@@ -3649,7 +3501,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
       const searchModal = document.getElementById("searchModal");
       const modalSearchInput = document.getElementById("modalSearchInput");
       const searchResultsDiv = document.getElementById("searchResults");
-
 
 function isPinned(p) {
   const text = Array.isArray(p.content) ? p.content.join('') : p.content;
@@ -3764,11 +3615,7 @@ function stripPinKeyword(text) {
         }
     const pinBadge = isPinned ? `
   <div class="pin-badge" aria-hidden="true">
-    <span class="pin-badge-text">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15.5 3.5c.8.8.8 2.1 0 2.9l-1.2 1.2 2.8 2.8c.4.4.4 1 0 1.4l-1 1c-.2.2-.4.3-.7.3h-2.2l-1.5 1.5v4.7l-.8.8-.8-.8v-4.7L9 13.3H6.8c-.3 0-.5-.1-.7-.3l-1-1c-.4-.4-.4-1 0-1.4l2.8-2.8-1.2-1.2c-.8-.8-.8-2.1 0-2.9" />
-        <path d="M9.8 8.2l6 6" />
-      </svg>
+    <span class="pin-badge-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0z" fill="none"></path><path fill="currentColor" d="M8.619 8.378c-.71 0-.884-.632-.884-.949c.197-.736.928-2.52 2.368-2.52c2.072 0 4.26.23 5.443.546c-2.661.632-6.038 2.923-6.927 2.923"></path><path fill="currentColor" fill-rule="evenodd" d="M7.735 8.062c0 .316.403.665.992.665c.366 0 1.418-.545 2.618-1.162c1.697-.872 3.682-1.898 4.375-1.712c.196.316.655 1.636.89 3.152l.18.077C18.163 9.638 21 10.794 21 12c0 1.576-4.39 7.09-10.898 7.09C3.589 19.09 3 14.679 3 13.735c0-.949 1.184-3.152 4.44-4.418c.196-.098.295-.753.295-1.254m-.917 3.392c.197.524 1.07 1.637 2.727 1.637c2.073 0 6.502-2.64 7.091-3.273v2.455c0 .709-4.472 3.272-6.545 3.272s-3.546-1.494-3.546-2.127c0-.502.175-1.544.273-1.964" clip-rule="evenodd"></path></svg>
       <span>置顶</span>
     </span>
   </div>
