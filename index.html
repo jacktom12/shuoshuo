@@ -2477,14 +2477,17 @@ main::-webkit-scrollbar {
       };
 
       marked.setOptions({ breaks: true, gfm: true });
-		marked.use({
-     renderer: {
-       link(href, title, text) {
-         const titleAttr = title ? ` title="${title}"` : '';
-         return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
-       }
-     }
-   });
+		 marked.use({
+  renderer: {
+    link(token) {
+      // token 对象包含 href、title、text 属性
+      const href = token.href || '';
+      const title = token.title ? ` title="${token.title}"` : '';
+      const text = token.text || '';
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer"${title}>${text}</a>`;
+    }
+  }
+});
       const COLOR_BLOCKS = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "⬛", "⬜"];
       function randomColorBlock() {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
