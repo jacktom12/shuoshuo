@@ -152,7 +152,30 @@ main {
   padding-top: 6px;
 }
 
-
+/* 导航下方的“打印出口” */
+#postsContainer::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92%, 760px);
+  height: 30px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(50, 50, 50, 0.06) 0px,
+      rgba(50, 50, 50, 0.06) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(180deg, rgba(255,249,230,0.96), rgba(243,233,221,0.98));
+  border-left: 2px solid var(--border);
+  border-right: 2px solid var(--border);
+  box-shadow: inset 0 6px 10px rgba(0,0,0,0.06);
+  z-index: 0;
+  pointer-events: none;
+}
 
 /* 让第一张像刚“打印”出来 */
 #postsContainer > .post:first-child {
@@ -393,7 +416,7 @@ body.dark #postsContainer > .post:first-child::before {
          -webkit-mask-image: linear-gradient(to bottom, transparent, black 16px); 
       }
       #postsContainer {
-        padding-top: 22px;
+        padding-top: 16px;
       }
 
       /* ==========================================
@@ -494,20 +517,6 @@ body.dark .post-content h2::after {
   background: repeating-linear-gradient(90deg, var(--accent), var(--accent) 4px, transparent 4px, transparent 8px);
 }
 
-/* 内容区链接 —— 手绘风格 */
-.post-content a {
-  color: var(--accent-dark);        /* 暗黑模式下自动变为 #e5aa70（亮橙） */
-  text-decoration: underline dashed var(--accent);
-  font-weight: 600;
-   transition: color 0.2s;
-}
-
-.post-content a:hover {
-  color: var(--accent);
-   
-}
-
-		
 @media (max-width: 768px) {
   .post-content h1 { font-size: 1.25rem; padding: 3px 12px; }
   .post-content h2 { font-size: 1.12rem; }
@@ -930,7 +939,7 @@ body.dark .post-content blockquote {
       }
       .post-images img:hover {
         border-color: var(--accent);
-        
+        transform: scale(1.02) rotate(1deg);
         box-shadow: 4px 4px 0px var(--border);
       }
 
@@ -2237,19 +2246,542 @@ body {
   color: #fc8181;
 }
 
-.app-container,
-main {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+/* 内容区链接 —— 手绘风格 */
+.post-content a {
+  color: var(--accent-dark);
+  text-decoration: underline dashed var(--accent);
+  font-weight: 600;
+  transition: color 0.2s;
 }
 
-.app-container::-webkit-scrollbar,
-main::-webkit-scrollbar {
-  display: none;
+.post-content a:hover {
+  color: var(--accent);
 }
 
 </style>
-  </head>
+  
+<style id="handwritten-card-overrides">
+  :root {
+    --hw-bg: #f6eddc;
+    --hw-paper: rgba(255, 250, 238, 0.96);
+    --hw-paper-2: #fffaf0;
+    --hw-text: #2d2117;
+    --hw-muted: #6d5a46;
+    --hw-line: #231b16;
+    --hw-line-soft: rgba(35, 27, 22, 0.12);
+    --hw-accent: #ef962a;
+    --hw-accent-2: #f0cc76;
+    --hw-green: #dceab7;
+    --hw-shadow: 0 14px 0 #17120d, 0 22px 34px rgba(64, 39, 15, 0.2);
+    --hw-shadow-soft: 0 12px 24px rgba(49, 35, 21, 0.14);
+    --hw-tape: linear-gradient(180deg, rgba(233,210,170,.84), rgba(199,167,127,.58));
+    --hw-pin: linear-gradient(135deg, #f7cf71, #ee9628);
+  }
+  body.dark {
+    --hw-bg: #171311;
+    --hw-paper: rgba(37, 29, 24, 0.95);
+    --hw-paper-2: #201813;
+    --hw-text: #f7eedf;
+    --hw-muted: #d6c3a7;
+    --hw-line: #b88a45;
+    --hw-line-soft: rgba(244, 215, 148, 0.16);
+    --hw-accent: #efb14f;
+    --hw-accent-2: #f4cf73;
+    --hw-green: rgba(104, 123, 62, 0.72);
+    --hw-shadow: 0 0 0 1px rgba(252,196,102,.22), 0 0 18px rgba(241,190,82,.16), 0 18px 32px rgba(0,0,0,.48);
+    --hw-shadow-soft: 0 18px 30px rgba(0,0,0,.35);
+    --hw-tape: linear-gradient(180deg, rgba(174,135,84,.9), rgba(116,90,58,.75));
+    --hw-pin: linear-gradient(135deg, #f8ca62, #f09e39);
+  }
+
+  #postsContainer {
+    padding-top: 12px;
+  }
+
+  .post {
+    position: relative;
+    overflow: visible;
+    margin: 0 0 26px;
+    padding: 26px 26px 22px;
+    border: 3px solid var(--hw-line);
+    border-radius: 30px;
+    background: linear-gradient(180deg, var(--hw-paper), var(--hw-paper-2));
+    box-shadow: var(--hw-shadow-soft);
+    transform: none;
+    background-image: none;
+    isolation: isolate;
+  }
+
+  .post::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: var(--hw-shadow);
+    z-index: -2;
+    opacity: .98;
+    pointer-events: none;
+  }
+
+  .post::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 22px;
+    border: 1px solid var(--hw-line-soft);
+    pointer-events: none;
+    opacity: 1;
+    background: none;
+    transform: none;
+    z-index: -1;
+  }
+
+  .post:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hw-shadow-soft);
+    border-color: var(--hw-accent);
+  }
+
+  .post:hover::before {
+    opacity: .98;
+    transform: none;
+  }
+
+  .post.pinned {
+    border-color: var(--hw-accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--hw-paper) 88%, var(--hw-accent) 12%), var(--hw-paper-2));
+    box-shadow: var(--hw-shadow-soft);
+    padding-top: 28px;
+  }
+
+  body.dark .post.pinned {
+    background: linear-gradient(180deg, rgba(239,177,79,.08), var(--hw-paper));
+  }
+
+  .pin-badge {
+    position: absolute;
+    left: 18px;
+    top: -22px;
+    transform: rotate(-9deg);
+    z-index: 8;
+    pointer-events: none;
+    filter: none;
+  }
+
+  .pin-badge-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 3px solid var(--hw-line);
+    border-radius: 4px 20px 4px 16px;
+    background: var(--hw-pin);
+    box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    color: #22190f;
+    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .pin-badge-text svg {
+    width: 18px;
+    height: 18px;
+    color: #22190f !important;
+    flex: 0 0 18px;
+  }
+
+  .pin-badge-text span:last-child {
+    font-size: 24px;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+  }
+
+  .post-time {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 12px;
+    border: 2px solid rgba(77, 82, 34, 0.35);
+    background: var(--hw-green);
+    color: #33401f;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: .5px;
+    box-shadow: 0 4px 10px rgba(137, 154, 81, .12);
+    transform: none;
+  }
+
+  body.dark .post-time {
+    color: #eff8d8;
+    background: rgba(103, 126, 60, .62);
+  }
+
+  .post-right {
+    display: grid;
+    grid-template-columns: minmax(0, 1.28fr) minmax(180px, .92fr);
+    gap: 24px;
+    align-items: center;
+    min-width: 0;
+    overflow: visible;
+    transform: none !important;
+  }
+
+  .post-content {
+    min-width: 0;
+    font-size: 1.05rem;
+    line-height: 1.82;
+    color: var(--hw-text);
+  }
+
+  body.dark .post-content,
+  body.dark .post-content p,
+  body.dark .post-content li,
+  body.dark .post-content h1,
+  body.dark .post-content h2,
+  body.dark .post-content h3,
+  body.dark .post-content h4 {
+    color: var(--hw-text);
+  }
+
+  .post-content h1,
+  .post-content h2,
+  .post-content h3,
+  .post-content h4 {
+    transform: none;
+  }
+
+  .post-image-dual {
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .scrapbook-gallery-source {
+    display: none !important;
+  }
+
+  .scrapbook-preview-host {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .scrapbook-stack {
+    position: relative;
+    width: min(100%, 288px);
+    height: 194px;
+    margin-left: auto;
+  }
+
+  .scrapbook-photo {
+    position: absolute;
+    width: clamp(110px, 44%, 142px);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: #fefbf6;
+    border: 2px solid rgba(18, 15, 12, .88);
+    box-shadow: 0 10px 14px rgba(0,0,0,.14);
+    padding: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .scrapbook-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1px;
+  }
+
+  .scrapbook-photo::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 54px;
+    height: 16px;
+    background: var(--hw-tape);
+    border-radius: 4px;
+    transform: translateX(-50%) rotate(-2deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  }
+
+  .scrapbook-photo.single-a {
+    left: 56px;
+    top: 18px;
+    width: 160px;
+    transform: rotate(-6deg);
+  }
+
+  .scrapbook-photo.single-b {
+    left: 82px;
+    top: 16px;
+    width: 148px;
+    transform: rotate(6deg);
+  }
+
+  .scrapbook-photo.variant-a.first {
+    left: 18px;
+    top: 16px;
+    transform: rotate(-5deg);
+  }
+
+  .scrapbook-photo.variant-a.second {
+    right: 10px;
+    top: 24px;
+    transform: rotate(5deg);
+  }
+
+  .scrapbook-photo.variant-b.first {
+    left: 26px;
+    top: 12px;
+    transform: rotate(4deg);
+  }
+
+  .scrapbook-photo.variant-b.second {
+    right: 12px;
+    top: 34px;
+    transform: rotate(-7deg);
+  }
+
+  .scrapbook-photo.clip::after {
+    content: '📎';
+    position: absolute;
+    right: -14px;
+    top: -22px;
+    font-size: 28px;
+    transform: rotate(10deg);
+  }
+
+  .scrapbook-photo.plus::after {
+    content: attr(data-plus);
+    position: absolute;
+    inset: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1px;
+    background: rgba(17, 13, 9, 0.42);
+    color: #fff7eb;
+    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: .6px;
+  }
+
+  body.dark .scrapbook-photo {
+    background: #f7efdf;
+    border-color: rgba(242, 214, 169, 0.86);
+    box-shadow: 0 10px 16px rgba(0,0,0,.34);
+  }
+
+  .search-results .post {
+    margin-bottom: 18px;
+  }
+
+  .search-results .post-right {
+    transform: none !important;
+  }
+
+  @media (max-width: 760px) {
+    .post {
+      padding: 22px 18px 18px;
+      margin-bottom: 22px;
+    }
+
+    .post-right {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .scrapbook-stack {
+      width: min(100%, 248px);
+      height: 184px;
+      margin: 0 auto;
+    }
+
+    .scrapbook-photo.single-a { left: 42px; width: 148px; }
+    .scrapbook-photo.single-b { left: 56px; width: 142px; }
+
+    .pin-badge {
+      top: -18px;
+      left: 10px;
+    }
+
+    .pin-badge-text,
+    .pin-badge-text span:last-child {
+      font-size: 21px;
+    }
+  }
+  
+  #postsContainer .post.pinned .pin-badge {
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: 14px;
+  bottom: 14px;
+  transform: rotate(-8deg);
+}
+
+#postsContainer .post.pinned .pin-badge-text {
+  border-radius: 50%;
+  border: 2px dashed var(--border);
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+  box-shadow: none;
+  background: var(--paper);
+}
+
+#postsContainer .post.pinned .pin-badge-text svg {
+  width: 16px;
+  height: 16px;
+}
+
+#postsContainer .post.pinned .pin-badge-text span:last-child {
+  font-size: 10px;
+}
+</style>
+
+
+<style id="masonry-override">
+/* ========= 瀑布流卡片 + 图片居中顶部 · 最终稳妥版 ========= */
+
+.app-container { max-width: 1200px !important; }
+
+#postsContainer::before,
+#postsContainer .post:first-child::before { display: none !important; }
+
+#postsContainer {
+  display: block;
+  column-count: 3;
+  column-gap: 20px;
+  padding: 16px 4px 0;
+}
+
+#postsContainer .post {
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin: 0 0 20px !important;
+  transform: none !important;
+}
+
+#postsContainer .post .post-right {
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 14px;
+}
+
+#postsContainer .post.pinned { margin-top: 0 !important; }
+
+/* 图片区整体居中，宽度不超过卡片 */
+#postsContainer .post-image-dual,
+#postsContainer .post-images-wrap,
+#postsContainer .scrapbook-preview-host {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex;
+  justify-content: center;
+}
+
+#postsContainer .scrapbook-stack {
+  margin: 0 auto !important;
+}
+
+#postsContainer .post-images img,
+#postsContainer .post-images-wrap img {
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 260px;
+}
+
+/* 文字铺满整个卡片宽度，居中对齐更像手账 */
+#postsContainer .post-content {
+  width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.85;
+  text-align: left;
+}
+
+/* ---- 平板 2列 ---- */
+@media (max-width: 1024px) {
+  #postsContainer { column-count: 2; column-gap: 16px; }
+}
+
+/* ---- 手机 2列 ---- */
+@media (max-width: 768px) {
+  .app-container { max-width: 100% !important; }
+  #postsContainer { column-count: 2; column-gap: 10px; padding: 12px 6px 0; }
+  #postsContainer .post {
+    padding: 14px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
+  }
+  #postsContainer .post-content { font-size: 14.5px !important; }
+  #postsContainer .post-images img,
+  #postsContainer .post-images-wrap img { max-height: 160px; }
+  #postsContainer .scrapbook-stack { width: min(100%, 220px) !important; height: 160px !important; }
+}
+
+/* ---- 极小屏单列 ---- */
+@media (max-width: 460px) {
+  #postsContainer { column-count: 1; }
+}
+
+/* 关闭卡片 hover 时右下角弹出的五角星 */
+#postsContainer .post::after,
+#postsContainer .post:hover::after {
+  display: none !important;
+  content: none !important;
+}
+/* 邮戳置顶徽章 · 暗色模式对比度修复 */
+body.dark #postsContainer .post.pinned .pin-badge-text {
+  background: #3a3530;
+  border-color: #f3e9dd;
+  color: #f3e9dd;
+}
+
+body.dark #postsContainer .post.pinned .pin-badge-text svg {
+  color: #f0cc76 !important;
+}
+
+body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
+  color: #f3e9dd;
+  font-weight: 900;
+}
+/* 暗色模式下贴纸图片同步降低亮度 */
+.scrapbook-photo img {
+  filter: brightness(var(--img-brightness));
+}
+#postsContainer .post:hover {
+  transform: translate(-3px, -3px) !important;
+  box-shadow: 5px 5px 0px var(--border) !important;
+  border-color: var(--accent-dark) !important;
+}
+
+</style>
+</head>
   <body>
     <!-- 手绘漂浮装饰（来自登录页） -->
     <svg
@@ -2418,8 +2950,8 @@ main::-webkit-scrollbar {
       </header>
       <button class="back-to-top" id="backToTopBtn" title="回到顶部">⬆︎</button>
       <main>
-		  <div id="postsContainer"></div>
-         <div id="loader">正在检索记忆碎片...</div>
+        <div id="postsContainer"></div>
+        <div id="loader">正在检索记忆碎片...</div>
       </main>
     </div>
 
@@ -2476,18 +3008,19 @@ main::-webkit-scrollbar {
         updateThemeIcon(isDark);
       };
 
+      
       marked.setOptions({ breaks: true, gfm: true });
-		 marked.use({
-  renderer: {
-    link(token) {
-      // token 对象包含 href、title、text 属性
-      const href = token.href || '';
-      const title = token.title ? ` title="${token.title}"` : '';
-      const text = token.text || '';
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer"${title}>${text}</a>`;
-    }
-  }
-});
+      marked.use({
+        renderer: {
+          link(token) {
+            const href = token.href || '';
+            const title = token.title ? ` title="${token.title}"` : '';
+            const text = token.text || '';
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer"${title}>${text}</a>`;
+          }
+        }
+      });
+
       const COLOR_BLOCKS = ["🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "⬛", "⬜"];
       function randomColorBlock() {
         return COLOR_BLOCKS[Math.floor(Math.random() * COLOR_BLOCKS.length)];
@@ -2533,6 +3066,10 @@ main::-webkit-scrollbar {
         "https://datas.199105.xyz";
       const PUBLISH_PWD_KEY = "memo_publish_pwd";
       const PUBLISH_PWD_DAYS = 30;
+
+      ));
+      }
+
 
       const loaderDom = document.getElementById("loader");
       const postsContainer = document.getElementById("postsContainer");
@@ -2634,10 +3171,8 @@ function stripPinKeyword(text) {
         let imagesHtml = "";
         if (p.images && p.images.length) {
           const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
-          const navBtns = p.images.length > 1
-            ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
-            : "";
-          imagesHtml = `<div class="post-images-wrap">${navBtns}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+          const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(p) : "";
+          imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
         }
 
         const hasAuth = !!getPublishPassword();
@@ -2655,12 +3190,11 @@ function stripPinKeyword(text) {
     const pinBadge = isPinned ? `
   <div class="pin-badge" aria-hidden="true">
     <span class="pin-badge-text">
-      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-	<path d="M0 0h24v24H0z" fill="none" />
-	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m3 21l5-5m5.259 2.871c-3.744-.85-7.28-4.386-8.13-8.13c-.135-.592-.202-.888-.007-1.369c.194-.48.433-.63.909-.927c1.076-.672 2.242-.886 3.451-.78c1.697.151 2.546.226 2.97.005c.423-.22.71-.736 1.286-1.767l.728-1.307c.48-.86.72-1.291 1.285-1.494s.905-.08 1.585.166a5.63 5.63 0 0 1 3.396 3.396c.246.68.369 1.02.166 1.585c-.203.564-.633.804-1.494 1.285l-1.337.745c-1.03.574-1.544.862-1.765 1.289c-.22.428-.14 1.258.02 2.918c.118 1.22-.085 2.394-.766 3.484c-.298.476-.447.714-.928.909c-.48.194-.777.127-1.37-.008" />
-</svg>
-
-      
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15.5 3.5c.8.8.8 2.1 0 2.9l-1.2 1.2 2.8 2.8c.4.4.4 1 0 1.4l-1 1c-.2.2-.4.3-.7.3h-2.2l-1.5 1.5v4.7l-.8.8-.8-.8v-4.7L9 13.3H6.8c-.3 0-.5-.1-.7-.3l-1-1c-.4-.4-.4-1 0-1.4l2.8-2.8-1.2-1.2c-.8-.8-.8-2.1 0-2.9" />
+        <path d="M9.8 8.2l6 6" />
+      </svg>
+      <span>置顶</span>
     </span>
   </div>
 ` : '';
@@ -2673,8 +3207,8 @@ function stripPinKeyword(text) {
       ${actionsHtml}
     </div>
     <div class="post-right">
-      <div class="post-content">${parsed}</div>
       ${imagesHtml}
+      <div class="post-content">${parsed}</div>
     </div>
   </article>`;
       }
@@ -2686,25 +3220,23 @@ function stripPinKeyword(text) {
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
         try {
-                   // 请求加上特定路径，并改为 POST 方法
-      const res = await fetch(`${WORKER_URL}/api/get-memos`, {
-        method: "POST", 
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-            if (!res.ok) throw new Error("网络响应错误");
-            const json = await res.json();
-            if (json.code === 200) {
-                allPosts = json.data || [];
-               
-            } else {
-                throw new Error(json.msg || "获取数据失败");
+          const res = await fetch(`${WORKER_URL}/api/get-memos`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
             }
+          });
+          if (!res.ok) throw new Error("网络响应错误");
+          const json = await res.json();
+          if (json.code === 200) {
+            allPosts = json.data || [];
+          } else {
+            throw new Error(json.msg || "获取数据失败");
+          }
         } catch (err) {
-            console.error(err);
-            showToast("加载失败，请检查网络或配置", "error");
-            allPosts = [];
+          console.error(err);
+          showToast("加载失败，请检查网络或配置", "error");
+          allPosts = [];
         }
 
         filtered = [...allPosts];
@@ -2736,47 +3268,40 @@ function stripPinKeyword(text) {
           while (t.firstChild) postsContainer.appendChild(t.firstChild);
         }
         bindImagesInContainer(postsContainer);
+        if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
       }
 
-        function setupInfiniteScroll() {
-  const scrollContainer = document.querySelector('main');
-  if (!scrollContainer) return;
-
-  let noMoreShown = false;   // 关键：是否已经展示过"没有更多了"
-  let hideTimer = null;
-
-  const handleScroll = () => {
-    if (isLoading) return;
-    const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
-    const nearBottom = scrollTop + clientHeight >= scrollHeight - 150;
-
-    if (!nearBottom) {
-      // 离开底部区域，重置状态，方便下次再触发
-      noMoreShown = false;
-      return;
-    }
-
-    if (page * perPage < filtered.length) {
-      // 还有更多内容，正常加载下一页
-      noMoreShown = false;
-      page++;
-      if (loaderDom) loaderDom.style.display = 'block';
-      render(false);
-      if (loaderDom) loaderDom.style.display = 'none';
-    } else if (loaderDom && filtered.length && !noMoreShown) {
-      // 没有更多了：只在第一次触底时提示一次
-      noMoreShown = true;
-      loaderDom.style.display = 'block';
-      loaderDom.textContent = '- 没有更多了 -';
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => {
-        if (loaderDom) loaderDom.style.display = 'none';
-      }, 800);
-    }
-  };
-
-  scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
-}
+      function setupInfiniteScroll() {
+        const scrollContainer = document.querySelector("main"); // 把滚动监听绑定给 main
+        if (!scrollContainer) return;
+        let noMoreShown = false;
+        let hideTimer = null;
+        const handleScroll = () => {
+          if (isLoading) return;
+          const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
+          const nearBottom = scrollTop + clientHeight >= scrollHeight - 150;
+          if (!nearBottom) {
+            noMoreShown = false;
+            return;
+          }
+          if (page * perPage < filtered.length) {
+            noMoreShown = false;
+            page++;
+            if (loaderDom) loaderDom.style.display = "block";
+            render(false);
+            if (loaderDom) loaderDom.style.display = "none";
+          } else if (loaderDom && filtered.length && !noMoreShown) {
+            noMoreShown = true;
+            loaderDom.style.display = "block";
+            loaderDom.textContent = "已经没有更多手账了";
+            clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => {
+              if (loaderDom) loaderDom.style.display = "none";
+            }, 800);
+          }
+        };
+        scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+      }
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
@@ -3465,11 +3990,8 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const imgs = post.images
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
-            const navBtns2 =
-              post.images.length > 1
-                ? `<button class="img-nav-btn img-nav-prev" aria-label="上一张">&#8249;</button><button class="img-nav-btn img-nav-next" aria-label="下一张">&#8250;</button>`
-                : "";
-            imagesHtml = `<div class="post-images-wrap">${navBtns2}<div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div>`;
+            const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(post) : "";
+            imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
           }
           const hasAuth = !!getPublishPassword();
           let actionsHtml = "";
@@ -3488,6 +4010,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
+        if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(searchResultsDiv);
         const el = document.getElementById("searchLoader");
         if (el) el.remove();
         if (end < currentSearchResults.length) {
@@ -3582,6 +4105,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
               )
             : postsContainer.appendChild(t.firstElementChild);
           bindImagesInContainer(postsContainer);
+        if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
         }
       }
       function addSelectedPublishFiles(files) {
@@ -4044,5 +4568,45 @@ lbImg.onerror = () => resetLightboxBackdrop();
         initBackToTop();
       });
     </script>
-  </body>
+  
+<script>
+  window.__scrapbookPreview = (function () {
+    function buildScrapbookPreview(item) {
+      const images = Array.isArray(item && item.images) ? item.images.filter(Boolean) : [];
+      if (!images.length) return '';
+      const seed = Math.random() > 0.5 ? 'single-a' : 'single-b';
+      const variant = Math.random() > 0.5 ? 'variant-a' : 'variant-b';
+      if (images.length === 1) {
+        return `<div class="scrapbook-stack" data-preview-count="1"><div class="scrapbook-photo ${seed} clip" data-preview-index="0"><img src="${images[0]}" alt=""></div></div>`;
+      }
+      const extra = images.length - 2;
+      return `<div class="scrapbook-stack" data-preview-count="${images.length}">
+        <div class="scrapbook-photo ${variant} first" data-preview-index="0"><img src="${images[0]}" alt=""></div>
+        <div class="scrapbook-photo ${variant} second ${extra > 0 ? 'plus' : ''}" ${extra > 0 ? `data-plus="+${extra}"` : ''} data-preview-index="1"><img src="${images[1]}" alt=""></div>
+      </div>`;
+    }
+
+    function bindScrapbookPreviewClicks(root) {
+      (root || document).querySelectorAll('.scrapbook-preview-host').forEach((host) => {
+        if (host.dataset.boundPreviewClick) return;
+        host.dataset.boundPreviewClick = '1';
+        host.addEventListener('click', (e) => {
+          const clicked = e.target.closest('.scrapbook-photo');
+          if (!clicked) return;
+          const card = host.closest('.post, article');
+          const imgs = [...(card ? card.querySelectorAll('.scrapbook-gallery-source img') : [])];
+          if (!imgs.length) return;
+          const index = Number(clicked.dataset.previewIndex || 0);
+          currentGallery = imgs.map(i => i.src);
+currentIndex = index;
+if (typeof openLightbox === 'function') openLightbox();
+        });
+      });
+    }
+
+    return { buildScrapbookPreview, bindScrapbookPreviewClicks };
+  })();
+</script>
+
+</body>
 </html>
