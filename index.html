@@ -2625,6 +2625,228 @@ body {
         border-color: rgba(255,255,255,.14);
       }
 
+
+
+      /* ===== Glassmorphism V1 ===== */
+      :root {
+        --glass-bg: rgba(255, 249, 238, 0.42);
+        --glass-bg-strong: rgba(255, 249, 238, 0.58);
+        --glass-surface: rgba(255, 253, 247, 0.28);
+        --glass-border: rgba(72, 58, 44, 0.14);
+        --glass-highlight: rgba(255, 255, 255, 0.52);
+        --glass-shadow: 0 18px 42px rgba(89, 69, 49, 0.14);
+        --glass-blur: 20px;
+        --glass-saturate: 150%;
+      }
+
+      body.dark {
+        --glass-bg: rgba(34, 35, 41, 0.48);
+        --glass-bg-strong: rgba(34, 35, 41, 0.62);
+        --glass-surface: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --glass-highlight: rgba(255, 255, 255, 0.16);
+        --glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+        --glass-saturate: 135%;
+      }
+
+      .app-container {
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      }
+
+      #postsContainer::before,
+      .doodle-star,
+      .doodle-heart,
+      .doodle-flower,
+      .doodle-plane,
+      .doodle-clip,
+      .doodle-moon,
+      .doodle-leaf {
+        display: none !important;
+      }
+
+      .post,
+      .search-results .post,
+      .publish-panel,
+      .search-modal-content,
+      .publish-field,
+      .post-image-single .post-images-wrap,
+      .search-results .post-image-single .post-images-wrap {
+        background: linear-gradient(180deg, var(--glass-bg-strong), var(--glass-bg)) !important;
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: var(--glass-shadow) !important;
+        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+      }
+
+      .post::before,
+      .publish-panel::before,
+      .search-modal-content::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, var(--glass-highlight), rgba(255,255,255,0.04) 26%, transparent 60%);
+        pointer-events: none;
+      }
+
+      .post,
+      .search-results .post {
+        border-radius: 28px !important;
+        overflow: hidden;
+      }
+
+      .post::after,
+      .search-results .post::after,
+      #postsContainer .post::after,
+      #postsContainer .post:hover::after {
+        display: none !important;
+        content: none !important;
+      }
+
+      .post:hover,
+      .search-results .post:hover {
+        transform: translateY(-2px) !important;
+        border-color: rgba(208, 154, 98, 0.28) !important;
+        box-shadow: 0 24px 50px rgba(89, 69, 49, 0.18) !important;
+      }
+
+      body.dark .post:hover,
+      body.dark .search-results .post:hover {
+        box-shadow: 0 20px 48px rgba(0,0,0,0.34) !important;
+      }
+
+      .post-header,
+      .publish-top,
+      .search-modal-header {
+        background: transparent !important;
+        border-bottom: 1px solid rgba(50, 50, 50, 0.08) !important;
+      }
+
+      body.dark .post-header,
+      body.dark .publish-top,
+      body.dark .search-modal-header {
+        border-bottom-color: rgba(255,255,255,0.08) !important;
+      }
+
+      .post-time,
+      .pin-badge-text,
+      .post-action-btn,
+      .topbar-icon,
+      .search-bar button,
+      .close-search-btn,
+      .publish-submit,
+      .publish-cancel,
+      .pick-img-btn,
+      .theme-option,
+      .search-loader.more-btn {
+        background: linear-gradient(180deg, rgba(255,255,255,0.52), rgba(255,255,255,0.22)) !important;
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: 0 8px 20px rgba(89, 69, 49, 0.10) !important;
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+      }
+
+      body.dark .post-time,
+      body.dark .pin-badge-text,
+      body.dark .post-action-btn,
+      body.dark .topbar-icon,
+      body.dark .search-bar button,
+      body.dark .close-search-btn,
+      body.dark .publish-submit,
+      body.dark .publish-cancel,
+      body.dark .pick-img-btn,
+      body.dark .theme-option,
+      body.dark .search-loader.more-btn {
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05)) !important;
+      }
+
+      .post-content mark,
+      .post-content .highlight,
+      .search-results .post-content span[style*="background-color: var(--accent)"] {
+        border-radius: 12px !important;
+      }
+
+      .search-modal {
+        background: rgba(243, 233, 221, 0.36) !important;
+        backdrop-filter: blur(12px) saturate(130%);
+        -webkit-backdrop-filter: blur(12px) saturate(130%);
+      }
+
+      body.dark .search-modal {
+        background: rgba(16, 17, 22, 0.54) !important;
+      }
+
+      .search-modal-content,
+      .publish-panel {
+        position: relative;
+        border-radius: 32px !important;
+      }
+
+      .search-bar input,
+      .publish-input,
+      .publish-textarea,
+      #previewWrap,
+      .publish-drop-zone {
+        background: rgba(255, 255, 255, 0.28) !important;
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.26);
+      }
+
+      body.dark .search-bar input,
+      body.dark .publish-input,
+      body.dark .publish-textarea,
+      body.dark #previewWrap,
+      body.dark .publish-drop-zone {
+        background: rgba(255,255,255,0.05) !important;
+      }
+
+      .search-results {
+        max-width: 760px !important;
+      }
+
+      .search-results .post-image-dual .scrapbook-preview-host,
+      .post-image-dual .scrapbook-preview-host {
+        width: 100%;
+      }
+
+      .scrapbook-stack,
+      .search-results .scrapbook-stack {
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+        border-radius: 24px;
+      }
+
+      .scrapbook-photo {
+        border: 1px solid var(--glass-border) !important;
+        box-shadow: 0 10px 24px rgba(0,0,0,.12) !important;
+      }
+
+      .search-modal-header button:hover,
+      .post-action-btn:hover,
+      .topbar-icon:hover,
+      .search-bar button:hover,
+      .publish-submit:hover,
+      .publish-cancel:hover,
+      .pick-img-btn:hover,
+      .theme-option:hover,
+      .close-search-btn:hover,
+      .search-loader.more-btn:hover {
+        transform: translateY(-1px) !important;
+      }
+
+      .post-content a {
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 3px;
+      }
+
+      @media (max-width: 768px) {
+        .post,
+        .search-results .post,
+        .publish-panel,
+        .search-modal-content {
+          border-radius: 24px !important;
+        }
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
