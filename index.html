@@ -2633,6 +2633,7 @@ body {
 
 
 
+
 <style id="final-polish-overrides">
   #postsContainer::before,
   #postsContainer > .post:first-child::before {
@@ -2767,17 +2768,24 @@ body {
   }
 
   .post::after {
+    inset: 10px !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--hw-line-soft) !important;
     opacity: 1 !important;
+    background: none !important;
+    transform: none !important;
   }
 
   .post:hover::after {
     opacity: 1 !important;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' fill='%23E5AA70' stroke='%23323232' stroke-width='1.5'/%3E%3C/svg%3E") right 10px bottom 10px/36px 36px no-repeat !important;
+    background: none !important;
+    transform: none !important;
     border: 1px solid var(--hw-line-soft) !important;
   }
 
-  body.dark .post:hover::after {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' fill='%23DAA06D' stroke='%23F3E9DD' stroke-width='1.5'/%3E%3C/svg%3E") right 10px bottom 10px/36px 36px no-repeat !important;
+  .post:hover .post-corner-decor {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
 
   .post-right {
@@ -2798,6 +2806,44 @@ body {
     margin-top: 4px;
   }
 
+  .post-image-dual.single-only {
+    display: grid !important;
+    grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+    align-items: center;
+    gap: 20px;
+    margin-top: 6px;
+  }
+
+  .post-image-dual.single-only .scrapbook-preview-host {
+    order: 1;
+  }
+
+  .post-image-dual.single-only + .post-content,
+  .post-image-dual.single-only .post-content {
+    order: 2;
+  }
+
+  .single-photo-layout {
+    display: grid;
+    grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
+    gap: 22px;
+    align-items: center;
+  }
+
+  .single-photo-layout .scrapbook-preview-host {
+    justify-content: flex-start !important;
+  }
+
+  .single-photo-layout .scrapbook-stack {
+    width: min(100%, 250px) !important;
+    height: 210px !important;
+  }
+
+  .single-photo-layout .post-content {
+    margin: 0 !important;
+    padding-right: 18px;
+  }
+
   .scrapbook-preview-host {
     width: 100% !important;
     display: flex !important;
@@ -2810,6 +2856,129 @@ body {
     margin-right: 0 !important;
     width: min(100%, 250px) !important;
     height: 172px !important;
+    position: relative;
+  }
+
+  .scrapbook-stack.single-layout {
+    height: 210px !important;
+  }
+
+  .scrapbook-stack.multi-layout {
+    width: min(100%, 320px) !important;
+    height: 220px !important;
+  }
+
+  .single-photo-layout .scrapbook-photo.single-a {
+    left: 18px !important;
+    top: 12px !important;
+    width: 186px !important;
+    transform: rotate(-4.5deg) !important;
+  }
+
+  .single-photo-layout .scrapbook-photo.single-b {
+    left: 30px !important;
+    top: 10px !important;
+    width: 178px !important;
+    transform: rotate(4.5deg) !important;
+  }
+
+  .multi-layout.multi-count-2 .scrapbook-photo.first,
+  .multi-layout.multi-count-3 .scrapbook-photo.first,
+  .multi-layout.multi-count-4 .scrapbook-photo.first,
+  .multi-layout .scrapbook-photo.variant-a.first {
+    left: 14px !important;
+    top: 18px !important;
+    width: 116px !important;
+    transform: rotate(-6deg) !important;
+  }
+
+  .multi-layout.multi-count-2 .scrapbook-photo.second,
+  .multi-layout.multi-count-3 .scrapbook-photo.second,
+  .multi-layout.multi-count-4 .scrapbook-photo.second,
+  .multi-layout .scrapbook-photo.variant-a.second {
+    left: 112px !important;
+    top: 12px !important;
+    width: 116px !important;
+    transform: rotate(4deg) !important;
+  }
+
+  .multi-layout .scrapbook-photo.variant-b.first {
+    left: 20px !important;
+    top: 14px !important;
+    width: 114px !important;
+    transform: rotate(5deg) !important;
+  }
+
+  .multi-layout .scrapbook-photo.variant-b.second {
+    left: 118px !important;
+    top: 18px !important;
+    width: 114px !important;
+    transform: rotate(-5deg) !important;
+  }
+
+  .multi-layout.multi-count-3 .scrapbook-photo.third,
+  .multi-layout.multi-count-4 .scrapbook-photo.third {
+    left: 42px !important;
+    top: 92px !important;
+    width: 114px !important;
+    transform: rotate(-4deg) !important;
+  }
+
+  .multi-layout.multi-count-4 .scrapbook-photo.fourth,
+  .multi-layout.multi-count-3 .scrapbook-photo.fourth {
+    left: 146px !important;
+    top: 98px !important;
+    width: 114px !important;
+    transform: rotate(6deg) !important;
+  }
+
+  .multi-layout.multi-count-2 .scrapbook-photo.third,
+  .multi-layout.multi-count-2 .scrapbook-photo.fourth,
+  .multi-layout.multi-count-3 .scrapbook-photo.fourth:empty {
+    display: none !important;
+  }
+
+
+  .single-decor {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    color: rgba(111, 101, 90, 0.42);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .single-decor-star { font-size: 26px; transform: rotate(8deg); }
+  .single-decor-swirl { font-size: 28px; transform: rotate(-8deg); }
+  .single-decor-spark { font-size: 24px; transform: rotate(6deg); }
+  .single-decor-flower { font-size: 24px; transform: rotate(-10deg); }
+  .single-decor-stamp { font-size: 28px; transform: rotate(10deg); }
+
+  .post-corner-decor {
+    position: absolute;
+    right: 14px;
+    bottom: 12px;
+    width: 42px;
+    height: 42px;
+    opacity: 0;
+    transform: scale(0.65) rotate(-10deg);
+    transition: opacity .22s ease, transform .28s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    z-index: 2;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .post-corner-decor svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  body.dark .post-corner-decor {
+    color: #daa06d;
   }
 
   .post-image-dual:empty,
@@ -2859,9 +3028,82 @@ body {
       margin-bottom: 12px !important;
     }
 
+    .single-photo-layout,
+    .post-image-dual.single-only {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+
+    .single-photo-layout .scrapbook-stack,
     .scrapbook-stack {
       width: min(100%, 224px) !important;
       height: 164px !important;
+      margin: 0 auto 0 0 !important;
+    }
+
+    .scrapbook-stack.multi-layout {
+      width: min(100%, 250px) !important;
+      height: 182px !important;
+    }
+
+    .scrapbook-stack.single-layout {
+      height: 186px !important;
+    }
+
+    .single-photo-layout .scrapbook-photo.single-a {
+      left: 18px !important;
+      top: 8px !important;
+      width: 156px !important;
+    }
+
+    .single-photo-layout .scrapbook-photo.single-b {
+      left: 28px !important;
+      top: 8px !important;
+      width: 148px !important;
+    }
+
+    .single-photo-layout .post-content {
+      padding-right: 0 !important;
+    }
+
+    .multi-layout.multi-count-2 .scrapbook-photo.first,
+    .multi-layout.multi-count-3 .scrapbook-photo.first,
+    .multi-layout.multi-count-4 .scrapbook-photo.first,
+    .multi-layout .scrapbook-photo.variant-a.first,
+    .multi-layout .scrapbook-photo.variant-b.first {
+      left: 8px !important;
+      top: 10px !important;
+      width: 92px !important;
+    }
+
+    .multi-layout.multi-count-2 .scrapbook-photo.second,
+    .multi-layout.multi-count-3 .scrapbook-photo.second,
+    .multi-layout.multi-count-4 .scrapbook-photo.second,
+    .multi-layout .scrapbook-photo.variant-a.second,
+    .multi-layout .scrapbook-photo.variant-b.second {
+      left: 92px !important;
+      top: 8px !important;
+      width: 92px !important;
+    }
+
+    .multi-layout.multi-count-3 .scrapbook-photo.third,
+    .multi-layout.multi-count-4 .scrapbook-photo.third {
+      left: 22px !important;
+      top: 78px !important;
+      width: 92px !important;
+    }
+
+    .multi-layout.multi-count-4 .scrapbook-photo.fourth {
+      left: 108px !important;
+      top: 82px !important;
+      width: 92px !important;
+    }
+
+    .post-corner-decor {
+      right: 10px;
+      bottom: 10px;
+      width: 34px;
+      height: 34px;
     }
   }
 </style>
@@ -3236,13 +3478,16 @@ function stripPinKeyword(text) {
            let text = Array.isArray(p.content) ? p.content.join('') : p.content;
   const isPinned = text.includes(PIN_KEYWORD);
   if (isPinned) text = stripPinKeyword(text);
-  const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
+  const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;
         const showTime = formatRelativeTime(p.date);
+        const imageCount = Array.isArray(p.images) ? p.images.length : 0;
         let imagesHtml = "";
-        if (p.images && p.images.length) {
+        let bodyClass = "post-body-text-only";
+        if (imageCount) {
           const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
           const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(p) : "";
-          imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+          imagesHtml = `<div class="post-image-dual ${imageCount === 1 ? 'single-only' : 'multi-only'}"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+          bodyClass = imageCount === 1 ? 'single-photo-layout' : 'post-body-with-images';
         }
 
         const hasAuth = !!getPublishPassword();
@@ -3268,17 +3513,18 @@ function stripPinKeyword(text) {
     </span>
   </div>
 ` : '';
-  
+
   const pinClass = isPinned ? ' pinned' : '';
+  const cornerDecor = `<span class="post-corner-decor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" stroke="${'none'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>`;
           return `<article class="post${pinClass}" id="post-${p.id}">
     ${pinBadge}
+    ${cornerDecor}
     <div class="post-header">
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
       ${actionsHtml}
     </div>
-    <div class="post-right">
-      <div class="post-content">${parsed}</div>
-      ${imagesHtml}
+    <div class="post-right ${bodyClass}">
+      ${imageCount === 1 ? `${imagesHtml}<div class="post-content">${parsed}</div>` : `<div class="post-content">${parsed}</div>${imagesHtml}`}
     </div>
   </article>`;
       }
@@ -4042,12 +4288,15 @@ lbImg.onerror = () => resetLightboxBackdrop();
           }
           const showTime = formatRelativeTime(post.date);
           let imagesHtml = "";
+          const imageCount = Array.isArray(post.images) ? post.images.length : 0;
+          let bodyClass = "post-body-text-only";
           if (post.images && post.images.length) {
             const imgs = post.images
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
             const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(post) : "";
-            imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+            imagesHtml = `<div class="post-image-dual ${imageCount === 1 ? 'single-only' : 'multi-only'}"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+            bodyClass = imageCount === 1 ? 'single-photo-layout' : 'post-body-with-images';
           }
           const hasAuth = !!getPublishPassword();
           let actionsHtml = "";
@@ -4062,7 +4311,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             </div>`;
           }
           div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-          <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
+          <div class="post-right ${bodyClass}">${imageCount === 1 ? `${imagesHtml}<div class="post-content">${parsed}</div>` : `<div class="post-content">${parsed}</div>${imagesHtml}`}</div>`;
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
@@ -4627,16 +4876,35 @@ lbImg.onerror = () => resetLightboxBackdrop();
   
 <script>
   window.__scrapbookPreview = (function () {
+    function pickDecor(seed) {
+      const list = ['star', 'swirl', 'spark', 'flower', 'stamp'];
+      return list[Math.abs(seed) % list.length];
+    }
+
+    function buildSingleDecor(seed) {
+      const decor = pickDecor(seed);
+      const map = {
+        star: '<span class="single-decor single-decor-star">✦</span>',
+        swirl: '<span class="single-decor single-decor-swirl">➰</span>',
+        spark: '<span class="single-decor single-decor-spark">✧</span>',
+        flower: '<span class="single-decor single-decor-flower">❀</span>',
+        stamp: '<span class="single-decor single-decor-stamp">☼</span>'
+      };
+      return map[decor] || map.star;
+    }
+
     function buildScrapbookPreview(item) {
       const images = Array.isArray(item && item.images) ? item.images.filter(Boolean) : [];
       if (!images.length) return '';
-      const seed = Math.random() > 0.5 ? 'single-a' : 'single-b';
-      const variant = Math.random() > 0.5 ? 'variant-a' : 'variant-b';
+      const seedBase = String(item && (item.id || item.date || item.content || images[0]) || '').length;
+      const seed = seedBase + images.length;
+      const singleLeft = seed % 2 === 0 ? 'single-a' : 'single-b';
+      const variant = seed % 2 === 0 ? 'variant-a' : 'variant-b';
       if (images.length === 1) {
-        return `<div class="scrapbook-stack" data-preview-count="1"><div class="scrapbook-photo ${seed} clip" data-preview-index="0"><img src="${images[0]}" alt=""></div></div>`;
+        return `<div class="scrapbook-stack single-layout" data-preview-count="1"><div class="scrapbook-photo ${singleLeft} clip" data-preview-index="0"><img src="${images[0]}" alt=""></div>${buildSingleDecor(seed)}</div>`;
       }
-      const extra = images.length - 2;
-      return `<div class="scrapbook-stack" data-preview-count="${images.length}">
+      const extra = images.length > 4 ? images.length - 2 : 0;
+      return `<div class="scrapbook-stack multi-layout" data-preview-count="${images.length}">
         <div class="scrapbook-photo ${variant} first" data-preview-index="0"><img src="${images[0]}" alt=""></div>
         <div class="scrapbook-photo ${variant} second ${extra > 0 ? 'plus' : ''}" ${extra > 0 ? `data-plus="+${extra}"` : ''} data-preview-index="1"><img src="${images[1]}" alt=""></div>
       </div>`;
@@ -4650,10 +4918,12 @@ lbImg.onerror = () => resetLightboxBackdrop();
           const clicked = e.target.closest('.scrapbook-photo');
           if (!clicked) return;
           const card = host.closest('.post, article');
-          const imgs = [...(card ? card.querySelectorAll('.scrapbook-gallery-source img') : [])];
-          if (!imgs.length) return;
-          const index = Number(clicked.dataset.previewIndex || 0);
-          if (typeof openLightbox === 'function') openLightbox(imgs, index);
+          if (!card) return;
+          const gallery = card.querySelector('.scrapbook-gallery-source .post-images .img-slide') || card.querySelector('.scrapbook-gallery-source .img-slide');
+          const images = gallery ? [...gallery.querySelectorAll('img')].map((img) => img.getAttribute('src')).filter(Boolean) : [];
+          if (!images.length) return;
+          const startIndex = Math.max(0, Math.min(Number(clicked.dataset.previewIndex || 0), images.length - 1));
+          if (typeof openLightbox === 'function') openLightbox(images, startIndex);
         });
       });
     }
