@@ -3108,6 +3108,156 @@ body {
   }
 </style>
 
+
+<style id="layout-fix-overrides">
+  .post-right.post-body-text-only {
+    display: block !important;
+  }
+
+  .post-right.single-photo-layout,
+  .post-right.post-body-with-images {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+
+  .post-right.single-photo-layout .post-image-dual,
+  .post-right.post-body-with-images .post-image-dual {
+    order: 1;
+    display: block !important;
+    width: 100% !important;
+    margin: 2px 0 0 0 !important;
+    align-self: start !important;
+  }
+
+  .post-right.single-photo-layout .post-content,
+  .post-right.post-body-with-images .post-content {
+    order: 2;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 6px 6px 0 0 !important;
+    align-self: start !important;
+    text-align: left !important;
+  }
+
+  .post-right.single-photo-layout .post-content p,
+  .post-right.post-body-with-images .post-content p {
+    margin-bottom: 10px !important;
+  }
+
+  .scrapbook-preview-host {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .scrapbook-stack {
+    margin: 0 !important;
+  }
+
+  .scrapbook-stack.single-layout {
+    width: min(100%, 248px) !important;
+    height: 224px !important;
+  }
+
+  .scrapbook-stack.multi-layout {
+    width: min(100%, 248px) !important;
+    height: 178px !important;
+  }
+
+  .post-right.single-photo-layout .scrapbook-photo.single-a {
+    left: 18px !important;
+    top: 10px !important;
+    width: 182px !important;
+    transform: rotate(-4deg) !important;
+  }
+
+  .post-right.single-photo-layout .scrapbook-photo.single-b {
+    left: 28px !important;
+    top: 10px !important;
+    width: 174px !important;
+    transform: rotate(4deg) !important;
+  }
+
+  .post-right.post-body-with-images .scrapbook-photo.variant-a.first,
+  .post-right.post-body-with-images .scrapbook-photo.variant-b.first,
+  .scrapbook-stack.multi-count-2 .scrapbook-photo.first {
+    left: 14px !important;
+    top: 14px !important;
+    width: 114px !important;
+    transform: rotate(-6deg) !important;
+  }
+
+  .post-right.post-body-with-images .scrapbook-photo.variant-a.second,
+  .post-right.post-body-with-images .scrapbook-photo.variant-b.second,
+  .scrapbook-stack.multi-count-2 .scrapbook-photo.second {
+    left: 108px !important;
+    top: 22px !important;
+    width: 114px !important;
+    transform: rotate(5deg) !important;
+  }
+
+  .scrapbook-stack.multi-layout .scrapbook-photo.third,
+  .scrapbook-stack.multi-layout .scrapbook-photo.fourth,
+  .single-decor {
+    display: none !important;
+  }
+
+  .post-right.post-body-text-only .post-image-dual {
+    display: none !important;
+  }
+
+  @media (max-width: 760px) {
+    .post-right.single-photo-layout,
+    .post-right.post-body-with-images {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+
+    .scrapbook-stack.single-layout,
+    .scrapbook-stack.multi-layout {
+      width: min(100%, 220px) !important;
+      margin: 0 auto 0 0 !important;
+    }
+
+    .scrapbook-stack.single-layout {
+      height: 190px !important;
+    }
+
+    .scrapbook-stack.multi-layout {
+      height: 160px !important;
+    }
+
+    .post-right.single-photo-layout .scrapbook-photo.single-a {
+      left: 18px !important;
+      top: 8px !important;
+      width: 152px !important;
+    }
+
+    .post-right.single-photo-layout .scrapbook-photo.single-b {
+      left: 28px !important;
+      top: 8px !important;
+      width: 146px !important;
+    }
+
+    .post-right.post-body-with-images .scrapbook-photo.variant-a.first,
+    .post-right.post-body-with-images .scrapbook-photo.variant-b.first,
+    .scrapbook-stack.multi-count-2 .scrapbook-photo.first {
+      left: 10px !important;
+      top: 12px !important;
+      width: 96px !important;
+    }
+
+    .post-right.post-body-with-images .scrapbook-photo.variant-a.second,
+    .post-right.post-body-with-images .scrapbook-photo.variant-b.second,
+    .scrapbook-stack.multi-count-2 .scrapbook-photo.second {
+      left: 86px !important;
+      top: 18px !important;
+      width: 96px !important;
+    }
+  }
+</style>
+
 </head>
   <body>
     <!-- 手绘漂浮装饰（来自登录页） -->
