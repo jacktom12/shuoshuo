@@ -2738,30 +2738,45 @@ function stripPinKeyword(text) {
         bindImagesInContainer(postsContainer);
       }
 
-      function setupInfiniteScroll() {
-        const scrollContainer = document.querySelector("main"); // 把滚动监听绑定给 main
-        if (!scrollContainer) return;
-        const handleScroll = () => {
-          if (isLoading) return;
-          const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
-          if (scrollTop + clientHeight >= scrollHeight - 150) {
-            if (page * perPage < filtered.length) {
-              page++;
-              if (loaderDom) loaderDom.style.display = "block";
-              render(false);
-              if (loaderDom) loaderDom.style.display = "none";
-            } else if (loaderDom && filtered.length) {
-              loaderDom.style.display = "block";
-              loaderDom.textContent = "已经没有更多手账了";
-              setTimeout(() => {
-                if (loaderDom && filtered.length)
-                  loaderDom.style.display = "none";
-              }, 800);
-            }
-          }
-        };
-        scrollContainer.addEventListener("scroll", handleScroll);
-      }
+        function setupInfiniteScroll() {
+  const scrollContainer = document.querySelector('main');
+  if (!scrollContainer) return;
+
+  let noMoreShown = false;   // 关键：是否已经展示过"没有更多了"
+  let hideTimer = null;
+
+  const handleScroll = () => {
+    if (isLoading) return;
+    const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
+    const nearBottom = scrollTop + clientHeight >= scrollHeight - 150;
+
+    if (!nearBottom) {
+      // 离开底部区域，重置状态，方便下次再触发
+      noMoreShown = false;
+      return;
+    }
+
+    if (page * perPage < filtered.length) {
+      // 还有更多内容，正常加载下一页
+      noMoreShown = false;
+      page++;
+      if (loaderDom) loaderDom.style.display = 'block';
+      render(false);
+      if (loaderDom) loaderDom.style.display = 'none';
+    } else if (loaderDom && filtered.length && !noMoreShown) {
+      // 没有更多了：只在第一次触底时提示一次
+      noMoreShown = true;
+      loaderDom.style.display = 'block';
+      loaderDom.textContent = '- 没有更多了 -';
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (loaderDom) loaderDom.style.display = 'none';
+      }, 800);
+    }
+  };
+
+  scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+}
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
