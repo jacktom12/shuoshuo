@@ -3503,29 +3503,31 @@ body {
 }
 </style>
 <style id="masonry-override">
-/* ========= 瀑布流卡片 + 图片居中顶部 · 最终稳妥版 ========= */
+/* ========= JS Masonry · 保留源码顺序 + 严格时间流 ========= */
 
 .app-container { max-width: 1200px !important; }
 
 #postsContainer::before,
-#postsContainer .post:first-child::before { display: none !important; }
+#postsContainer .post:first-child::before {
+  display: none !important;
+}
 
 #postsContainer {
+  position: relative;
   display: block;
-  column-count: 3;
-  column-gap: 20px;
   padding: 16px 4px 0;
 }
 
 #postsContainer .post {
-  display: inline-block;
-  width: 100%;
-  vertical-align: top;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
-  margin: 0 0 20px !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--masonry-item-width, 100%);
+  margin: 0 !important;
   transform: none !important;
+  box-sizing: border-box;
+  will-change: top, left, width;
+  transition: top 0.22s ease, left 0.22s ease, width 0.22s ease;
 }
 
 #postsContainer .post .post-right {
@@ -3538,7 +3540,6 @@ body {
 
 #postsContainer .post.pinned { margin-top: 0 !important; }
 
-/* 图片区整体居中，宽度不超过卡片 */
 #postsContainer .post-image-dual,
 #postsContainer .post-images-wrap,
 #postsContainer .scrapbook-preview-host {
@@ -3559,7 +3560,6 @@ body {
   max-height: 260px;
 }
 
-/* 文字铺满整个卡片宽度，居中对齐更像手账 */
 #postsContainer .post-content {
   width: 100%;
   margin: 0;
@@ -3568,62 +3568,26 @@ body {
   text-align: left;
 }
 
-/* ---- 平板 2列 ---- */
-@media (max-width: 1024px) {
-  #postsContainer { column-count: 2; column-gap: 16px; }
-}
-
-/* ---- 手机 2列 ---- */
 @media (max-width: 768px) {
   .app-container { max-width: 100% !important; }
-  #postsContainer { column-count: 2; column-gap: 10px; padding: 12px 6px 0; }
+  #postsContainer { padding: 12px 6px 0; }
   #postsContainer .post {
     padding: 14px !important;
-    margin-bottom: 12px !important;
     border-radius: 14px !important;
   }
   #postsContainer .post-content { font-size: 14.5px !important; }
   #postsContainer .post-images img,
   #postsContainer .post-images-wrap img { max-height: 160px; }
-  #postsContainer .scrapbook-stack { width: min(100%, 220px) !important; height: 160px !important; }
+  #postsContainer .scrapbook-stack {
+    width: min(100%, 220px) !important;
+    height: 160px !important;
+  }
 }
 
-/* ---- 极小屏单列 ---- */
-@media (max-width: 460px) {
-  #postsContainer { column-count: 1; }
-}
-
-/* 关闭卡片 hover 时右下角弹出的五角星 */
 #postsContainer .post::after,
 #postsContainer .post:hover::after {
   display: none !important;
-  content: none !important;
 }
-/* 邮戳置顶徽章 · 暗色模式对比度修复 */
-body.dark #postsContainer .post.pinned .pin-badge-text {
-  background: #3a3530;
-  border-color: #f3e9dd;
-  color: #f3e9dd;
-}
-
-body.dark #postsContainer .post.pinned .pin-badge-text svg {
-  color: #f0cc76 !important;
-}
-
-body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
-  color: #f3e9dd;
-  font-weight: 900;
-}
-/* 暗色模式下贴纸图片同步降低亮度 */
-.scrapbook-photo img {
-  filter: brightness(var(--img-brightness));
-}
-#postsContainer .post:hover {
-  transform: translate(-3px, -3px) !important;
-  box-shadow: 5px 5px 0px var(--border) !important;
-  border-color: var(--accent-dark) !important;
-}
-
 	.app-container,
 main {
   -ms-overflow-style: none;
@@ -3634,7 +3598,6 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
-
 </style>
 </head>
 <body>
@@ -3928,6 +3891,86 @@ function stripPinKeyword(text) {
         return y + "-" + m + "-" + d;
       }
 
+
+      function getPostTimestamp(post) {
+        const raw = String(post?.date || "").replace(/-/g, "/");
+        const t = new Date(raw).getTime();
+        return Number.isFinite(t) ? t : 0;
+      }
+
+      function sortPostsByDateDesc(list) {
+        return [...(list || [])].sort((a, b) => getPostTimestamp(b) - getPostTimestamp(a));
+      }
+
+      function getMasonryColumnCount() {
+        const w = window.innerWidth;
+        if (w <= 460) return 1;
+        if (w <= 768) return 2;
+        if (w <= 1024) return 2;
+        return 3;
+      }
+
+      function getMasonryGap() {
+        const w = window.innerWidth;
+        if (w <= 768) return 10;
+        if (w <= 1024) return 16;
+        return 20;
+      }
+
+      let masonryRaf = 0;
+      function layoutMasonry() {
+        const container = document.getElementById("postsContainer");
+        if (!container) return;
+        const items = Array.from(container.querySelectorAll(".post"));
+        if (!items.length) {
+          container.style.height = "0px";
+          return;
+        }
+
+        const styles = getComputedStyle(container);
+        const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+        const paddingRight = parseFloat(styles.paddingRight) || 0;
+        const innerWidth = container.clientWidth - paddingLeft - paddingRight;
+        const columns = Math.max(1, getMasonryColumnCount());
+        const gap = getMasonryGap();
+        const itemWidth = Math.max(0, (innerWidth - gap * (columns - 1)) / columns);
+        const heights = new Array(columns).fill(0);
+
+        container.style.setProperty("--masonry-item-width", `${itemWidth}px`);
+
+        items.forEach((item, index) => {
+          item.style.width = `${itemWidth}px`;
+
+          let columnIndex = 0;
+          if (index < columns) {
+            columnIndex = index;
+          } else {
+            let minHeight = heights[0];
+            for (let i = 1; i < heights.length; i++) {
+              if (heights[i] < minHeight) {
+                minHeight = heights[i];
+                columnIndex = i;
+              }
+            }
+          }
+
+          const x = columnIndex * (itemWidth + gap);
+          const y = heights[columnIndex];
+          item.style.left = `${x}px`;
+          item.style.top = `${y}px`;
+          heights[columnIndex] += item.offsetHeight + gap;
+        });
+
+        container.style.height = `${Math.max(...heights) - gap}px`;
+      }
+
+      function scheduleMasonry() {
+        cancelAnimationFrame(masonryRaf);
+        masonryRaf = requestAnimationFrame(() => {
+          requestAnimationFrame(layoutMasonry);
+        });
+      }
+
       function parseMdToPosts(mdContent, fileYear) {
         const fi = mdContent.indexOf("---", 3);
         const raw = fi > -1 ? mdContent.slice(fi + 3).trim() : mdContent.trim();
@@ -4053,7 +4096,8 @@ function stripPinKeyword(text) {
           showToast("在线数据不可用，已切换为本地演示数据", "error");
         }
 
-        filtered = [...allPosts];
+        allPosts = sortPostsByDateDesc(allPosts);
+        filtered = sortPostsByDateDesc(allPosts);
         page = 1;
         loaderDom.style.display = "none";
         isLoading = false;
@@ -4065,7 +4109,7 @@ function stripPinKeyword(text) {
       function render(reset = false) {
         if (!postsContainer) return;
         if (reset) postsContainer.innerHTML = "";
-         const ordered = getPinnedView(filtered);   // 👈 新增这一行
+        const ordered = sortPostsByDateDesc(filtered);
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
        const show = ordered.slice(start, end); 
@@ -4083,6 +4127,17 @@ function stripPinKeyword(text) {
         }
         bindImagesInContainer(postsContainer);
         if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
+        requestAnimationFrame(() => {
+          scheduleMasonry();
+          postsContainer.querySelectorAll("img").forEach((img) => {
+            if (img.dataset.masonryBound) return;
+            img.dataset.masonryBound = "true";
+            if (!img.complete) {
+              img.addEventListener("load", scheduleMasonry, { passive: true });
+              img.addEventListener("error", scheduleMasonry, { passive: true });
+            }
+          });
+        });
       }
 
       function setupInfiniteScroll() {
@@ -5198,8 +5253,9 @@ lbImg.onerror = () => resetLightboxBackdrop();
                 if (json.code === 200) {
                     setPublishPassword(pwd);
                     showToast("删除成功", "delete");
-                    allPosts = allPosts.filter(p => p.id !== id);
-                    filtered = filtered.filter(p => p.id !== id);
+                    allPosts = sortPostsByDateDesc(allPosts.filter(p => p.id !== id));
+                    filtered = sortPostsByDateDesc(filtered.filter(p => p.id !== id));
+                    page = 1;
                     render(true);
                 } else {
                     if (json.code === 403) clearPublishPassword();
@@ -5328,8 +5384,11 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const updatedPost = json.data;
             const idxAll = allPosts.findIndex(p => p.id === currentEditId);
             if (idxAll > -1) allPosts[idxAll] = updatedPost;
+            allPosts = sortPostsByDateDesc(allPosts);
             const idxFil = filtered.findIndex(p => p.id === currentEditId);
             if (idxFil > -1) filtered[idxFil] = updatedPost;
+            filtered = sortPostsByDateDesc(filtered);
+            page = 1;
  
             if (publishModal) {
               publishModal.remove();
@@ -5373,6 +5432,9 @@ lbImg.onerror = () => resetLightboxBackdrop();
           }, 220);
         }, d);
       }
+
+      window.addEventListener("resize", scheduleMasonry, { passive: true });
+      window.addEventListener("load", scheduleMasonry, { passive: true });
 
       // ---------- 事件绑定 + 回到顶部按钮修复 ----------
       const openSearchBtnEl = document.getElementById("openSearchBtn");
