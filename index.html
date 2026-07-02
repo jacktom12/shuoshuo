@@ -2248,21 +2248,165 @@ body {
 
 
 
-      /* ===== 2026-07 menu + flat card polish ===== */
+      /* ===== 2026-07 final visual fixes ===== */
       :root {
-        --glass-border: rgba(255, 255, 255, 0.35);
-        --menu-accent: rgba(0, 122, 255, 0.26);
-        --menu-accent-strong: rgba(0, 122, 255, 0.82);
-        --menu-text-light: rgba(255, 255, 255, 0.92);
+        --menu-paper-bg: rgba(243, 233, 221, 0.84);
+        --menu-paper-border: rgba(50, 50, 50, 0.10);
+        --menu-paper-text: #6d5845;
+        --menu-paper-active-bg: rgba(255, 249, 230, 0.88);
+        --menu-paper-active-text: #b2743f;
+      }
+
+      .menu {
+        background: var(--menu-paper-bg) !important;
+        border-color: var(--menu-paper-border) !important;
+        box-shadow: 0 12px 30px rgba(50, 50, 50, 0.12) !important;
+      }
+
+      .menu .menu-item {
+        color: var(--menu-paper-text) !important;
+      }
+
+      .menu .menu-item.active {
+        background: var(--menu-paper-active-bg) !important;
+        color: var(--menu-paper-active-text) !important;
+      }
+
+      .menu .menu-item:hover,
+      .menu .menu-item:focus-visible {
+        background-color: rgba(255, 249, 230, 0.52) !important;
+        color: #8d633d !important;
+      }
+
+      body.dark .post-content a {
+        color: #ffd88c !important;
+        text-decoration-color: rgba(255, 216, 140, 0.92) !important;
+      }
+
+      body.dark .post-content a:hover {
+        color: #fff2c7 !important;
+      }
+
+      #postsContainer .post,
+      #postsContainer .post:hover,
+      .post,
+      .post:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        border-color: var(--border) !important;
+      }
+
+      #postsContainer .post::after,
+      #postsContainer .post:hover::after {
+        display: none !important;
+        content: none !important;
+      }
+
+      .post-right.single-media {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+        align-items: stretch !important;
+      }
+
+      .post-right.single-media .post-content {
+        width: 100% !important;
+      }
+
+      .post-image-single {
+        width: 100%;
+        margin: 6px 0 2px;
+      }
+
+      .post-image-single .scrapbook-gallery-source,
+      .post-right.single-media .scrapbook-gallery-source {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .post-image-single .post-images-wrap {
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1.5px solid rgba(50, 50, 50, 0.14);
+        background: rgba(255, 249, 230, 0.56);
+        padding: 10px;
+      }
+
+      body.dark .post-image-single .post-images-wrap {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .post-image-single .post-images {
+        padding: 0 !important;
+        overflow: visible !important;
+        contain: none !important;
+      }
+
+      .post-image-single .img-slide {
+        display: block !important;
+      }
+
+      .post-image-single .post-images img,
+      .post-image-single .post-images.single-image img {
+        display: block;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 520px !important;
+        object-fit: contain !important;
+        border: 0 !important;
+        border-radius: 14px !important;
+        box-shadow: none !important;
+        background: rgba(255,255,255,0.35);
+      }
+
+      .post-image-single .img-dots {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        .post-right.single-media {
+          gap: 12px !important;
+        }
+        .post-image-single .post-images-wrap {
+          padding: 8px;
+          border-radius: 16px;
+        }
+        .post-image-single .post-images img,
+        .post-image-single .post-images.single-image img {
+          max-height: 360px !important;
+          border-radius: 12px !important;
+        }
+      }
+
+
+
+      .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+
+      :root {
+        --glass-border: rgba(50, 50, 50, 0.10);
+        --menu-paper-bg: rgba(243, 233, 221, 0.82);
+        --menu-paper-text: #6d5845;
+        --menu-paper-active-bg: rgba(255, 249, 230, 0.9);
+        --menu-paper-active-text: #b2743f;
         --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       .topbar { display: none !important; }
-
-      main {
-        padding-top: 16px !important;
-        padding-bottom: calc(112px + var(--safe-bottom)) !important;
-      }
+      main { padding-top: 16px !important; padding-bottom: calc(112px + var(--safe-bottom)) !important; }
 
       .menu {
         position: fixed;
@@ -2271,11 +2415,11 @@ body {
         transform: translateX(-50%);
         width: calc(100% - 20px);
         max-width: 520px;
-        backdrop-filter: blur(12px) saturate(180%) contrast(200%);
-        -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(200%);
-        background: var(--menu-accent);
+        backdrop-filter: blur(12px) saturate(180%) contrast(150%);
+        -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(150%);
+        background: var(--menu-paper-bg);
         border: 1px solid var(--glass-border);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 12px 30px rgba(50,50,50,.12);
         padding: 8px;
         border-radius: 999px;
         display: flex;
@@ -2283,16 +2427,14 @@ body {
         gap: 8px;
         z-index: 6000;
       }
-
       .menu::after {
         content: "";
         position: absolute;
         inset: 0;
         border-radius: inherit;
-        box-shadow: inset 2px 2px 5px -2px rgba(255, 255, 255, 0.4), inset -2px -2px 5px 2px rgba(255, 255, 255, 0.26), inset 0 -2px 0 rgba(255, 255, 255, 0.18);
+        box-shadow: inset 2px 2px 5px -2px rgba(255,255,255,.55), inset -2px -2px 5px 2px rgba(255,255,255,.22), inset 0 -2px 0 rgba(255,255,255,.18);
         pointer-events: none;
       }
-
       .menu .menu-item {
         appearance: none;
         border: 0;
@@ -2303,154 +2445,109 @@ body {
         justify-content: center;
         flex: 1 1 0;
         min-width: 0;
-        color: var(--menu-text-light);
-        text-decoration: none;
+        color: var(--menu-paper-text);
         padding: 10px 6px;
         border-radius: 999px;
-        -webkit-tap-highlight-color: transparent;
-        transition: background 0.18s var(--ease-spring), color 0.18s var(--ease-spring), transform 0.18s var(--ease-spring), box-shadow 0.3s ease-in-out;
+        transition: background .18s var(--ease-spring), color .18s var(--ease-spring), transform .18s var(--ease-spring), box-shadow .3s ease-in-out;
       }
-
       .menu .menu-item:hover,
       .menu .menu-item:focus-visible {
-        background-color: rgba(255, 255, 255, 0.28);
-        box-shadow: inset 2px 2px 5px -2px rgba(255, 255, 255, 0.4), inset -2px -1px 5px 0 rgba(255, 255, 255, 0.34), inset 0 -2px 0 rgba(255, 255, 255, 0.2);
-        transform: translateY(-1px);
+        background-color: rgba(255,249,230,.56);
+        color: #8d633d;
+        box-shadow: inset 2px 2px 5px -2px rgba(255,255,255,.44), inset -2px -1px 5px 0 rgba(255,255,255,.34), inset 0 -2px 0 rgba(255,255,255,.18);
       }
-
-      .menu .menu-item svg {
-        width: 1.4rem;
-        height: 1.4rem;
-      }
-
-      .menu .menu-item span {
-        font-size: 0.8rem;
-        font-weight: 600;
-        line-height: 1;
-        margin-top: 4px;
-      }
-
       .menu .menu-item.active {
-        background: rgba(255, 255, 255, 0.56);
-        color: var(--menu-accent-strong);
+        background: var(--menu-paper-active-bg);
+        color: var(--menu-paper-active-text);
       }
-
-      .menu .menu-item:active {
-        transform: scale(0.98);
-      }
-
+      .menu .menu-item svg { width: 1.4rem; height: 1.4rem; }
+      .menu .menu-item span { font-size: .8rem; font-weight: 600; line-height: 1; margin-top: 4px; }
+      .menu .menu-item:active { transform: scale(.98); }
       body.dark .menu {
-        background: rgba(47, 87, 157, 0.42);
-        border-color: rgba(255, 255, 255, 0.14);
-        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+        background: rgba(55, 56, 63, 0.72);
+        border-color: rgba(255,255,255,.12);
+        box-shadow: 0 14px 36px rgba(0,0,0,.28);
       }
+      body.dark .menu .menu-item { color: rgba(255,255,255,.88); }
+      body.dark .menu .menu-item.active { background: rgba(255,255,255,.14); color: #ffe2a8; }
+      #backToTopBtn { bottom: calc(94px + var(--safe-bottom)) !important; }
 
-      body.dark .menu .menu-item {
-        color: rgba(255, 255, 255, 0.88);
-      }
-
-      body.dark .menu .menu-item.active {
-        background: rgba(255, 255, 255, 0.14);
-        color: #a8cbff;
-      }
-
-      #backToTopBtn {
-        bottom: calc(94px + var(--safe-bottom)) !important;
-      }
-
-      .post,
-      #postsContainer .post {
-        transform: none !important;
-        box-shadow: none !important;
-        border-radius: 22px !important;
-        border-color: var(--border) !important;
-      }
-
-      .post:hover,
-      #postsContainer .post:hover {
+      .post, .post:hover, #postsContainer .post, #postsContainer .post:hover {
         transform: none !important;
         box-shadow: none !important;
         border-color: var(--border) !important;
       }
-
-      #postsContainer .post::after,
-      #postsContainer .post:hover::after {
-        display: none !important;
+      .post-images img, .post-images img:hover { transform: none !important; box-shadow: none !important; }
+      .post::after, .post:hover::after, #postsContainer .post::after, #postsContainer .post:hover::after {
+        display: none !important; content: none !important;
       }
 
-      .post-images img,
-      .post-images img:hover {
-        box-shadow: none !important;
-        transform: none !important;
+      .post-content a {
+        color: var(--accent-dark);
+        text-decoration: underline dashed var(--accent);
+        font-weight: 600;
+        transition: color 0.2s;
       }
-
-      .post-image-single {
-        margin: 14px 0 4px;
+      .post-content a:hover { color: var(--accent); }
+      body.dark .post-content a {
+        color: #ffd88c !important;
+        text-decoration-color: rgba(255,216,140,.92) !important;
       }
+      body.dark .post-content a:hover { color: #fff2c7 !important; }
 
+      .post-right.single-media {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+        align-items: stretch !important;
+        grid-template-columns: none !important;
+      }
+      .post-right.single-media .post-content { width: 100% !important; }
+      .post-image-single { width: 100%; margin: 6px 0 2px; }
+      .post-image-single .scrapbook-gallery-source,
+      .post-right.single-media .scrapbook-gallery-source {
+        display: block !important;
+        width: 100% !important;
+      }
       .post-image-single .post-images-wrap {
-        display: block;
         width: 100%;
+        display: block;
         overflow: hidden;
         border-radius: 18px;
-        border: 1.5px solid color-mix(in srgb, var(--border) 72%, transparent);
-        background: color-mix(in srgb, var(--paper) 92%, white 8%);
+        border: 1.5px solid rgba(50,50,50,.14);
+        background: rgba(255,249,230,.56);
         padding: 10px;
       }
-
+      body.dark .post-image-single .post-images-wrap {
+        background: rgba(255,255,255,.05);
+        border-color: rgba(255,255,255,.14);
+      }
       .post-image-single .post-images {
         padding: 0 !important;
+        overflow: visible !important;
+        contain: none !important;
       }
-
-      .post-image-single .img-slide {
-        display: block;
-      }
-
-      .post-image-single .post-images.single-image img,
-      .post-image-single .post-images img {
+      .post-image-single .img-slide { display: block !important; }
+      .post-image-single .post-images img,
+      .post-image-single .post-images.single-image img {
         display: block;
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
-        max-height: 520px;
-        object-fit: cover;
-        border-radius: 14px;
+        max-height: 520px !important;
+        object-fit: contain !important;
         border: 0 !important;
+        border-radius: 14px !important;
+        background: rgba(255,255,255,.35);
       }
-
-      .post-image-single .img-dots {
-        display: none !important;
-      }
-
-      .post-image-dual {
-        align-items: start;
-      }
-
-      @media (max-width: 740px) {
-        .menu {
-          width: calc(100% - 16px);
-          gap: 6px;
-          padding: 7px;
-        }
-
-        .menu .menu-item {
-          padding: 9px 4px;
-        }
-
-        .menu .menu-item span {
-          font-size: 0.74rem;
-        }
-
-        .post-image-single .post-images-wrap {
-          padding: 8px;
-          border-radius: 16px;
-        }
-
-        .post-image-single .post-images.single-image img,
-        .post-image-single .post-images img {
-          max-height: 360px;
-          border-radius: 12px;
-        }
+      .post-image-single .img-dots { display: none !important; }
+      @media (max-width: 768px) {
+        .menu { width: calc(100% - 16px); gap: 6px; padding: 7px; }
+        .menu .menu-item { padding: 9px 4px; }
+        .menu .menu-item span { font-size: .74rem; }
+        .post-image-single .post-images-wrap { padding: 8px; border-radius: 16px; }
+        .post-image-single .post-images img,
+        .post-image-single .post-images.single-image img { max-height: 360px !important; border-radius: 12px !important; }
       }
 
 </style>
@@ -3085,28 +3182,19 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
       <div id="logoTitle" class="sr-only">WEN</div>
       <nav class="menu" aria-label="快捷菜单">
         <button type="button" class="menu-item active" id="homeNavBtn" title="主页">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-            <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"></path>
-            <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z"></path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z"></path><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z"></path></svg>
           <span>主页</span>
         </button>
         <button type="button" class="menu-item" id="openSearchBtn" title="搜索">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-            <path fill-rule="evenodd" d="M10.5 3a7.5 7.5 0 1 0 4.673 13.367l4.23 4.23a.75.75 0 1 0 1.06-1.06l-4.23-4.23A7.5 7.5 0 0 0 10.5 3Zm-6 7.5a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z" clip-rule="evenodd"></path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M10.5 3a7.5 7.5 0 1 0 4.673 13.367l4.23 4.23a.75.75 0 1 0 1.06-1.06l-4.23-4.23A7.5 7.5 0 0 0 10.5 3Zm-6 7.5a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z" clip-rule="evenodd"></path></svg>
           <span>搜索</span>
         </button>
         <button type="button" class="menu-item" id="themeToggleBtn" title="切换主题">
-          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
+          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           <span>主题</span>
         </button>
         <button type="button" class="menu-item" id="openPublishBtn" title="发布">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-            <path d="M12 4.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6A.75.75 0 0 1 12 4.5Z"></path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M12 4.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6A.75.75 0 0 1 12 4.5Z"></path></svg>
           <span>发布</span>
         </button>
       </nav>
@@ -3410,9 +3498,10 @@ function stripPinKeyword(text) {
   const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
+        const hasSingleImage = Array.isArray(p.images) && p.images.length === 1;
         if (p.images && p.images.length) {
           const imgs = p.images.map(url => `<img src="${url}" alt="" draggable="false">`).join("");
-          if (p.images.length === 1) {
+          if (hasSingleImage) {
             imagesHtml = `<div class="post-image-single"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
           } else {
             const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(p) : "";
@@ -3451,7 +3540,7 @@ function stripPinKeyword(text) {
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
       ${actionsHtml}
     </div>
-    <div class="post-right">
+    <div class="post-right${hasSingleImage ? " single-media" : ""}">
       ${imagesHtml}
       <div class="post-content">${parsed}</div>
     </div>
@@ -4257,7 +4346,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             </div>`;
           }
           div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-          <div class="post-right"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
+          <div class="post-right${hasSingleImage ? " single-media" : ""}"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
@@ -4814,7 +4903,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
         handleScroll(); // 初始检测一次
       }
 
-
+      
       const menuHomeBtn = document.getElementById("homeNavBtn");
       if (menuHomeBtn) {
         menuHomeBtn.onclick = (e) => {
@@ -4823,10 +4912,10 @@ lbImg.onerror = () => resetLightboxBackdrop();
           if (scrollContainer) scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
         };
       }
-
       const menuButtons = document.querySelectorAll('.menu .menu-item');
       const setActiveMenu = (id) => {
-        menuButtons.forEach(btn => btn.classList.toggle('active', btn.id === id || (id === 'homeNavBtn' && btn.id === 'homeNavBtn')));
+        menuButtons.forEach(btn => btn.classList.toggle('active', btn.id === id));
+        if (id === 'homeNavBtn' && menuHomeBtn) menuHomeBtn.classList.add('active');
       };
       document.getElementById("openSearchBtn")?.addEventListener('click', () => setActiveMenu('openSearchBtn'));
       document.getElementById("themeToggleBtn")?.addEventListener('click', () => setActiveMenu('themeToggleBtn'));
