@@ -2625,157 +2625,223 @@ body {
 </style>
 
 
-<style id="handwritten-header-overrides">
-  .topbar {
-    padding-top: calc(var(--safe-top) + 10px);
-    padding-bottom: 18px;
-  }
-
-  .topbar-inner {
-    margin: 0 14px;
-    padding: 10px 16px 14px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    transform: none;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  .topbar-inner:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .topbar-inner::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-bottom: 2px dashed rgba(71, 54, 39, .55);
-  }
-
-  body.dark .topbar-inner::after {
-    border-bottom-color: rgba(244, 215, 148, .45);
-  }
-
-  .topbar-inner::before {
-    content: '✦';
-    position: absolute;
-    left: 50%;
-    bottom: -12px;
-    transform: translateX(-50%);
-    font-size: 14px;
-    line-height: 1;
-    color: var(--accent);
-    background: var(--bg);
-    padding: 0 8px;
-  }
-
-  .blog-brand {
-    position: absolute;
-    left: 50%;
-    top: 2px;
-    transform: translateX(-50%);
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 700;
-    color: var(--ink) !important;
-    text-transform: none;
-    letter-spacing: 1px;
-    text-shadow: none;
-  }
-
-  .blog-brand::after {
-    content: '';
-    display: block;
-    width: min(180px, 88%);
-    height: 4px;
-    margin: 6px auto 0;
-    border-radius: 999px;
-    background: currentColor;
-    opacity: .9;
-    transform: rotate(-1.5deg);
-  }
-
-  .blog-brand:hover,
-  .blog-brand:active {
-    background: transparent;
-    box-shadow: none;
-    transform: translateX(-50%);
-  }
-
-  .topbar-right {
-    margin-left: auto;
-    gap: 10px;
-  }
-
-  .topbar-icon {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    transform: none;
-    padding: 4px 6px;
-    min-width: 40px;
-    min-height: 40px;
-    color: var(--ink);
-  }
-
-  .topbar-icon:hover,
-  .topbar-icon:active {
-    background: transparent;
-    box-shadow: none;
-    transform: none;
-    color: var(--accent-dark);
-  }
-
-  #openPublishBtn {
-    display: none !important;
-  }
-
-  @media (max-width: 760px) {
-    .topbar {
-      padding-bottom: 14px;
-    }
-
-    .topbar-inner {
-      margin: 0 10px;
-      padding: 8px 8px 12px;
-    }
-
-    .blog-brand {
-      font-size: clamp(24px, 8vw, 36px);
-      top: 1px;
-    }
-
-    .blog-brand::after {
-      width: min(132px, 78%);
-      height: 3px;
-      margin-top: 4px;
-    }
-
-    .topbar-right {
-      gap: 4px;
-    }
-
-    .topbar-icon {
-      min-width: 34px;
-      min-height: 34px;
-      padding: 2px 4px;
-    }
-  }
-</style>
-
-
 <style id="handwritten-fix-overrides">
   .post-content, .post-content * { text-align: left !important; }
   .post-right > .post-content:only-child { padding-right: 6px; }
   .post-image-dual { align-self: start; }
+</style>
+
+
+<style id="ultimate-clean-overrides">
+  .doodle-star,
+  .doodle-sparkle,
+  .doodle-swirl,
+  .doodle-flower,
+  .doodle-plane,
+  .doodle-clip,
+  .doodle-moon,
+  .doodle-leaf {
+    display: none !important;
+  }
+
+  #postsContainer::before,
+  #postsContainer > .post:first-child::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  #postsContainer {
+    padding-top: 18px !important;
+  }
+
+  #postsContainer > .post:first-child {
+    margin-top: 0 !important;
+  }
+
+  .topbar {
+    padding-top: calc(var(--safe-top) + 8px) !important;
+    padding-bottom: 14px !important;
+  }
+
+  .topbar-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px !important;
+    margin: 0 14px !important;
+    background: var(--paper) !important;
+    border: 2px solid var(--border) !important;
+    border-radius: var(--sketch-radius-btn) !important;
+    box-shadow: var(--p-shadow) !important;
+    transform: rotate(-0.35deg) skewX(-0.8deg) !important;
+  }
+
+  .topbar-inner:hover {
+    transform: rotate(0deg) skewX(0deg) translate(-1px, -1px) !important;
+    box-shadow: 5px 5px 0px var(--border) !important;
+  }
+
+  body.dark .topbar-inner {
+    box-shadow: 4px 5px 0px rgba(255,255,255,0.05) !important;
+  }
+
+  .topbar-inner::before,
+  .topbar-inner::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .blog-brand {
+    position: static !important;
+    transform: rotate(-2.5deg) skewX(-3deg) !important;
+    background: var(--accent) !important;
+    border: 2px solid var(--border) !important;
+    box-shadow: 3px 3px 0px var(--border) !important;
+    padding: 6px 16px !important;
+    border-radius: var(--sketch-radius-btn) !important;
+    font-family: "LXGW WenKai Screen", sans-serif !important;
+    font-size: 1.3rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.08) !important;
+    color: var(--ink) !important;
+  }
+
+  .blog-brand::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .blog-brand:hover {
+    background: var(--accent-dark) !important;
+    transform: rotate(1deg) scale(1.04) translateY(-1px) !important;
+    box-shadow: 4px 4px 0px var(--border) !important;
+  }
+
+  .blog-brand:active {
+    transform: rotate(-1deg) scale(0.97) translateY(1px) !important;
+    box-shadow: 0 0 0 var(--border) !important;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px !important;
+    min-width: 0;
+  }
+
+  .topbar-icon {
+    background: var(--paper) !important;
+    border: 2px solid var(--border) !important;
+    font-size: 1.05rem !important;
+    cursor: pointer;
+    color: var(--text) !important;
+    padding: 6px 10px !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    transform: rotate(2deg) skewX(-4deg) !important;
+    border-radius: var(--sketch-radius-btn) !important;
+    box-shadow: 3px 3px 0px var(--border) !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .topbar-icon:hover {
+    background: var(--accent) !important;
+    transform: rotate(0deg) scale(1.04) translateY(-1px) !important;
+    box-shadow: 4px 4px 0px var(--border) !important;
+  }
+
+  .topbar-icon:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0 0 0 var(--border) !important;
+  }
+
+  #openPublishBtn {
+    display: flex !important;
+  }
+
+  .post {
+    padding: 22px 22px 18px !important;
+  }
+
+  .post-right {
+    display: block !important;
+    align-items: initial !important;
+  }
+
+  .post-content {
+    width: 100% !important;
+    margin-top: 2px !important;
+    margin-bottom: 14px !important;
+    text-align: left !important;
+  }
+
+  .post-image-dual {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 4px;
+  }
+
+  .scrapbook-preview-host {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  .scrapbook-stack {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: min(100%, 250px) !important;
+    height: 172px !important;
+  }
+
+  .post-image-dual:empty,
+  .scrapbook-preview-host:empty {
+    display: none !important;
+  }
+
+  @media (max-width: 760px) {
+    .topbar-inner {
+      margin: 0 8px !important;
+      padding: 9px 12px !important;
+      gap: 8px !important;
+    }
+
+    .blog-brand {
+      font-size: 1.05rem !important;
+      padding: 5px 12px !important;
+    }
+
+    .topbar-right {
+      gap: 8px !important;
+    }
+
+    .topbar-icon {
+      padding: 5px 8px !important;
+      font-size: 1rem !important;
+    }
+
+    .post {
+      padding: 20px 16px 16px !important;
+    }
+
+    .post-content {
+      margin-bottom: 12px !important;
+    }
+
+    .scrapbook-stack {
+      width: min(100%, 224px) !important;
+      height: 164px !important;
+    }
+  }
 </style>
 
 </head>
@@ -2887,7 +2953,7 @@ body {
     <div class="app-container">
       <header class="topbar">
         <div class="topbar-inner">
-          <div class="blog-brand" id="logoTitle">Handwritten Blog</div>
+          <div class="blog-brand" id="logoTitle">WEN</div>
           <div class="topbar-right">
             <!-- 搜索按钮 -->
             <button class="topbar-icon" id="openSearchBtn" title="搜索">
