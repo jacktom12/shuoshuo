@@ -2691,6 +2691,58 @@ body {
         }
       }
 
+
+
+      /* ===== iPhone Safari multi-image overlap fix ===== */
+      @media (max-width: 768px) {
+        .post-image-dual,
+        .search-results .post-image-dual {
+          display: block !important;
+          overflow: visible !important;
+        }
+
+        .scrapbook-preview-host,
+        .search-results .scrapbook-preview-host {
+          display: block !important;
+          width: 100% !important;
+          min-height: 204px !important;
+          margin: 0 0 12px 0 !important;
+          overflow: visible !important;
+          position: relative !important;
+          z-index: 1 !important;
+          -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+        }
+
+        .scrapbook-stack,
+        .search-results .scrapbook-stack {
+          position: relative !important;
+          width: min(100%, 280px) !important;
+          height: 192px !important;
+          min-height: 192px !important;
+          margin: 0 auto !important;
+          display: block !important;
+          contain: none !important;
+          isolation: isolate !important;
+        }
+
+        .scrapbook-photo,
+        .search-results .scrapbook-photo {
+          will-change: auto !important;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+
+        .post-right .post-content,
+        .post-right.single-media .post-content,
+        .search-results .post-right .post-content {
+          display: block !important;
+          position: relative !important;
+          z-index: 0 !important;
+          margin-top: 0 !important;
+        }
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
