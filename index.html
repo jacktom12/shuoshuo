@@ -2625,6 +2625,72 @@ body {
         border-color: rgba(255,255,255,.14);
       }
 
+
+
+      /* ===== Mobile readability fixes ===== */
+      @media (max-width: 768px) {
+        .post-content,
+        .search-results .post-content {
+          font-size: 18px !important;
+          line-height: 1.86 !important;
+        }
+
+        .post-right,
+        .post-right.single-media,
+        .search-results .post-right,
+        .post-image-dual {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 14px !important;
+          overflow: visible !important;
+        }
+
+        .post-image-dual,
+        .post-image-single,
+        .post-image-dual .scrapbook-preview-host,
+        .post-image-dual .post-images-wrap,
+        .post-image-single .post-images-wrap,
+        .search-results .post-image-dual,
+        .search-results .post-image-single {
+          width: 100% !important;
+          max-width: 100% !important;
+          flex: none !important;
+          margin: 0 !important;
+          overflow: visible !important;
+        }
+
+        .scrapbook-preview-host,
+        .search-results .scrapbook-preview-host {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: center !important;
+          margin-bottom: 2px !important;
+        }
+
+        .scrapbook-stack,
+        .search-results .scrapbook-stack {
+          width: min(100%, 280px) !important;
+          height: 192px !important;
+          margin: 0 auto !important;
+        }
+
+        .post-right .post-content,
+        .post-right.single-media .post-content,
+        .search-results .post-right .post-content {
+          width: 100% !important;
+          min-width: 0 !important;
+          flex: none !important;
+          clear: both !important;
+        }
+
+        .post-images,
+        .post-images-wrap,
+        .img-slide {
+          overflow: hidden !important;
+        }
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
