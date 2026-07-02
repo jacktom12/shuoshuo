@@ -2740,6 +2740,88 @@ body {
         }
       }
 
+
+
+      /* ===== dark menu + dynamic scrapbook grid ===== */
+      body.dark .menu {
+        background: rgba(24, 24, 26, 0.84) !important;
+        border-color: rgba(243, 233, 221, 0.12) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28) !important;
+      }
+
+      body.dark .menu::after {
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+      }
+
+      body.dark .menu .menu-item {
+        color: #cdbca8 !important;
+      }
+
+      body.dark .menu .menu-item.active {
+        background: rgba(229, 170, 112, 0.16) !important;
+        color: #ffd88c !important;
+      }
+
+      body.dark .menu .menu-item:hover,
+      body.dark .menu .menu-item:focus-visible {
+        background: rgba(255, 255, 255, 0.06) !important;
+        color: #f3e9dd !important;
+      }
+
+      .post-image-dual {
+        gap: 10px !important;
+      }
+
+      .scrapbook-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        width: min(100%, 360px);
+        margin: 0 auto;
+      }
+
+      .scrapbook-grid[data-grid-count="2"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: min(100%, 244px);
+      }
+
+      .scrapbook-grid[data-grid-count="3"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: min(100%, 360px);
+      }
+
+      .scrapbook-grid[data-grid-count="4"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: min(100%, 244px);
+      }
+
+      .scrapbook-grid[data-grid-count="5"],
+      .scrapbook-grid[data-grid-count="6"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: min(100%, 360px);
+      }
+
+      @media (max-width: 768px) {
+        .post-image-dual {
+          gap: 8px !important;
+        }
+
+        .scrapbook-grid {
+          gap: 8px;
+          width: min(100%, 320px);
+        }
+
+        .scrapbook-grid[data-grid-count="2"],
+        .scrapbook-grid[data-grid-count="4"] {
+          width: min(100%, 216px);
+        }
+
+        .scrapbook-grid[data-grid-count="3"],
+        .scrapbook-grid[data-grid-count="5"],
+        .scrapbook-grid[data-grid-count="6"] {
+          width: min(100%, 320px);
+        }
+      }
+
 </style>
 <style id="handwritten-card-overrides">
   :root {
@@ -5075,7 +5157,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
       const previewImages = images.slice(0, 6);
       const extra = images.length - 6;
-      return `<div class="scrapbook-grid" data-preview-count="${images.length}">${previewImages.map((src, index) => {
+      return `<div class="scrapbook-grid" data-preview-count="${images.length}" data-grid-count="${previewImages.length}">${previewImages.map((src, index) => {
         const plusClass = extra > 0 && index === 5 ? ' plus' : '';
         const plusAttr = extra > 0 && index === 5 ? ` data-plus="+${extra}"` : '';
         return `<div class="scrapbook-grid-item${plusClass}"${plusAttr} data-preview-index="${index}"><img src="${src}" alt=""></div>`;
