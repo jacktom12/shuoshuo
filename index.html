@@ -4408,6 +4408,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
         searchModal.classList.remove("open");
         document.body.style.overflow = "";
         window.scrollTo(0, lastScrollY);
+        if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
       }
 
       // ---------- 发布功能 ----------
@@ -4866,10 +4867,49 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
 
       // ---------- 事件绑定 + 回到顶部按钮修复 ----------
-      document.getElementById("openSearchBtn").onclick = openSearchModal;
-      document.getElementById("closeSearchModal").onclick =
-        closeSearchModalFunc;
-      document.getElementById("modalSearchBtn").onclick = performSearch;
+      const openSearchBtnEl = document.getElementById("openSearchBtn");
+      const closeSearchBtnEl = document.getElementById("closeSearchModal");
+      const modalSearchBtnEl = document.getElementById("modalSearchBtn");
+      const modalSearchInputEl = document.getElementById("modalSearchInput");
+
+      if (openSearchBtnEl) {
+        openSearchBtnEl.onclick = null;
+        openSearchBtnEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof setActiveMenu === "function") setActiveMenu("openSearchBtn");
+          openSearchModal();
+        });
+      }
+      if (closeSearchBtnEl) {
+        closeSearchBtnEl.onclick = null;
+        closeSearchBtnEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          closeSearchModalFunc();
+          if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+        });
+      }
+      if (modalSearchBtnEl) {
+        modalSearchBtnEl.onclick = null;
+        modalSearchBtnEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          performSearch();
+        });
+      }
+      if (modalSearchInputEl) {
+        modalSearchInputEl.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeSearchModalFunc();
+            if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+          }
+        });
+      }
+      searchModal?.addEventListener("click", (e) => {
+        if (e.target === searchModal) {
+          closeSearchModalFunc();
+          if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+        }
+      });
       document
         .getElementById("modalSearchInput")
         .addEventListener("keypress", (e) => {
