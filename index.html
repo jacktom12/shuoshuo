@@ -29,7 +29,7 @@
         --img-brightness: 1;
         --dot-normal: #cccccc;
         --dot-active: #e5aa70;
-        --box-bg: rgba(243, 233, 221, 0.98);
+        --lightbox-bg: rgba(243, 233, 221, 0.98);
         --lightbox-btn-bg: #fff9e6;
         --lightbox-btn-color: #323232;
         --lightbox-shadow: 3px 3px 0px #323232;
@@ -2951,6 +2951,50 @@ body {
         ) !important;
       }
 
+
+
+      /* ===== search back to top ===== */
+      #searchBackToTopBtn {
+        position: fixed;
+        right: 20px;
+        bottom: calc(94px + var(--safe-bottom));
+        width: 54px;
+        height: 54px;
+        border: 2px solid var(--border);
+        border-radius: 18px;
+        background: var(--paper);
+        color: var(--text);
+        box-shadow: 3px 3px 0 var(--border);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1200;
+        cursor: pointer;
+      }
+
+      #searchBackToTopBtn.show {
+        display: inline-flex;
+      }
+
+      body.dark #searchBackToTopBtn {
+        background: #23211e;
+        color: var(--hw-text);
+        border-color: rgba(255,255,255,.14);
+        box-shadow: 3px 3px 0 rgba(0,0,0,.28);
+      }
+
+      #searchBackToTopBtn svg {
+        width: 1.4rem;
+        height: 1.4rem;
+      }
+
+      @media (max-width: 768px) {
+        #searchBackToTopBtn {
+          right: 16px;
+          bottom: calc(92px + var(--safe-bottom));
+        }
+      }
+
 </style>
 <style id="handwritten-card-overrides">
   :root {
@@ -3468,6 +3512,7 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
   box-shadow: 5px 5px 0px var(--border) !important;
   border-color: var(--accent-dark) !important;
 }
+
 	.app-container,
 main {
   -ms-overflow-style: none;
@@ -3550,6 +3595,7 @@ main::-webkit-scrollbar {
 <div class="search-results" id="searchResults"></div>
 <div class="close-search-btn" id="closeSearchModal">✕</div>
 </div>
+<button aria-label="回到顶部" id="searchBackToTopBtn" type="button"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5l-6 6m6-6l6 6m-6-6v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 <div class="toast-wrap" id="toastWrap"></div>
 <script>
       // 1. 定义更新图标的函数
@@ -3729,6 +3775,7 @@ main::-webkit-scrollbar {
       const searchModal = document.getElementById("searchModal");
       const modalSearchInput = document.getElementById("modalSearchInput");
       const searchResultsDiv = document.getElementById("searchResults");
+      const searchBackToTopBtn = document.getElementById("searchBackToTopBtn");
 
 function isPinned(p) {
   const text = Array.isArray(p.content) ? p.content.join('') : p.content;
@@ -4692,6 +4739,21 @@ lbImg.onerror = () => resetLightboxBackdrop();
         }
       }
 
+
+      function updateSearchBackToTop() {
+        if (!searchModal || !searchBackToTopBtn) return;
+        const open = searchModal.classList.contains("open");
+        const scrolled = searchModal.scrollTop > 260;
+        searchBackToTopBtn.classList.toggle("show", open && scrolled);
+      }
+
+      if (searchModal && searchBackToTopBtn) {
+        searchModal.addEventListener("scroll", updateSearchBackToTop, { passive: true });
+        searchBackToTopBtn.addEventListener("click", () => {
+          searchModal.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
             function performSearch() {
         const kw = modalSearchInput.value.trim().toLowerCase();
         currentSearchKeyword = kw;
@@ -4719,6 +4781,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function openSearchModal() {
         lastScrollY = window.scrollY;
         searchModal.classList.add("open");
+          updateSearchBackToTop();
         document.body.style.overflow = "hidden";
         modalSearchInput.value = "";
         modalSearchInput.focus();
@@ -4726,6 +4789,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
       function closeSearchModalFunc() {
         searchModal.classList.remove("open");
+        updateSearchBackToTop();
         document.body.style.overflow = "";
         window.scrollTo(0, lastScrollY);
         if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
