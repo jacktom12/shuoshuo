@@ -2550,6 +2550,19 @@ body {
         .post-image-single .post-images.single-image img { max-height: 360px !important; border-radius: 12px !important; }
       }
 
+
+
+      .search-results .post-content-only {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .search-results .post-content-only .post-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
@@ -4308,6 +4321,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
         pageR.forEach((post) => {
           const div = document.createElement("article");
           div.className = "post";
+          const hasImages = Array.isArray(post.images) && post.images.length > 0;
           const hasSingleImage = Array.isArray(post.images) && post.images.length === 1;
           const raw = Array.isArray(post.content)
             ? post.content.join("\n\n")
@@ -4327,7 +4341,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
           }
           const showTime = formatRelativeTime(post.date);
           let imagesHtml = "";
-          if (post.images && post.images.length) {
+          if (hasImages) {
             const imgs = post.images
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
@@ -4350,8 +4364,11 @@ lbImg.onerror = () => resetLightboxBackdrop();
                 </button>
             </div>`;
           }
+          const postRightClass = hasImages
+            ? `post-right${hasSingleImage ? " single-media" : ""}`
+            : "post-content-only";
           div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-          <div class="post-right${hasSingleImage ? " single-media" : ""}">${imagesHtml}<div class="post-content">${parsed}</div></div>`;
+          <div class="${postRightClass}">${imagesHtml}<div class="post-content">${parsed}</div></div>`;
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
