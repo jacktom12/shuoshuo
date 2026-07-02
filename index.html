@@ -3532,16 +3532,6 @@ body.dark #postsContainer .post.pinned .pin-badge-text span:last-child {
   box-shadow: 5px 5px 0px var(--border) !important;
   border-color: var(--accent-dark) !important;
 }
-	.app-container,
-main {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.app-container::-webkit-scrollbar,
-main::-webkit-scrollbar {
-  display: none;
-}
 
 </style>
 </head>
@@ -4762,14 +4752,14 @@ lbImg.onerror = () => resetLightboxBackdrop();
       function updateSearchBackToTop() {
         if (!searchModal || !searchBackToTopBtn) return;
         const open = searchModal.classList.contains("open");
-        const scrolled = window.scrollY > 260;
+        const scrolled = searchModal.scrollTop > 260;
         searchBackToTopBtn.classList.toggle("show", open && scrolled);
       }
 
-      if (searchBackToTopBtn) {
-        window.addEventListener("scroll", updateSearchBackToTop, { passive: true });
+      if (searchModal && searchBackToTopBtn) {
+        searchModal.addEventListener("scroll", updateSearchBackToTop, { passive: true });
         searchBackToTopBtn.addEventListener("click", () => {
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          searchModal.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
 
