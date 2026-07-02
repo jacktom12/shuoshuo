@@ -2632,18 +2632,8 @@ body {
 </style>
 
 
-<style id="ultimate-clean-overrides">
-  .doodle-star,
-  .doodle-sparkle,
-  .doodle-swirl,
-  .doodle-flower,
-  .doodle-plane,
-  .doodle-clip,
-  .doodle-moon,
-  .doodle-leaf {
-    display: none !important;
-  }
 
+<style id="final-polish-overrides">
   #postsContainer::before,
   #postsContainer > .post:first-child::before {
     display: none !important;
@@ -2768,7 +2758,26 @@ body {
   }
 
   .post {
-    padding: 22px 22px 18px !important;
+    background: var(--paper) !important;
+    background-image: none !important;
+  }
+
+  .post::before {
+    opacity: 1 !important;
+  }
+
+  .post::after {
+    opacity: 1 !important;
+  }
+
+  .post:hover::after {
+    opacity: 1 !important;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' fill='%23E5AA70' stroke='%23323232' stroke-width='1.5'/%3E%3C/svg%3E") right 10px bottom 10px/36px 36px no-repeat !important;
+    border: 1px solid var(--hw-line-soft) !important;
+  }
+
+  body.dark .post:hover::after {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' fill='%23DAA06D' stroke='%23F3E9DD' stroke-width='1.5'/%3E%3C/svg%3E") right 10px bottom 10px/36px 36px no-repeat !important;
   }
 
   .post-right {
@@ -2806,6 +2815,19 @@ body {
   .post-image-dual:empty,
   .scrapbook-preview-host:empty {
     display: none !important;
+  }
+
+  .app-container,
+  main {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  .app-container::-webkit-scrollbar,
+  main::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   @media (max-width: 760px) {
