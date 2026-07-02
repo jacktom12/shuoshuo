@@ -2763,6 +2763,34 @@ body {
           0 0 36px rgba(229, 170, 112, 0.10) !important;
       }
 
+
+
+      /* ===== Light hover simplification ===== */
+      body:not(.dark) #postsContainer .post,
+      body:not(.dark) .post {
+        box-shadow: 4px 4px 0px rgba(50, 50, 50, 0.92) !important;
+      }
+
+      body:not(.dark) #postsContainer .post:hover,
+      body:not(.dark) .post:hover {
+        transform: none !important;
+        border-color: var(--border) !important;
+        box-shadow: 0 0 18px rgba(229, 170, 112, 0.24) !important;
+      }
+
+      body:not(.dark) #postsContainer .post::before,
+      body:not(.dark) #postsContainer .post::after,
+      body:not(.dark) .post::before,
+      body:not(.dark) .post::after,
+      body:not(.dark) #postsContainer .post:hover::before,
+      body:not(.dark) #postsContainer .post:hover::after,
+      body:not(.dark) .post:hover::before,
+      body:not(.dark) .post:hover::after {
+        opacity: 0 !important;
+        display: none !important;
+        content: none !important;
+      }
+
 </style>
   
 <style id="handwritten-card-overrides">
