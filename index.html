@@ -4308,6 +4308,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
         pageR.forEach((post) => {
           const div = document.createElement("article");
           div.className = "post";
+          const hasSingleImage = Array.isArray(post.images) && post.images.length === 1;
           const raw = Array.isArray(post.content)
             ? post.content.join("\n\n")
             : post.content || "";
@@ -4330,8 +4331,12 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const imgs = post.images
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
-            const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(post) : "";
-            imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+            if (hasSingleImage) {
+              imagesHtml = `<div class="post-image-single"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
+            } else {
+              const scrapbookHtml = window.__scrapbookPreview ? window.__scrapbookPreview.buildScrapbookPreview(post) : "";
+              imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+            }
           }
           const hasAuth = !!getPublishPassword();
           let actionsHtml = "";
@@ -4346,7 +4351,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             </div>`;
           }
           div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-          <div class="post-right${hasSingleImage ? " single-media" : ""}"><div class="post-content">${parsed}</div>${imagesHtml}</div>`;
+          <div class="post-right${hasSingleImage ? " single-media" : ""}">${imagesHtml}<div class="post-content">${parsed}</div></div>`;
           searchResultsDiv.appendChild(div);
         });
         bindImagesInContainer(searchResultsDiv);
@@ -4357,22 +4362,12 @@ lbImg.onerror = () => resetLightboxBackdrop();
           const ldr = document.createElement("div");
           ldr.id = "searchLoader";
           ldr.className = "search-loader";
-          ldr.textContent = "向下滚动加载更多...";
+          ldr.textContent = "加载更多…";
           searchResultsDiv.appendChild(ldr);
-          const obs = new IntersectionObserver(
-            (entries) => {
-              if (entries[0].isIntersecting) {
-                searchPage++;
-                renderSearchResults(false);
-                obs.unobserve(ldr);
-              }
-            },
-            { root: searchModal, rootMargin: "200px" },
-          );
-          obs.observe(ldr);
         }
       }
-      function performSearch() {
+
+            function performSearch() {
         const kw = modalSearchInput.value.trim().toLowerCase();
         currentSearchKeyword = kw;
         if (!kw) {
