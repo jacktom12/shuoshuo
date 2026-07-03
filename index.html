@@ -3720,10 +3720,10 @@ body.dark #postsContainer .post.post-flash-focus {
 }
 
 .pinned-hero-card .post-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, max-content));
+  justify-content: start;
+  align-items: start;
   gap: 14px 12px;
 }
 
@@ -3735,6 +3735,7 @@ body.dark #postsContainer .post.post-flash-focus {
   margin: 0 !important;
   transform: none !important;
   max-width: 100%;
+  width: max-content;
 }
 
 .pinned-hero-card .post-content h1 {
@@ -3749,7 +3750,6 @@ body.dark #postsContainer .post.post-flash-focus {
   box-shadow: 5px 5px 0 rgba(50, 50, 50, 0.92);
   line-height: 1.32;
   white-space: nowrap;
-  flex: 0 1 auto;
 }
 
 .pinned-hero-card .post-content h2 {
@@ -3765,7 +3765,6 @@ body.dark #postsContainer .post.post-flash-focus {
   font-size: 1.02rem;
   line-height: 1.25;
   white-space: nowrap;
-  flex: 0 1 auto;
 }
 
 .pinned-hero-card .post-content h3 {
@@ -3783,7 +3782,6 @@ body.dark #postsContainer .post.post-flash-focus {
   box-shadow: 4px 4px 0 rgba(50, 50, 50, 0.62);
   line-height: 1.25;
   white-space: nowrap;
-  flex: 0 1 auto;
 }
 
 .pinned-hero-card .post-content h4,
@@ -3800,7 +3798,6 @@ body.dark #postsContainer .post.post-flash-focus {
   font-size: 0.96rem;
   line-height: 1.2;
   white-space: nowrap;
-  flex: 0 1 auto;
 }
 
 .pinned-hero-card .post-content h1::after,
@@ -3885,6 +3882,7 @@ body.dark .pinned-hero-card .pin-badge-text {
   }
 
   .pinned-hero-card .post-content {
+    grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
     gap: 10px;
   }
 
@@ -3893,6 +3891,7 @@ body.dark .pinned-hero-card .pin-badge-text {
     padding: 10px 14px;
     font-size: 0.98rem !important;
     white-space: normal;
+    width: 100%;
   }
 
   .pinned-hero-card .post-content h2 {
@@ -3900,6 +3899,7 @@ body.dark .pinned-hero-card .pin-badge-text {
     padding: 8px 14px;
     font-size: 0.92rem !important;
     white-space: normal;
+    width: 100%;
   }
 
   .pinned-hero-card .post-content h3 {
@@ -3907,6 +3907,7 @@ body.dark .pinned-hero-card .pin-badge-text {
     padding: 8px 12px;
     font-size: 0.9rem !important;
     white-space: normal;
+    width: 100%;
   }
 
   .pinned-hero-card .post-content h4,
@@ -3915,8 +3916,10 @@ body.dark .pinned-hero-card .pin-badge-text {
     padding: 7px 11px;
     font-size: 0.86rem !important;
     white-space: normal;
+    width: 100%;
   }
 }
+
 .app-container,
 main {
   -ms-overflow-style: none;
@@ -3927,7 +3930,6 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
-
 </style>
 </head>
 <body>
