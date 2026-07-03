@@ -44,7 +44,7 @@
         --sketch-radius-btn: 16px 5px 16px 5px / 5px 16px 5px 16px;
       }
 
-      /* 暗黑模式适配 - 保持P5反色涂鸦质感 */
+      
       body.dark {
         --bg: #1a1917;
         --paper: #2d2a26;
@@ -264,8 +264,8 @@ body.dark #postsContainer > .post:first-child::before {
         margin: 0 16px; /* 让卡片和屏幕边缘有空隙 */
         background: var(--paper); /* 使用纸张背景色 */
         border: 2px solid var(--border); /* 加上手绘边框 */
-        border-radius: var(--sketch-radius-btn); /* 使用你已有的手绘圆角变量 */
-        box-shadow: var(--p-shadow); /* 使用你已有的卡片阴影变量 */
+        border-radius: var(--sketch-radius-btn);  
+        box-shadow: var(--p-shadow);  
         
         /* 稍微加一点倾斜，更有手作感 */
         transform: rotate(-0.5deg) skewX(-1deg);
