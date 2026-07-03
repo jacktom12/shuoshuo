@@ -14,7 +14,7 @@
         --safe-left: env(safe-area-inset-left, 0px);
         --safe-right: env(safe-area-inset-right, 0px);
 
-        
+         
         --ink: #323232;
         --bg: #f3e9dd; /* 奶黄色底色 */
         --paper: #fff9e6; /* 手绘米白纸张感 */
@@ -168,7 +168,7 @@ main {
   pointer-events: none;
 }
 
- 
+/* 让第一张像刚“打印”出来 */
 #postsContainer > .post:first-child {
   position: relative;
   margin-top: 0;
@@ -3641,7 +3641,9 @@ body {
   transform: none !important;
   box-sizing: border-box;
   will-change: top, left, width;
-  transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, opacity 0.18s ease;
+   transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, opacity 0.18s ease,
+              transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease !important;
 }
 
 #postsContainer .post .post-right {
@@ -3715,14 +3717,15 @@ body {
   100% { transform: translate(-3px, -3px) rotate(-0.8deg); }
 }
 
-#postsContainer .post:hover {
-  animation: card-hover-wiggle 0.42s ease-out 1;
-  transform: translate(-3px, -3px) rotate(-0.8deg) !important;
+ #postsContainer .post:hover {
+  animation: none !important;
+  transform: translateY(-8px) scale(1.01) rotate(-0.5deg) !important;
   border-color: var(--accent-dark) !important;
   box-shadow:
-    0 0 0 2px rgba(255,255,255,0.12) inset,
-    0 0 18px rgba(255, 205, 132, 0.38),
-    0 0 36px rgba(255, 171, 122, 0.24),
+    0 0 0 2px rgba(255, 255, 255, 0.8) inset,
+    0 0 20px rgba(255, 205, 132, 0.6),
+    0 0 40px rgba(255, 171, 122, 0.35),
+    0 0 80px rgba(229, 170, 112, 0.15),
     7px 8px 0 rgba(50, 50, 50, 0.72) !important;
 }
 
@@ -4485,7 +4488,7 @@ function stripPinKeyword(text) {
       }
 
       function buildPinnedHeroContent(text) {
-         const clean = stripPinKeyword(text || "").replace(/\n/g, "").trim();
+        const clean = stripPinKeyword(text || "").replace(/\n/g, "").trim();
         const parts = clean
           .split("A")
           .map((item) => item.replace(/^#+\s*/, "").trim())
