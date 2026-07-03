@@ -545,13 +545,42 @@ body.dark .post-content ol > li::before {
   position: relative;
   margin-top: 26px;
   padding-top: 24px;
-  border-color: var(--accent-dark);
+  border-color: var(--pinned-border, var(--accent-dark));
   background:
-    linear-gradient(180deg, rgba(229,170,112,0.08), rgba(229,170,112,0.02)),
-    var(--paper);
+    var(--pinned-gradient, linear-gradient(135deg, #ffdca8 0%, #ffc3a6 48%, #ffb7d5 100%));
   animation: none;
   clip-path: none;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+  box-shadow:
+    0 14px 28px rgba(53, 29, 17, 0.16),
+    0 7px 0 rgba(35, 27, 22, 0.16),
+    0 0 0 1px rgba(255,255,255,0.28) inset;
+}
+
+body.dark .post.pinned {
+  border-color: var(--pinned-border-dark, #f0c36d);
+  box-shadow:
+    0 18px 32px rgba(0, 0, 0, 0.42),
+    0 8px 0 rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255,255,255,0.06) inset;
+}
+
+.post.pinned,
+.post.pinned:hover {
+  transform: none !important;
+  border-color: var(--pinned-border, var(--accent-dark)) !important;
+}
+
+body.dark .post.pinned,
+body.dark .post.pinned:hover {
+  border-color: var(--pinned-border-dark, #f0c36d) !important;
+}
+
+.post.pinned::before,
+.post.pinned::after,
+.post.pinned:hover::before,
+.post.pinned:hover::after {
+  opacity: 0 !important;
+  display: none !important;
 }
 
 .pin-badge {
@@ -3517,6 +3546,7 @@ body {
   display: block;
   padding: 16px 4px 0;
   min-height: 320px;
+  --pinned-extra-gap: 18px;
 }
 
 #postsContainer:not(.masonry-ready) .post {
@@ -3575,7 +3605,10 @@ body {
 
 @media (max-width: 768px) {
   .app-container { max-width: 100% !important; }
-  #postsContainer { padding: 12px 6px 0; }
+  #postsContainer {
+    padding: 12px 6px 0;
+    --pinned-extra-gap: 24px;
+  }
   #postsContainer .post {
     padding: 14px !important;
     border-radius: 14px !important;
@@ -3593,7 +3626,8 @@ body {
 #postsContainer .post:hover::after {
   display: none !important;
 }
-.app-container,
+
+	.app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -3603,7 +3637,6 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
-	
 </style>
 </head>
 <body>
@@ -3978,9 +4011,12 @@ function stripPinKeyword(text) {
 
           const x = columnIndex * (itemWidth + gap);
           const y = heights[columnIndex];
+          const extraGap = item.classList.contains("pinned")
+            ? parseFloat(getComputedStyle(container).getPropertyValue("--pinned-extra-gap")) || 0
+            : 0;
           item.style.left = `${x}px`;
           item.style.top = `${y}px`;
-          heights[columnIndex] += item.offsetHeight + gap;
+          heights[columnIndex] += item.offsetHeight + gap + extraGap;
         });
 
         container.style.height = `${Math.max(...heights) - gap}px`;
@@ -3992,6 +4028,42 @@ function stripPinKeyword(text) {
         masonryRaf = requestAnimationFrame(() => {
           requestAnimationFrame(layoutMasonry);
         });
+      }
+
+      function getRandomPinnedTheme() {
+        const themes = [
+          {
+            gradient: 'linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%)',
+            border: '#d98a6a',
+            borderDark: '#f4b26b'
+          },
+          {
+            gradient: 'linear-gradient(135deg, #b7f8db 0%, #8fd3f4 52%, #84fab0 100%)',
+            border: '#4da592',
+            borderDark: '#7ce0c0'
+          },
+          {
+            gradient: 'linear-gradient(135deg, #fddb92 0%, #d1fdff 48%, #c2ffd8 100%)',
+            border: '#88a86a',
+            borderDark: '#d8d16b'
+          },
+          {
+            gradient: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 55%, #cfd9ff 100%)',
+            border: '#8b76c7',
+            borderDark: '#d7b1ff'
+          },
+          {
+            gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 52%, #fbc2eb 100%)',
+            border: '#d78a53',
+            borderDark: '#f0b06f'
+          },
+          {
+            gradient: 'linear-gradient(135deg, #a1ffce 0%, #faffd1 45%, #ffd3a5 100%)',
+            border: '#7da56c',
+            borderDark: '#9fe08b'
+          }
+        ];
+        return themes[Math.floor(Math.random() * themes.length)];
       }
 
       function parseMdToPosts(mdContent, fileYear) {
@@ -4040,6 +4112,10 @@ function stripPinKeyword(text) {
   const isPinned = text.includes(PIN_KEYWORD);
   if (isPinned) text = stripPinKeyword(text);
   const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
+        const pinnedTheme = isPinned ? getRandomPinnedTheme() : null;
+        const pinStyle = pinnedTheme
+          ? ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`
+          : '';
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
         const hasSingleImage = Array.isArray(p.images) && p.images.length === 1;
@@ -4074,7 +4150,7 @@ function stripPinKeyword(text) {
 ` : '';
   
   const pinClass = isPinned ? ' pinned' : '';
-          return `<article class="post${pinClass}" id="post-${p.id}">
+          return `<article class="post${pinClass}" id="post-${p.id}"${pinStyle}>
     ${pinBadge}
     <div class="post-header">
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
