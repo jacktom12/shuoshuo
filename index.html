@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -734,6 +735,56 @@ body.dark .pin-badge-text svg {
 .post:hover::after {
   opacity: 1;
   transform: rotate(12deg) scale(1.15);
+}
+
+
+.post,
+.pinned-hero-card {
+  --hover-glow: rgba(255, 207, 132, 0.34);
+  --hover-glow-strong: rgba(255, 163, 122, 0.22);
+}
+
+body.dark .post,
+body.dark .pinned-hero-card {
+  --hover-glow: rgba(137, 180, 255, 0.26);
+  --hover-glow-strong: rgba(255, 152, 214, 0.16);
+}
+
+.post:hover {
+  transform: rotate(-1deg) skewX(-0.8deg) translate(-3px, -3px);
+  border-color: var(--accent-dark);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.10) inset,
+    0 0 18px var(--hover-glow),
+    0 0 34px var(--hover-glow-strong),
+    7px 8px 0 rgba(50, 50, 50, 0.72);
+}
+
+body.dark .post:hover {
+  border-color: rgba(255, 224, 173, 0.48);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05) inset,
+    0 0 18px var(--hover-glow),
+    0 0 34px var(--hover-glow-strong),
+    7px 8px 0 rgba(0, 0, 0, 0.40);
+}
+
+.pinned-hero-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.14) inset,
+    0 0 22px var(--hover-glow),
+    0 0 42px var(--hover-glow-strong),
+    0 20px 36px rgba(53, 29, 17, 0.20),
+    0 10px 0 rgba(35, 27, 22, 0.18);
+}
+
+body.dark .pinned-hero-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08) inset,
+    0 0 22px var(--hover-glow),
+    0 0 42px var(--hover-glow-strong),
+    0 22px 38px rgba(0, 0, 0, 0.44),
+    0 10px 0 rgba(0, 0, 0, 0.30);
 }
 
       .post-right {
@@ -3657,6 +3708,10 @@ body {
   display: none !important;
 }
 
+#postsContainer .post:hover {
+  transform: translate(-3px, -3px) !important;
+}
+
 #postsContainer .post.post-flash-focus {
   box-shadow:
     0 0 0 4px rgba(255, 198, 84, 0.5),
@@ -3712,130 +3767,89 @@ body.dark #postsContainer .post.post-flash-focus {
 
 .pinned-hero-card .post-content {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 10px 10px;
 }
 
-.pinned-hero-card .post-content > *:first-child {
-  margin-top: 0;
-}
-
-.pinned-hero-card .post-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, max-content));
-  justify-content: start;
-  align-items: start;
-  gap: 14px 12px;
+.pinned-hero-card .post-content > * {
+  margin: 0 !important;
+  transform: none !important;
+  max-width: 100%;
 }
 
 .pinned-hero-card .post-content h1,
 .pinned-hero-card .post-content h2,
-.pinned-hero-card .post-content h3,
-.pinned-hero-card .post-content h4,
-.pinned-hero-card .post-content p {
-  margin: 0 !important;
-  transform: none !important;
-  max-width: 100%;
-  width: max-content;
-}
-
-.pinned-hero-card .post-content h1 {
-  display: inline-flex;
-  align-items: center;
-  min-height: 66px;
-  padding: 12px 18px;
-  background: rgba(230, 175, 112, 0.92);
-  color: #2a221d;
-  border: 2px solid rgba(50, 50, 50, 0.92);
-  border-radius: 16px;
-  box-shadow: 5px 5px 0 rgba(50, 50, 50, 0.92);
-  line-height: 1.32;
-  white-space: nowrap;
-}
-
-.pinned-hero-card .post-content h2 {
-  display: inline-flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 10px 18px;
-  background: rgba(255, 236, 195, 0.92);
-  color: #3a2b1d;
-  border: 2px solid rgba(50, 50, 50, 0.82);
-  border-radius: 999px;
-  box-shadow: 4px 4px 0 rgba(50, 50, 50, 0.75);
-  font-size: 1.02rem;
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
 .pinned-hero-card .post-content h3 {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  padding: 10px 16px;
-  background: rgba(255, 249, 234, 0.88);
-  color: #493526;
-  border-left: 6px solid rgba(217, 138, 106, 0.95);
-  border-top: 2px solid rgba(50, 50, 50, 0.82);
-  border-right: 2px solid rgba(50, 50, 50, 0.82);
-  border-bottom: 2px solid rgba(50, 50, 50, 0.82);
-  border-radius: 14px;
-  box-shadow: 4px 4px 0 rgba(50, 50, 50, 0.62);
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
-.pinned-hero-card .post-content h4,
-.pinned-hero-card .post-content p {
-  display: inline-flex;
-  align-items: center;
-  min-height: 42px;
-  padding: 8px 14px;
-  background: rgba(255,255,255,0.72);
-  color: #4c3e32;
-  border: 2px dashed rgba(50, 50, 50, 0.55);
-  border-radius: 12px;
-  box-shadow: 3px 3px 0 rgba(50, 50, 50, 0.45);
-  font-size: 0.96rem;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.pinned-hero-card .post-content h1::after,
-.pinned-hero-card .post-content h2::after,
-.pinned-hero-card .post-content h3::after,
-.pinned-hero-card .post-content h4::after {
   display: none !important;
 }
 
-body.dark .pinned-hero-card .post-content h1 {
-  background: rgba(43, 37, 46, 0.92);
-  color: #fff1dc;
-  border-color: rgba(255, 224, 185, 0.42);
-  box-shadow: 5px 5px 0 rgba(10, 10, 10, 0.36);
+.pinned-hero-card .post-content h4,
+.pinned-hero-card .post-content p,
+.pinned-hero-card .post-content li {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  background: rgba(255, 247, 233, 0.86);
+  color: #3f2f24;
+  border: 2px solid rgba(50, 50, 50, 0.78);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 rgba(50, 50, 50, 0.38);
+  font-size: 0.96rem;
+  font-weight: 900;
+  line-height: 1.18;
+  white-space: nowrap;
+  width: auto;
+  max-width: 100%;
 }
 
-body.dark .pinned-hero-card .post-content h2 {
-  background: rgba(76, 63, 109, 0.82);
-  color: #f8ead2;
-  border-color: rgba(216, 191, 255, 0.52);
-  box-shadow: 4px 4px 0 rgba(10, 10, 10, 0.32);
+.pinned-hero-card .post-content ul,
+.pinned-hero-card .post-content ol {
+  display: contents;
+  margin: 0;
+  padding: 0;
 }
 
-body.dark .pinned-hero-card .post-content h3 {
-  background: rgba(26, 44, 55, 0.88);
-  color: #deeffa;
-  border-left-color: rgba(120, 219, 255, 0.92);
-  border-top-color: rgba(167, 222, 255, 0.36);
-  border-right-color: rgba(167, 222, 255, 0.36);
-  border-bottom-color: rgba(167, 222, 255, 0.36);
-  box-shadow: 4px 4px 0 rgba(10, 10, 10, 0.3);
+.pinned-hero-card .post-content li {
+  list-style: none;
+  padding-left: 14px !important;
+}
+
+.pinned-hero-card .post-content li::before,
+.pinned-hero-card .post-content li::after,
+.pinned-hero-card .post-content h4::before,
+.pinned-hero-card .post-content h4::after {
+  display: none !important;
+  content: none !important;
 }
 
 body.dark .pinned-hero-card .post-content h4,
-body.dark .pinned-hero-card .post-content p {
+body.dark .pinned-hero-card .post-content p,
+body.dark .pinned-hero-card .post-content li {
   background: rgba(28, 31, 38, 0.78);
-  color: #ece4d8;
-  border-color: rgba(255, 229, 194, 0.28);
+  color: #f5eadc;
+  border-color: rgba(255, 229, 194, 0.30);
   box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.26);
+}
+
+@media (max-width: 768px) {
+  .pinned-hero-card .post-content {
+    gap: 8px;
+  }
+
+  .pinned-hero-card .post-content h4,
+  .pinned-hero-card .post-content p,
+  .pinned-hero-card .post-content li {
+    min-height: 38px;
+    padding: 7px 11px;
+    font-size: 0.86rem !important;
+    white-space: normal;
+  }
 }
 
 .pinned-hero-card .post-time {
@@ -3918,7 +3932,6 @@ body.dark .pinned-hero-card .pin-badge-text {
     width: 100%;
   }
 }
-
 .app-container,
 main {
   -ms-overflow-style: none;
@@ -3929,6 +3942,7 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
+
 </style>
 </head>
 <body>
