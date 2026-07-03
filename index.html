@@ -212,14 +212,7 @@ body.dark #postsContainer::before {
 }
 
 body.dark #postsContainer > .post:first-child::before {
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0 10px,
-      rgba(243,233,221,0.08) 10px 12px
-    ),
-    linear-gradient(180deg, rgba(45,42,38,0.95), rgba(45,42,38,0.6));
-  border-top: 2px solid rgba(243,233,221,0.16);
+  display: none !important;
 }
 		
 @media (max-width: 768px) {
@@ -3583,6 +3576,7 @@ body {
   padding: 16px 4px 0;
   min-height: 320px;
   --pinned-extra-gap: 18px;
+  --first-card-extra-gap: 28px;
 }
 
 #postsContainer:not(.masonry-ready) .post {
@@ -3644,6 +3638,7 @@ body {
   #postsContainer {
     padding: 12px 6px 0;
     --pinned-extra-gap: 24px;
+    --first-card-extra-gap: 32px;
   }
   #postsContainer .post {
     padding: 14px !important;
@@ -3678,7 +3673,7 @@ body.dark #postsContainer .post.post-flash-focus {
 }
 
 #pinnedHero {
-  margin: 16px 4px 18px;
+  margin: 16px 4px 22px;
 }
 
 #pinnedHero:empty {
@@ -3720,6 +3715,63 @@ body.dark #postsContainer .post.post-flash-focus {
   width: 100%;
 }
 
+.pinned-hero-card .post-content > *:first-child {
+  margin-top: 0;
+}
+
+.pinned-hero-card .post-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 18px 14px;
+}
+
+.pinned-hero-card .post-content h1,
+.pinned-hero-card .post-content h2,
+.pinned-hero-card .post-content h3,
+.pinned-hero-card .post-content h4,
+.pinned-hero-card .post-content p {
+  margin: 0 !important;
+}
+
+.pinned-hero-card .post-content h1,
+.pinned-hero-card .post-content h2,
+.pinned-hero-card .post-content h3,
+.pinned-hero-card .post-content h4,
+.pinned-hero-card .post-content p {
+  display: inline-flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 14px 22px;
+  background: rgba(230, 175, 112, 0.92);
+  color: #2a221d;
+  border: 2px solid rgba(50, 50, 50, 0.92);
+  border-radius: 18px;
+  box-shadow: 6px 6px 0 rgba(50, 50, 50, 0.92);
+  transform: none !important;
+  line-height: 1.35;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.pinned-hero-card .post-content h1::after,
+.pinned-hero-card .post-content h2::after,
+.pinned-hero-card .post-content h3::after,
+.pinned-hero-card .post-content h4::after {
+  display: none !important;
+}
+
+body.dark .pinned-hero-card .post-content h1,
+body.dark .pinned-hero-card .post-content h2,
+body.dark .pinned-hero-card .post-content h3,
+body.dark .pinned-hero-card .post-content h4,
+body.dark .pinned-hero-card .post-content p {
+  background: rgba(35, 31, 37, 0.88);
+  color: #fff1dc;
+  border-color: rgba(255, 226, 187, 0.42);
+  box-shadow: 6px 6px 0 rgba(10, 10, 10, 0.36);
+}
+
 .pinned-hero-card .post-time {
   background: rgba(255,255,255,0.78) !important;
   color: #2b2017 !important;
@@ -3739,26 +3791,45 @@ body.dark .pinned-hero-card {
 }
 
 body.dark .pinned-hero-card .post-time {
-  background: rgba(22,18,18,0.34) !important;
-  color: #fff4dc !important;
-  border-color: rgba(255,238,199,0.52) !important;
+  background: rgba(23, 27, 40, 0.72) !important;
+  color: #fef0c9 !important;
+  border-color: rgba(255, 222, 165, 0.44) !important;
+  box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.35) !important;
 }
 
 body.dark .pinned-hero-card .pin-badge-text {
-  background: rgba(24,24,24,0.7);
+  background: rgba(18, 22, 32, 0.82);
+  color: #fff1dc;
+  border-color: rgba(255, 221, 173, 0.42);
+  box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.35);
 }
 
 @media (max-width: 768px) {
   #pinnedHero {
-    margin: 12px 6px 18px;
+    margin: 12px 6px 22px;
   }
 
   .pinned-hero-card {
     padding: 16px;
     border-radius: 16px;
   }
-  
-  .app-container,
+
+  .pinned-hero-card .post-content {
+    gap: 12px;
+  }
+
+  .pinned-hero-card .post-content h1,
+  .pinned-hero-card .post-content h2,
+  .pinned-hero-card .post-content h3,
+  .pinned-hero-card .post-content h4,
+  .pinned-hero-card .post-content p {
+    min-height: 62px;
+    padding: 12px 16px;
+    font-size: 1rem !important;
+    white-space: normal;
+  }
+}
+.app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -3768,7 +3839,7 @@ main {
 main::-webkit-scrollbar {
   display: none;
 }
-}
+
 </style>
 </head>
 <body>
@@ -4143,9 +4214,12 @@ function stripPinKeyword(text) {
 
           const x = columnIndex * (itemWidth + gap);
           const y = heights[columnIndex];
+          const containerStyles = getComputedStyle(container);
           const extraGap = item.classList.contains("pinned")
-            ? parseFloat(getComputedStyle(container).getPropertyValue("--pinned-extra-gap")) || 0
-            : 0;
+            ? parseFloat(containerStyles.getPropertyValue("--pinned-extra-gap")) || 0
+            : index === 0
+              ? parseFloat(containerStyles.getPropertyValue("--first-card-extra-gap")) || 0
+              : 0;
           item.style.left = `${x}px`;
           item.style.top = `${y}px`;
           heights[columnIndex] += item.offsetHeight + gap + extraGap;
