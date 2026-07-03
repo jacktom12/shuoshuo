@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -3709,6 +3710,21 @@ body {
 
 #postsContainer .post:hover {
   transform: translate(-3px, -3px) !important;
+  border-color: var(--accent-dark) !important;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.12) inset,
+    0 0 18px rgba(255, 205, 132, 0.34),
+    0 0 34px rgba(255, 171, 122, 0.20),
+    7px 8px 0 rgba(50, 50, 50, 0.72) !important;
+}
+
+body.dark #postsContainer .post:hover {
+  border-color: rgba(255, 224, 173, 0.48) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05) inset,
+    0 0 18px rgba(137, 180, 255, 0.26),
+    0 0 34px rgba(255, 152, 214, 0.16),
+    7px 8px 0 rgba(0, 0, 0, 0.40) !important;
 }
 
 #postsContainer .post.post-flash-focus {
@@ -3773,66 +3789,29 @@ body.dark #postsContainer .post.post-flash-focus {
   gap: 10px 10px;
 }
 
-.pinned-hero-card .post-content > * {
-  margin: 0 !important;
-  transform: none !important;
-  max-width: 100%;
-}
-
-.pinned-hero-card .post-content h1,
-.pinned-hero-card .post-content h2,
-.pinned-hero-card .post-content h3 {
-  display: none !important;
-}
-
-.pinned-hero-card .post-content h4,
-.pinned-hero-card .post-content p,
-.pinned-hero-card .post-content li {
+.pinned-hero-card .pinned-pill {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   min-height: 44px;
   padding: 8px 14px;
-  background: rgba(255, 247, 233, 0.86);
-  color: #3f2f24;
-  border: 2px solid rgba(50, 50, 50, 0.78);
+  background: rgba(255,255,255,0.72);
+  color: #4c3e32;
+  border: 2px dashed rgba(50, 50, 50, 0.55);
   border-radius: 999px;
-  box-shadow: 3px 3px 0 rgba(50, 50, 50, 0.38);
+  box-shadow: 3px 3px 0 rgba(50, 50, 50, 0.45);
   font-size: 0.96rem;
   font-weight: 900;
-  line-height: 1.18;
+  line-height: 1.2;
   white-space: nowrap;
-  width: auto;
   max-width: 100%;
 }
 
-.pinned-hero-card .post-content ul,
-.pinned-hero-card .post-content ol {
-  display: contents;
-  margin: 0;
-  padding: 0;
-}
-
-.pinned-hero-card .post-content li {
-  list-style: none;
-  padding-left: 14px !important;
-}
-
-.pinned-hero-card .post-content li::before,
-.pinned-hero-card .post-content li::after,
-.pinned-hero-card .post-content h4::before,
-.pinned-hero-card .post-content h4::after {
-  display: none !important;
-  content: none !important;
-}
-
-body.dark .pinned-hero-card .post-content h4,
-body.dark .pinned-hero-card .post-content p,
-body.dark .pinned-hero-card .post-content li {
+body.dark .pinned-hero-card .pinned-pill {
   background: rgba(28, 31, 38, 0.78);
-  color: #f5eadc;
-  border-color: rgba(255, 229, 194, 0.30);
+  color: #ece4d8;
+  border-color: rgba(255, 229, 194, 0.28);
   box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.26);
 }
 
@@ -3841,9 +3820,7 @@ body.dark .pinned-hero-card .post-content li {
     gap: 8px;
   }
 
-  .pinned-hero-card .post-content h4,
-  .pinned-hero-card .post-content p,
-  .pinned-hero-card .post-content li {
+  .pinned-hero-card .pinned-pill {
     min-height: 38px;
     padding: 7px 11px;
     font-size: 0.86rem !important;
@@ -3931,6 +3908,7 @@ body.dark .pinned-hero-card .pin-badge-text {
     width: 100%;
   }
 }
+
 .app-container,
 main {
   -ms-overflow-style: none;
@@ -4498,8 +4476,57 @@ function stripPinKeyword(text) {
         requestAnimationFrame(tick);
       }
 
+      function escapeHTML(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function buildPinnedHeroContent(text) {
+        const clean = stripPinKeyword(text || "").replace(/
+/g, "").trim();
+        const parts = clean
+          .split("A")
+          .map((item) => item.replace(/^#+\s*/, "").trim())
+          .filter(Boolean);
+        if (!parts.length) {
+          return `<div class="post-content"><span class="pinned-pill">${escapeHTML(clean)}</span></div>`;
+        }
+        return `<div class="post-content">${parts.map((item) => `<span class="pinned-pill">${escapeHTML(item)}</span>`).join("")}</div>`;
+      }
+
       function buildPinnedHeroHTML(p) {
-        return buildPostHTML(p).replace('class="post pinned"', 'class="pinned-hero-card pinned"');
+        let text = Array.isArray(p.content) ? p.content.join('') : p.content;
+        text = stripPinKeyword(text);
+        const pinnedTheme = getRandomPinnedTheme();
+        const pinStyle = ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-gradient-dark:${pinnedTheme.gradientDark};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`;
+        const showTime = formatRelativeTime(p.date);
+        const hasAuth = !!getPublishPassword();
+        let actionsHtml = '';
+        if (hasAuth) {
+          actionsHtml = `<div class="post-actions">
+              <button class="post-action-btn edit-btn" onclick="openEditEditor('${p.id}')" title="编辑">
+                  <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+              </button>
+              <button class="post-action-btn delete-btn" onclick="deletePost('${p.id}')" title="删除">
+                  <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              </button>
+          </div>`;
+        }
+        const pinBadge = `<div class="pin-badge"><div class="pin-badge-text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3c.8 0 1.5.3 2.1.9l4 4c.6.6.9 1.3.9 2.1s-.3 1.5-.9 2.1l-1.1 1.1-2.3-2.3-2.7 2.7-1.4-1.4 2.7-2.7-2.3-2.3L14 5.1c.6-.6 1.3-.9 2.1-.9ZM8.5 10.5 13.5 15.5 9 20H4v-5l4.5-4.5Z" fill="currentColor"></path></svg><span>置顶</span></div></div>`;
+        return `<article class="pinned-hero-card pinned" id="post-${p.id}"${pinStyle}>
+          ${pinBadge}
+          <div class="post-header">
+            <span class="post-time">${randomColorBlock()} ${showTime}</span>
+            ${actionsHtml}
+          </div>
+          <div class="post-right">
+            ${buildPinnedHeroContent(text)}
+          </div>
+        </article>`;
       }
 
       function buildPostHTML(p) {
