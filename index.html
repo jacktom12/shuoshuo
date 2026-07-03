@@ -3573,8 +3573,7 @@ body {
 
 .app-container { max-width: 1200px !important; }
 
-#postsContainer::before,
-#postsContainer .post:first-child::before {
+#postsContainer::before {
   display: none !important;
 }
 
@@ -3678,7 +3677,7 @@ body.dark #postsContainer .post.post-flash-focus {
     0 8px 0 rgba(0, 0, 0, 0.30) !important;
 }
 
-	.app-container,
+.app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -5594,21 +5593,18 @@ lbImg.onerror = () => resetLightboxBackdrop();
           if (json.code === 200) {
             setPublishPassword(pwd);
             const updatedPost = json.data;
-            const idxAll = allPosts.findIndex(p => p.id === currentEditId);
-            if (idxAll > -1) allPosts[idxAll] = updatedPost;
-            allPosts = sortPostsByDateDesc(allPosts);
-            const idxFil = filtered.findIndex(p => p.id === currentEditId);
-            if (idxFil > -1) filtered[idxFil] = updatedPost;
-            filtered = sortPostsByDateDesc(filtered);
-            page = 1;
- 
-            if (publishModal) {
-              publishModal.remove();
-              publishModal = null;
-            }
-            selectedPublishFiles = [];
+            const originalPost = allPosts.find((p) => p.id === currentEditId) || filtered.find((p) => p.id === currentEditId);
+            if (originalPost?.date) updatedPost.date = originalPost.date;
+            preserveViewportDuring(() => {
+              upsertPostInLists(updatedPost);
+              if (publishModal) {
+                publishModal.remove();
+                publishModal = null;
+              }
+              selectedPublishFiles = [];
+              render(true);
+            });
             showToast("更新成功", "edit");
-            render(true);
           } else {
             if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "更新失败", "error");
