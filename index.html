@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -544,23 +545,42 @@ body.dark .post-content ol > li::before {
   position: relative;
   margin-top: 26px;
   padding-top: 24px;
-  border-color: var(--pinned-border, var(--accent-dark));
-  background:
-    var(--pinned-gradient, linear-gradient(135deg, #ffdca8 0%, #ffc3a6 48%, #ffb7d5 100%));
+  border-color: var(--pinned-border, var(--accent-dark)) !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: var(--pinned-gradient, linear-gradient(135deg, #ffdca8 0%, #ffc3a6 48%, #ffb7d5 100%)) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
   animation: none;
   clip-path: none;
   box-shadow:
-    0 14px 28px rgba(53, 29, 17, 0.16),
-    0 7px 0 rgba(35, 27, 22, 0.16),
-    0 0 0 1px rgba(255,255,255,0.28) inset;
+    0 16px 30px rgba(53, 29, 17, 0.18),
+    0 8px 0 rgba(35, 27, 22, 0.16),
+    0 0 0 1px rgba(255,255,255,0.26) inset !important;
 }
 
 body.dark .post.pinned {
-  border-color: var(--pinned-border-dark, #f0c36d);
+  border-color: var(--pinned-border-dark, #f0c36d) !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: var(--pinned-gradient-dark, var(--pinned-gradient, linear-gradient(135deg, #7f5af0 0%, #2cb67d 45%, #ef4565 100%))) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
   box-shadow:
-    0 18px 32px rgba(0, 0, 0, 0.42),
-    0 8px 0 rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255,255,255,0.06) inset;
+    0 18px 34px rgba(0, 0, 0, 0.44),
+    0 8px 0 rgba(0, 0, 0, 0.30),
+    0 0 0 1px rgba(255,255,255,0.06) inset !important;
+}
+
+.post.pinned .post-time {
+  background: rgba(255,255,255,0.78) !important;
+  color: #2b2017 !important;
+}
+
+body.dark .post.pinned .post-time {
+  background: rgba(22,18,18,0.34) !important;
+  color: #fff4dc !important;
+  border-color: rgba(255,238,199,0.52) !important;
 }
 
 .post.pinned,
@@ -3625,7 +3645,6 @@ body {
 #postsContainer .post:hover::after {
   display: none !important;
 }
-
 	.app-container,
 main {
   -ms-overflow-style: none;
@@ -4033,33 +4052,39 @@ function stripPinKeyword(text) {
         const themes = [
           {
             gradient: 'linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%)',
+            gradientDark: 'linear-gradient(135deg, #7a3f00 0%, #8c2f39 50%, #5b224e 100%)',
             border: '#d98a6a',
-            borderDark: '#f4b26b'
+            borderDark: '#ffbf7e'
           },
           {
             gradient: 'linear-gradient(135deg, #b7f8db 0%, #8fd3f4 52%, #84fab0 100%)',
+            gradientDark: 'linear-gradient(135deg, #1d5f56 0%, #184d75 52%, #24553d 100%)',
             border: '#4da592',
-            borderDark: '#7ce0c0'
+            borderDark: '#89efd1'
           },
           {
             gradient: 'linear-gradient(135deg, #fddb92 0%, #d1fdff 48%, #c2ffd8 100%)',
+            gradientDark: 'linear-gradient(135deg, #7b5e1f 0%, #275f6d 48%, #29533c 100%)',
             border: '#88a86a',
-            borderDark: '#d8d16b'
+            borderDark: '#e6d07b'
           },
           {
             gradient: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 55%, #cfd9ff 100%)',
+            gradientDark: 'linear-gradient(135deg, #6b2f62 0%, #334f85 55%, #4a4f8d 100%)',
             border: '#8b76c7',
-            borderDark: '#d7b1ff'
+            borderDark: '#e2b8ff'
           },
           {
             gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 52%, #fbc2eb 100%)',
+            gradientDark: 'linear-gradient(135deg, #7b5a14 0%, #7b3f2c 52%, #653c63 100%)',
             border: '#d78a53',
-            borderDark: '#f0b06f'
+            borderDark: '#f6ba80'
           },
           {
             gradient: 'linear-gradient(135deg, #a1ffce 0%, #faffd1 45%, #ffd3a5 100%)',
+            gradientDark: 'linear-gradient(135deg, #1f5f44 0%, #5a6430 45%, #7a5230 100%)',
             border: '#7da56c',
-            borderDark: '#9fe08b'
+            borderDark: '#b6f29e'
           }
         ];
         return themes[Math.floor(Math.random() * themes.length)];
@@ -4113,7 +4138,7 @@ function stripPinKeyword(text) {
   const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
         const pinnedTheme = isPinned ? getRandomPinnedTheme() : null;
         const pinStyle = pinnedTheme
-          ? ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`
+          ? ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-gradient-dark:${pinnedTheme.gradientDark};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`
           : '';
         const showTime = formatRelativeTime(p.date);
         let imagesHtml = "";
