@@ -3707,17 +3707,28 @@ body {
   display: none !important;
 }
 
+@keyframes card-hover-wiggle {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-2px, -2px) rotate(-0.8deg); }
+  50% { transform: translate(-3px, -3px) rotate(0.8deg); }
+  75% { transform: translate(-2px, -3px) rotate(-0.5deg); }
+  100% { transform: translate(-3px, -3px) rotate(-0.8deg); }
+}
+
 #postsContainer .post:hover {
-  transform: translate(-3px, -3px) !important;
+  animation: card-hover-wiggle 0.42s ease-out 1;
+  transform: translate(-3px, -3px) rotate(-0.8deg) !important;
   border-color: var(--accent-dark) !important;
   box-shadow:
     0 0 0 2px rgba(255,255,255,0.12) inset,
-    0 0 18px rgba(255, 205, 132, 0.34),
-    0 0 34px rgba(255, 171, 122, 0.20),
+    0 0 18px rgba(255, 205, 132, 0.38),
+    0 0 36px rgba(255, 171, 122, 0.24),
     7px 8px 0 rgba(50, 50, 50, 0.72) !important;
 }
 
 body.dark #postsContainer .post:hover {
+  animation: card-hover-wiggle 0.42s ease-out 1;
+  transform: translate(-3px, -3px) rotate(-0.8deg) !important;
   border-color: rgba(255, 224, 173, 0.48) !important;
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.05) inset,
@@ -3741,31 +3752,25 @@ body.dark #postsContainer .post.post-flash-focus {
 }
 
 #pinnedHero {
-  margin: 16px 4px 22px;
+  display: none !important;
 }
 
 #pinnedHero:empty {
-  display: none;
+  display: none !important;
 }
 
 .pinned-hero-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  border: 2px solid var(--pinned-border, var(--accent-dark));
-  border-radius: 22px;
-  background: var(--pinned-gradient, linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%));
+  position: absolute;
+  display: block;
+  padding: 18px !important;
+  border: 2px solid var(--pinned-border, var(--accent-dark)) !important;
+  border-radius: 18px !important;
+  background: var(--pinned-gradient, linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%)) !important;
   box-shadow:
-    0 18px 34px rgba(53, 29, 17, 0.18),
-    0 9px 0 rgba(35, 27, 22, 0.16),
-    inset 0 0 0 1px rgba(255,255,255,0.22);
+    0 16px 28px rgba(53, 29, 17, 0.18),
+    0 8px 0 rgba(35, 27, 22, 0.16),
+    inset 0 0 0 1px rgba(255,255,255,0.18) !important;
   overflow: visible;
-}
-
-.pinned-hero-card,
-.pinned-hero-card:hover {
-  transform: none !important;
 }
 
 .pinned-hero-card::before,
@@ -3832,8 +3837,9 @@ body.dark .pinned-hero-card .pinned-pill {
   color: #2b2017 !important;
 }
 
+.pinned-hero-card .pin-badge,
 .pinned-hero-card .pin-badge-text {
-  background: rgba(255,255,255,0.86);
+  display: none !important;
 }
 
 body.dark .pinned-hero-card {
@@ -3852,21 +3858,15 @@ body.dark .pinned-hero-card .post-time {
   box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.35) !important;
 }
 
-body.dark .pinned-hero-card .pin-badge-text {
-  background: rgba(18, 22, 32, 0.82);
-  color: #fff1dc;
-  border-color: rgba(255, 221, 173, 0.42);
-  box-shadow: 3px 3px 0 rgba(10, 10, 10, 0.35);
-}
 
 @media (max-width: 768px) {
   #pinnedHero {
-    margin: 12px 6px 22px;
+    display: none !important;
   }
 
   .pinned-hero-card {
-    padding: 16px;
-    border-radius: 16px;
+    padding: 14px !important;
+    border-radius: 16px !important;
   }
 
   .pinned-hero-card .post-content {
@@ -4485,7 +4485,8 @@ function stripPinKeyword(text) {
       }
 
       function buildPinnedHeroContent(text) {
-         const clean = stripPinKeyword(text || "").replace(/\n/g, "").trim();
+        const clean = stripPinKeyword(text || "").replace(/
+/g, "").trim();
         const parts = clean
           .split("A")
           .map((item) => item.replace(/^#+\s*/, "").trim())
@@ -4514,9 +4515,7 @@ function stripPinKeyword(text) {
               </button>
           </div>`;
         }
-        const pinBadge = `<div class="pin-badge"><div class="pin-badge-text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3c.8 0 1.5.3 2.1.9l4 4c.6.6.9 1.3.9 2.1s-.3 1.5-.9 2.1l-1.1 1.1-2.3-2.3-2.7 2.7-1.4-1.4 2.7-2.7-2.3-2.3L14 5.1c.6-.6 1.3-.9 2.1-.9ZM8.5 10.5 13.5 15.5 9 20H4v-5l4.5-4.5Z" fill="currentColor"></path></svg><span>置顶</span></div></div>`;
-        return `<article class="pinned-hero-card pinned" id="post-${p.id}"${pinStyle}>
-          ${pinBadge}
+        return `<article class="post pinned pinned-hero-card" id="post-${p.id}"${pinStyle}>
           <div class="post-header">
             <span class="post-time">${randomColorBlock()} ${showTime}</span>
             ${actionsHtml}
@@ -4628,20 +4627,22 @@ function stripPinKeyword(text) {
       function render(reset = false) {
         if (!postsContainer) return;
         const pinnedHero = ensurePinnedHeroContainer();
+        if (pinnedHero) pinnedHero.innerHTML = "";
         if (reset) {
           postsContainer.classList.remove("masonry-ready");
           postsContainer.innerHTML = "";
         }
         const { pinned, rest } = getOrderedGroups(filtered);
-        if (pinnedHero) pinnedHero.innerHTML = pinned.map(buildPinnedHeroHTML).join("");
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
         const show = rest.slice(start, end);
-        if (!show.length && reset) {
+        const html = reset
+          ? [...pinned.map(buildPinnedHeroHTML), ...show.map(buildPostHTML)].join("")
+          : show.map(buildPostHTML).join("");
+        if (!html && reset) {
           postsContainer.innerHTML =
             '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>';
-        } else {
-          const html = show.map(buildPostHTML).join("");
+        } else if (html) {
           if (reset) postsContainer.innerHTML = html;
           else {
             const t = document.createElement("div");
@@ -4649,18 +4650,13 @@ function stripPinKeyword(text) {
             while (t.firstChild) postsContainer.appendChild(t.firstChild);
           }
         }
-        if (pinnedHero) bindImagesInContainer(pinnedHero);
         bindImagesInContainer(postsContainer);
         if (window.__scrapbookPreview) {
-          if (pinnedHero) window.__scrapbookPreview.bindScrapbookPreviewClicks(pinnedHero);
           window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
         }
         requestAnimationFrame(() => {
           startMasonrySettle();
-          const imgNodes = [
-            ...(pinnedHero ? Array.from(pinnedHero.querySelectorAll("img")) : []),
-            ...Array.from(postsContainer.querySelectorAll("img"))
-          ];
+          const imgNodes = Array.from(postsContainer.querySelectorAll("img"));
           imgNodes.forEach((img) => {
             if (img.dataset.masonryBound) return;
             img.dataset.masonryBound = "true";
