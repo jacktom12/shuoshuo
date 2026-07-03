@@ -4485,8 +4485,7 @@ function stripPinKeyword(text) {
       }
 
       function buildPinnedHeroContent(text) {
-        const clean = stripPinKeyword(text || "").replace(/
-/g, "").trim();
+         const clean = stripPinKeyword(text || "").replace(/\n/g, "").trim();
         const parts = clean
           .split("A")
           .map((item) => item.replace(/^#+\s*/, "").trim())
