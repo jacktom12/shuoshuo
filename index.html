@@ -3677,7 +3677,88 @@ body.dark #postsContainer .post.post-flash-focus {
     0 8px 0 rgba(0, 0, 0, 0.30) !important;
 }
 
-.app-container,
+#pinnedHero {
+  margin: 16px 4px 18px;
+}
+
+#pinnedHero:empty {
+  display: none;
+}
+
+.pinned-hero-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 2px solid var(--pinned-border, var(--accent-dark));
+  border-radius: 22px;
+  background: var(--pinned-gradient, linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%));
+  box-shadow:
+    0 18px 34px rgba(53, 29, 17, 0.18),
+    0 9px 0 rgba(35, 27, 22, 0.16),
+    inset 0 0 0 1px rgba(255,255,255,0.22);
+  overflow: visible;
+}
+
+.pinned-hero-card,
+.pinned-hero-card:hover {
+  transform: none !important;
+}
+
+.pinned-hero-card::before,
+.pinned-hero-card::after,
+.pinned-hero-card:hover::before,
+.pinned-hero-card:hover::after {
+  display: none !important;
+}
+
+.pinned-hero-card .post-right {
+  transform: none !important;
+}
+
+.pinned-hero-card .post-content {
+  width: 100%;
+}
+
+.pinned-hero-card .post-time {
+  background: rgba(255,255,255,0.78) !important;
+  color: #2b2017 !important;
+}
+
+.pinned-hero-card .pin-badge-text {
+  background: rgba(255,255,255,0.86);
+}
+
+body.dark .pinned-hero-card {
+  border-color: var(--pinned-border-dark, #f0c36d);
+  background: var(--pinned-gradient-dark, var(--pinned-gradient, linear-gradient(135deg, #7a3f00 0%, #8c2f39 50%, #5b224e 100%)));
+  box-shadow:
+    0 20px 36px rgba(0, 0, 0, 0.42),
+    0 10px 0 rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+body.dark .pinned-hero-card .post-time {
+  background: rgba(22,18,18,0.34) !important;
+  color: #fff4dc !important;
+  border-color: rgba(255,238,199,0.52) !important;
+}
+
+body.dark .pinned-hero-card .pin-badge-text {
+  background: rgba(24,24,24,0.7);
+}
+
+@media (max-width: 768px) {
+  #pinnedHero {
+    margin: 12px 6px 18px;
+  }
+
+  .pinned-hero-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  
+  .app-container,
 main {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -3686,6 +3767,7 @@ main {
 .app-container::-webkit-scrollbar,
 main::-webkit-scrollbar {
   display: none;
+}
 }
 </style>
 </head>
@@ -4211,6 +4293,39 @@ function stripPinKeyword(text) {
         filtered = sortPostsByDateDesc(filtered.filter((p) => p.id !== id));
       }
 
+      function getOrderedGroups(list) {
+        const sorted = sortPostsByDateDesc(list);
+        const pinned = sorted.filter(isPinned);
+        const rest = sorted.filter((p) => !isPinned(p));
+        return { pinned, rest, sorted };
+      }
+
+      function ensurePinnedHeroContainer() {
+        let el = document.getElementById("pinnedHero");
+        if (!el && postsContainer?.parentNode) {
+          el = document.createElement("section");
+          el.id = "pinnedHero";
+          postsContainer.parentNode.insertBefore(el, postsContainer);
+        }
+        return el;
+      }
+
+      function scrollToPostWithRetry(id, mode = "center", attempts = 10) {
+        let count = 0;
+        const tick = () => {
+          focusPostById(id, mode);
+          count += 1;
+          if (count < attempts) {
+            setTimeout(() => requestAnimationFrame(tick), 140);
+          }
+        };
+        requestAnimationFrame(tick);
+      }
+
+      function buildPinnedHeroHTML(p) {
+        return buildPostHTML(p).replace('class="post pinned"', 'class="pinned-hero-card pinned"');
+      }
+
       function buildPostHTML(p) {
            let text = Array.isArray(p.content) ? p.content.join('') : p.content;
   const isPinned = text.includes(PIN_KEYWORD);
@@ -4311,36 +4426,41 @@ function stripPinKeyword(text) {
 
       function render(reset = false) {
         if (!postsContainer) return;
+        const pinnedHero = ensurePinnedHeroContainer();
         if (reset) {
           postsContainer.classList.remove("masonry-ready");
           postsContainer.innerHTML = "";
         }
-        const ordered = (() => {
-          const sorted = sortPostsByDateDesc(filtered);
-          const pinned = sorted.filter(isPinned);
-          const rest = sorted.filter((p) => !isPinned(p));
-          return [...pinned, ...rest];
-        })();
+        const { pinned, rest } = getOrderedGroups(filtered);
+        if (pinnedHero) pinnedHero.innerHTML = pinned.map(buildPinnedHeroHTML).join("");
         const start = reset ? 0 : (page - 1) * perPage;
         const end = page * perPage;
-       const show = ordered.slice(start, end); 
+        const show = rest.slice(start, end);
         if (!show.length && reset) {
           postsContainer.innerHTML =
             '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>';
-          return;
+        } else {
+          const html = show.map(buildPostHTML).join("");
+          if (reset) postsContainer.innerHTML = html;
+          else {
+            const t = document.createElement("div");
+            t.innerHTML = html;
+            while (t.firstChild) postsContainer.appendChild(t.firstChild);
+          }
         }
-        const html = show.map(buildPostHTML).join("");
-        if (reset) postsContainer.innerHTML = html;
-        else {
-          const t = document.createElement("div");
-          t.innerHTML = html;
-          while (t.firstChild) postsContainer.appendChild(t.firstChild);
-        }
+        if (pinnedHero) bindImagesInContainer(pinnedHero);
         bindImagesInContainer(postsContainer);
-        if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
+        if (window.__scrapbookPreview) {
+          if (pinnedHero) window.__scrapbookPreview.bindScrapbookPreviewClicks(pinnedHero);
+          window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
+        }
         requestAnimationFrame(() => {
           startMasonrySettle();
-          postsContainer.querySelectorAll("img").forEach((img) => {
+          const imgNodes = [
+            ...(pinnedHero ? Array.from(pinnedHero.querySelectorAll("img")) : []),
+            ...Array.from(postsContainer.querySelectorAll("img"))
+          ];
+          imgNodes.forEach((img) => {
             if (img.dataset.masonryBound) return;
             img.dataset.masonryBound = "true";
             if (!img.complete) {
@@ -4364,13 +4484,14 @@ function stripPinKeyword(text) {
             noMoreShown = false;
             return;
           }
-          if (page * perPage < filtered.length) {
+          const { rest } = getOrderedGroups(filtered);
+          if (page * perPage < rest.length) {
             noMoreShown = false;
             page++;
             if (loaderDom) loaderDom.style.display = "block";
             render(false);
             if (loaderDom) loaderDom.style.display = "none";
-          } else if (loaderDom && filtered.length && !noMoreShown) {
+          } else if (loaderDom && rest.length && !noMoreShown) {
             noMoreShown = true;
             loaderDom.style.display = "block";
             loaderDom.textContent = "已经没有更多手账了";
@@ -5605,6 +5726,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
               render(true);
             });
             showToast("更新成功", "edit");
+            scrollToPostWithRetry(updatedPost.id, "center", 12);
           } else {
             if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "更新失败", "error");
