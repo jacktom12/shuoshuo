@@ -558,7 +558,7 @@ body.dark .post-content ol > li::before {
   display: block !important;
   pointer-events: none !important;
   border-radius: inherit !important;
-  background-image: var(--pinned-gradient, linear-gradient(135deg, #ffdca8 0%, #ffc3a6 48%, #ffb7d5 100%)) !important;
+  background: var(--pinned-gradient, #ffd36f) !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22) !important;
@@ -575,7 +575,7 @@ body.dark .post.pinned {
 
 body.dark .post.pinned::before,
 body.dark .post.pinned:hover::before {
-  background-image: var(--pinned-gradient-dark, var(--pinned-gradient, linear-gradient(135deg, #7f5af0 0%, #2cb67d 45%, #ef4565 100%))) !important;
+  background: var(--pinned-gradient-dark, var(--pinned-gradient, #7a4d16)) !important;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08) !important;
 }
 
@@ -3754,6 +3754,62 @@ body.dark #postsContainer .post.post-flash-focus {
     0 8px 0 rgba(0, 0, 0, 0.30) !important;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  body:not(.dark) #postsContainer .post,
+  body:not(.dark) .search-results .post {
+    transition:
+      transform 0.24s cubic-bezier(.2,.9,.25,1.25),
+      box-shadow 0.24s ease,
+      border-color 0.2s ease,
+      filter 0.2s ease !important;
+    will-change: transform, box-shadow;
+  }
+
+  body:not(.dark) #postsContainer .post:hover,
+  body:not(.dark) .search-results .post:hover {
+    transform: translateY(-10px) scale(1.018) rotate(-0.7deg) !important;
+    border-color: #c86e23 !important;
+    filter: saturate(1.06) contrast(1.02);
+    box-shadow:
+      0 0 0 3px rgba(255, 255, 255, 0.92) inset,
+      0 0 0 2px rgba(200, 110, 35, 0.18),
+      0 12px 24px rgba(229, 150, 42, 0.28),
+      0 0 34px rgba(255, 190, 94, 0.55),
+      9px 10px 0 rgba(35, 27, 22, 0.76) !important;
+  }
+
+  body:not(.dark) #postsContainer .post:hover::before,
+  body:not(.dark) .search-results .post:hover::before {
+    display: block !important;
+    content: "" !important;
+    opacity: 0.42 !important;
+  }
+}
+
+.search-keyword-hit {
+  display: inline;
+  padding: 0.08em 0.36em 0.12em;
+  margin: 0 0.05em;
+  border: 1.5px solid rgba(94, 55, 23, 0.32);
+  border-radius: 7px;
+  background: #ffd86b;
+  color: #2d2117;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  font-family: "LXGW WenKai Screen", sans-serif;
+  font-weight: 900;
+  line-height: 1.45;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.42);
+}
+
+body.dark .search-keyword-hit {
+  background: rgba(255, 205, 90, 0.9);
+  color: #1c1712;
+  border-color: rgba(255, 238, 184, 0.42);
+  text-shadow: none;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 0 10px rgba(255, 191, 76, 0.18);
+}
+
 #pinnedHero {
   display: none !important;
 }
@@ -3768,7 +3824,7 @@ body.dark #postsContainer .post.post-flash-focus {
   padding: 18px !important;
   border: 2px solid var(--pinned-border, var(--accent-dark)) !important;
   border-radius: 18px !important;
-  background: var(--pinned-gradient, linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%)) !important;
+  background: var(--pinned-gradient, #ffd36f) !important;
   box-shadow:
     0 16px 28px rgba(53, 29, 17, 0.18),
     0 8px 0 rgba(35, 27, 22, 0.16),
@@ -3781,6 +3837,24 @@ body.dark #postsContainer .post.post-flash-focus {
 .pinned-hero-card:hover::before,
 .pinned-hero-card:hover::after {
   display: none !important;
+}
+
+#postsContainer .post.pinned {
+  background: var(--pinned-gradient, #ffd36f) !important;
+  background-image: none !important;
+  border-color: var(--pinned-border, #d18a20) !important;
+}
+
+body.dark #postsContainer .post.pinned {
+  background: var(--pinned-gradient-dark, #7a4d16) !important;
+  background-image: none !important;
+  border-color: var(--pinned-border-dark, #f1bd64) !important;
+}
+
+#postsContainer .post.pinned::before,
+#postsContainer .post.pinned:hover::before {
+  display: none !important;
+  content: none !important;
 }
 
 .pinned-hero-card .post-right {
@@ -3847,7 +3921,7 @@ body.dark .pinned-hero-card .pinned-pill {
 
 body.dark .pinned-hero-card {
   border-color: var(--pinned-border-dark, #f0c36d);
-  background: var(--pinned-gradient-dark, var(--pinned-gradient, linear-gradient(135deg, #7a3f00 0%, #8c2f39 50%, #5b224e 100%)));
+  background: var(--pinned-gradient-dark, var(--pinned-gradient, #7c4f20));
   box-shadow:
     0 20px 36px rgba(0, 0, 0, 0.42),
     0 10px 0 rgba(0, 0, 0, 0.28),
@@ -3987,7 +4061,7 @@ main::-webkit-scrollbar {
 </div>
 <div class="search-modal" id="searchModal">
 <div class="search-modal-header">
-<input autofocus="" id="modalSearchInput" placeholder="输入关键词..." type="text"/>
+<input autofocus="" id="modalSearchInput" placeholder="输入关键词，多个关键词用空格隔开" type="text"/>
 <button id="modalSearchBtn">搜索</button>
 </div>
 <div class="search-results" id="searchResults"></div>
@@ -4057,6 +4131,7 @@ main::-webkit-scrollbar {
       // 搜索状态
       let currentSearchResults = [],
         currentSearchKeyword = "";
+      let currentSearchTerms = [];
       let searchPage = 1;
       const searchPerPage = 12;
       let lastScrollY = 0;
@@ -4068,6 +4143,9 @@ main::-webkit-scrollbar {
       const PUBLISH_PREVIEW_DRAG_TYPE = "application/x-publish-preview-index";
       const WORKER_URL =
         "https://datas.199105.xyz";
+      function isLocalPreviewMode() {
+        return ["file:", "about:"].includes(location.protocol) || /localhost|127\.0\.0\.1/.test(location.hostname);
+      }
       const PUBLISH_PWD_KEY = "memo_publish_pwd";
       const PUBLISH_PWD_DAYS = 30;
 
@@ -4321,40 +4399,40 @@ function stripPinKeyword(text) {
       function getRandomPinnedTheme() {
         const themes = [
           {
-            gradient: 'linear-gradient(135deg, #ffe29f 0%, #ffa99f 48%, #ff719a 100%)',
-            gradientDark: 'linear-gradient(135deg, #7a3f00 0%, #8c2f39 50%, #5b224e 100%)',
-            border: '#d98a6a',
-            borderDark: '#ffbf7e'
+            gradient: '#ffd36f',
+            gradientDark: '#7a4d16',
+            border: '#d18a20',
+            borderDark: '#f1bd64'
           },
           {
-            gradient: 'linear-gradient(135deg, #b7f8db 0%, #8fd3f4 52%, #84fab0 100%)',
-            gradientDark: 'linear-gradient(135deg, #1d5f56 0%, #184d75 52%, #24553d 100%)',
-            border: '#4da592',
-            borderDark: '#89efd1'
+            gradient: '#8fdcbf',
+            gradientDark: '#1f5a4b',
+            border: '#3f927d',
+            borderDark: '#8ae3c8'
           },
           {
-            gradient: 'linear-gradient(135deg, #fddb92 0%, #d1fdff 48%, #c2ffd8 100%)',
-            gradientDark: 'linear-gradient(135deg, #7b5e1f 0%, #275f6d 48%, #29533c 100%)',
-            border: '#88a86a',
-            borderDark: '#e6d07b'
+            gradient: '#9ec9f1',
+            gradientDark: '#254d73',
+            border: '#527fa9',
+            borderDark: '#9fcaf0'
           },
           {
-            gradient: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 55%, #cfd9ff 100%)',
-            gradientDark: 'linear-gradient(135deg, #6b2f62 0%, #334f85 55%, #4a4f8d 100%)',
-            border: '#8b76c7',
-            borderDark: '#e2b8ff'
+            gradient: '#e8a6c8',
+            gradientDark: '#6a3655',
+            border: '#b6648e',
+            borderDark: '#efb3d3'
           },
           {
-            gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 52%, #fbc2eb 100%)',
-            gradientDark: 'linear-gradient(135deg, #7b5a14 0%, #7b3f2c 52%, #653c63 100%)',
-            border: '#d78a53',
-            borderDark: '#f6ba80'
+            gradient: '#f2a16f',
+            gradientDark: '#78412a',
+            border: '#c86f3e',
+            borderDark: '#f0ad7c'
           },
           {
-            gradient: 'linear-gradient(135deg, #a1ffce 0%, #faffd1 45%, #ffd3a5 100%)',
-            gradientDark: 'linear-gradient(135deg, #1f5f44 0%, #5a6430 45%, #7a5230 100%)',
-            border: '#7da56c',
-            borderDark: '#b6f29e'
+            gradient: '#c4d96d',
+            gradientDark: '#536323',
+            border: '#879844',
+            borderDark: '#d3e87c'
           }
         ];
         return themes[Math.floor(Math.random() * themes.length)];
@@ -4410,22 +4488,50 @@ function stripPinKeyword(text) {
         if (sc) sc.scrollTop = Math.max(0, value || 0);
       }
 
-      function preserveViewportDuring(fn) {
+      function getViewportAnchor() {
         const sc = getScrollContainer();
-        const beforeTop = sc ? sc.scrollTop : 0;
+        if (!sc) return null;
+        const posts = Array.from(document.querySelectorAll("#postsContainer .post[id]"));
+        if (!posts.length) return { scrollTop: sc.scrollTop };
+        const scTop = sc.scrollTop;
+        const scBottom = scTop + sc.clientHeight;
+        const anchor = posts.find((el) => el.offsetTop + el.offsetHeight > scTop + 16 && el.offsetTop < scBottom - 16) || posts[0];
+        return {
+          id: anchor.id.replace(/^post-/, ""),
+          offset: anchor.offsetTop - scTop,
+          scrollTop: scTop
+        };
+      }
+
+      function restoreViewportAnchor(anchor, attempts = 8) {
+        const sc = getScrollContainer();
+        if (!sc || !anchor) return;
+        let count = 0;
+        const tick = () => {
+          startMasonrySettle(360);
+          const el = anchor.id ? document.getElementById(`post-${anchor.id}`) : null;
+          if (el) {
+            sc.scrollTop = Math.max(0, el.offsetTop - anchor.offset);
+          } else if (typeof anchor.scrollTop === "number") {
+            sc.scrollTop = Math.max(0, anchor.scrollTop);
+          }
+          count += 1;
+          if (count < attempts) setTimeout(() => requestAnimationFrame(tick), 90);
+        };
+        requestAnimationFrame(tick);
+      }
+
+      function preserveViewportDuring(fn) {
+        const anchor = getViewportAnchor();
         fn();
-        requestAnimationFrame(() => {
-          startMasonrySettle(900);
-          setScrollTop(beforeTop);
-          requestAnimationFrame(() => setScrollTop(beforeTop));
-        });
+        restoreViewportAnchor(anchor, 8);
       }
 
       function focusPostById(id, mode = "center") {
         const sc = getScrollContainer();
         const el = document.getElementById(`post-${id}`);
         if (!sc || !el) return;
-        const target = el.offsetTop - (mode === "start" ? 24 : Math.max(40, (sc.clientHeight - el.offsetHeight) * 0.35));
+        const target = el.offsetTop - (mode === "start" ? 24 : Math.max(24, (sc.clientHeight - el.offsetHeight) / 2));
         sc.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
         el.classList.add("post-flash-focus");
         setTimeout(() => el.classList.remove("post-flash-focus"), 1800);
@@ -4442,6 +4548,11 @@ function stripPinKeyword(text) {
           filtered[idxFiltered] = post;
           filtered = sortPostsByDateDesc(filtered);
         }
+      }
+
+      function expandLoadedRangeForPrependedPost() {
+        const visibleCount = Math.max(perPage, page * perPage);
+        page = Math.max(page, Math.ceil((visibleCount + 1) / perPage));
       }
 
       function removePostFromLists(id) {
@@ -4469,10 +4580,11 @@ function stripPinKeyword(text) {
       function scrollToPostWithRetry(id, mode = "center", attempts = 10) {
         let count = 0;
         const tick = () => {
+          startMasonrySettle(300);
           focusPostById(id, mode);
           count += 1;
           if (count < attempts) {
-            setTimeout(() => requestAnimationFrame(tick), 140);
+            setTimeout(() => requestAnimationFrame(tick), 180);
           }
         };
         requestAnimationFrame(tick);
@@ -4590,7 +4702,7 @@ function stripPinKeyword(text) {
         isLoading = true;
         loaderDom.style.display = "block";
         loaderDom.textContent = "正在加载手账...";
-        const isLocalPreview = ["file:", "about:"].includes(location.protocol) || /localhost|127\.0\.0\.1/.test(location.hostname);
+        const isLocalPreview = isLocalPreviewMode();
         try {
           if (isLocalPreview) {
             allPosts = getMockPosts();
@@ -5359,6 +5471,26 @@ lbImg.onerror = () => resetLightboxBackdrop();
         text = text.replace(/```[a-zA-Z0-9_-]*/g, "").replace(/`/g, "");
         return text;
       }
+
+      function parseSearchTerms(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .map((term) => term.trim())
+          .filter(Boolean);
+      }
+
+      function highlightSearchTermsInHTML(html, terms) {
+        const uniqueTerms = [...new Set((terms || []).filter(Boolean))]
+          .sort((a, b) => b.length - a.length);
+        if (!uniqueTerms.length) return html;
+        const regex = new RegExp(`(${uniqueTerms.map(escapeRegExp).join("|")})`, "gi");
+        return html.replace(/(^|>)([^<]+)(?=<|$)/g, (full, prefix, text) => {
+          return prefix + text.replace(regex, '<span class="search-keyword-hit">$1</span>');
+        });
+      }
+
       function renderSearchResults(resetPage = true) {
         if (resetPage) searchPage = 1;
         const start = (searchPage - 1) * searchPerPage,
@@ -5374,18 +5506,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             ? post.content.join("\n\n")
             : post.content || "";
           let parsed = marked.parse(raw);
-          if (currentSearchKeyword) {
-            const regex = new RegExp(
-              `(${escapeRegExp(currentSearchKeyword)})`,
-              "gi",
-            );
-            parsed = parsed.replace(/(?<=^|>)([^<]+)(?=<|$)/g, (match) =>
-              match.replace(
-                regex,
-                '<span style="background-color: var(--accent); color: var(--ink); border: 2px solid var(--border); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2px 6px; margin: 0 2px; font-weight: 900; display: inline-block; transform: rotate(-1deg);">$1</span>',
-              ),
-            );
-          }
+          parsed = highlightSearchTermsInHTML(parsed, currentSearchTerms);
           const showTime = formatRelativeTime(post.date);
           let imagesHtml = "";
           if (hasImages) {
@@ -5452,9 +5573,11 @@ lbImg.onerror = () => resetLightboxBackdrop();
       }
 
             function performSearch() {
-        const kw = modalSearchInput.value.trim().toLowerCase();
-        currentSearchKeyword = kw;
-        if (!kw) {
+        const rawKeyword = modalSearchInput.value.trim();
+        const terms = parseSearchTerms(rawKeyword);
+        currentSearchKeyword = rawKeyword.toLowerCase();
+        currentSearchTerms = terms;
+        if (!terms.length) {
           currentSearchResults = [];
           searchResultsDiv.innerHTML =
             '<div class="search-loader">✨ 输入关键词看看</div>';
@@ -5463,9 +5586,10 @@ lbImg.onerror = () => resetLightboxBackdrop();
         searchResultsDiv.innerHTML =
           '<div class="search-loader">🔍 搜索中...</div>';
         setTimeout(() => {
-          currentSearchResults = allPosts.filter((p) =>
-            getCleanTextForSearch(p.content).toLowerCase().includes(kw),
-          );
+          currentSearchResults = allPosts.filter((p) => {
+            const text = getCleanTextForSearch(p.content).toLowerCase();
+            return terms.every((term) => text.includes(term));
+          });
           if (!currentSearchResults.length)
             searchResultsDiv.innerHTML =
               '<div class="search-loader">😢 没有找到相关手账</div>';
@@ -5711,6 +5835,32 @@ lbImg.onerror = () => resetLightboxBackdrop();
             newImgList.push(await toBase64(item.file));
           }
 
+          if (isLocalPreviewMode()) {
+            setPublishPassword(pwd);
+            const newPostItem = {
+              id: `local-${Date.now()}`,
+              date: getNowBeijingString(),
+              content,
+              images: newImgList
+            };
+            preserveViewportDuring(() => {
+              allPosts.unshift(newPostItem);
+              filtered.unshift(newPostItem);
+              allPosts = sortPostsByDateDesc(allPosts);
+              filtered = sortPostsByDateDesc(filtered);
+              expandLoadedRangeForPrependedPost();
+              if (publishModal) {
+                publishModal.remove();
+                publishModal = null;
+              }
+              selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+              selectedPublishFiles = [];
+              render(true);
+            });
+            showToast("本地演示已发布", "success");
+            return;
+          }
+
           const res = await fetch(WORKER_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -5724,16 +5874,21 @@ lbImg.onerror = () => resetLightboxBackdrop();
           if (json.code === 200) {
             setPublishPassword(pwd);
             const newPostItem = json.data;
-            allPosts.unshift(newPostItem);
-            filtered.unshift(newPostItem);
-            
-            if (publishModal) {
-              publishModal.remove();
-              publishModal = null;
-            }
-            selectedPublishFiles = [];
+            preserveViewportDuring(() => {
+              allPosts.unshift(newPostItem);
+              filtered.unshift(newPostItem);
+              allPosts = sortPostsByDateDesc(allPosts);
+              filtered = sortPostsByDateDesc(filtered);
+              expandLoadedRangeForPrependedPost();
+              if (publishModal) {
+                publishModal.remove();
+                publishModal = null;
+              }
+              selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+              selectedPublishFiles = [];
+              render(true);
+            });
             showToast("发布成功", "success");
-            render(true);
           } else {
             if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "发布失败", "error");
@@ -5772,6 +5927,15 @@ lbImg.onerror = () => resetLightboxBackdrop();
             const pwd = getPublishPassword();
             if (!pwd) {
                 return showToast("凭证已过期，请重新点击发布校验密码", "error");
+            }
+
+            if (isLocalPreviewMode()) {
+                preserveViewportDuring(() => {
+                  removePostFromLists(id);
+                  render(true);
+                });
+                showToast("本地演示已删除", "delete");
+                return;
             }
 
             try {
@@ -5898,6 +6062,30 @@ lbImg.onerror = () => resetLightboxBackdrop();
             newImgList.push(await toBase64(item.file));
           }
 
+          if (isLocalPreviewMode()) {
+            setPublishPassword(pwd);
+            const originalPost = allPosts.find((p) => p.id === currentEditId) || filtered.find((p) => p.id === currentEditId);
+            const updatedPost = {
+              id: currentEditId,
+              date: originalPost?.date || getNowBeijingString(),
+              content,
+              images: [...existingImagesForEdit, ...newImgList]
+            };
+            preserveViewportDuring(() => {
+              upsertPostInLists(updatedPost);
+              if (publishModal) {
+                publishModal.remove();
+                publishModal = null;
+              }
+              selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+              selectedPublishFiles = [];
+              render(true);
+            });
+            showToast("本地演示已更新", "edit");
+            scrollToPostWithRetry(updatedPost.id, "center", 14);
+            return;
+          }
+
           const res = await fetch(WORKER_URL, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -5921,6 +6109,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
                 publishModal.remove();
                 publishModal = null;
               }
+              selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
               selectedPublishFiles = [];
               render(true);
             });
