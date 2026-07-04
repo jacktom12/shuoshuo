@@ -6450,10 +6450,17 @@ lbImg.onerror = () => resetLightboxBackdrop();
   }
 
   async function loadWatchedItems(){
-    const data = await tmdbFetchJSON('watched', 1);
+  const all = [];
+  let page = 1, totalPages = 1;
+  do {
+    const data = await tmdbFetchJSON('watched', page);
     const items = data.items || [];
-    return items.map(it => normalizeItem(it, it.media_type || (it.title ? 'movie' : 'tv')));
-  }
+    items.forEach(it => all.push(normalizeItem(it, it.media_type || (it.title ? 'movie' : 'tv'))));
+    totalPages = data.total_pages || 1;
+    page++;
+  } while (page <= totalPages && page <= 50);
+  return all;
+}
 
   function renderGenreChips(){
     const chips = Object.entries(ALL_GENRES).map(([id, name]) => {
