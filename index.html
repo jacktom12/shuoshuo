@@ -4055,6 +4055,11 @@
       main::-webkit-scrollbar {
         display: none;
       }
+      /* 让瀑布流中不可见的卡片只占位不绘制，极速定位 */
+#postsContainer .post {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px; /* 预估卡片高度，保持滚动条稳定 */
+}
     </style>
     <style id="tmdb-modal-style">
       .tmdb-modal {
@@ -4667,34 +4672,74 @@
     <div class="toast-wrap" id="toastWrap"></div>
     <script>
       // 全局函数：点击“查看”后关闭搜索，定位到指定手账
-      function viewPost(id) {
-        // 关闭搜索框
-        closeSearchModalFunc();
+       function viewPost(id) {
+  // 1. 关闭搜索框
+  closeSearchModalFunc();
 
-        const post = allPosts.find((p) => p.id === id);
-        if (!post) {
-          showToast("未找到该手账", "error");
-          return;
+  const post = allPosts.find((p) => p.id === id);
+  if (!post) {
+    showToast("未找到该手账", "error");
+    return;
+  }
+
+  // 2. 如果卡片已经在 DOM 中，直接定位（快速路径）
+  const existingEl = document.getElementById(`post-${id}`);
+  if (existingEl) {
+    scrollToPostWithRetry(id, "center", 10);
+    return;
+  }
+
+  // 3. 计算该卡片在排序后列表中的索引
+  const sorted = sortPostsByDateDesc([...allPosts]);
+  const index = sorted.findIndex((p) => p.id === id);
+  if (index === -1) {
+    showToast("数据异常，未找到该手账", "error");
+    return;
+  }
+
+  // 4. 计算目标页码（从 1 开始）
+  const targetPage = Math.floor(index / perPage) + 1;
+
+  // 5. 重置数据并一次性渲染到目标页（目标卡片会包含在 DOM 中）
+  filtered = sorted;
+  page = targetPage;
+  render(true);
+
+  // 6. 启动重试定位（因为卡片现在已经在 DOM 里了）
+  let attempts = 0;
+  const maxAttempts = 30; // 30 次 × 150ms = 4.5秒，足够瀑布流稳定
+
+  const tryLocate = () => {
+    attempts++;
+    startMasonrySettle(300);
+
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`post-${id}`);
+      if (el) {
+        const sc = getScrollContainer();
+        if (sc) {
+          const targetOffset =
+            el.offsetTop -
+            Math.max(24, (sc.clientHeight - el.offsetHeight) / 2);
+          sc.scrollTo({ top: Math.max(0, targetOffset), behavior: "smooth" });
+          el.classList.add("post-flash-focus");
+          setTimeout(() => el.classList.remove("post-flash-focus"), 1800);
         }
-
-        // 检查是否已经在 DOM 中
-        const existingEl = document.getElementById(`post-${id}`);
-        if (existingEl) {
-          // 直接使用已有的重试定位函数（内部会处理布局和高亮）
-          scrollToPostWithRetry(id, "center", 10);
-          return;
-        }
-
-        // 不在 DOM 中：重新加载全部数据并渲染
-        preserveViewportDuring(() => {
-          filtered = sortPostsByDateDesc([...allPosts]);
-          page = 1;
-          render(true);
-        });
-
-        // 使用重试定位（此时新卡片会被渲染出来）
-        scrollToPostWithRetry(id, "center", 20);
+        return; // 定位成功
       }
+
+      // 未找到，继续重试
+      if (attempts < maxAttempts) {
+        setTimeout(() => requestAnimationFrame(tryLocate), 150);
+      } else {
+        showToast("定位失败，请刷新后重试", "error");
+      }
+    });
+  };
+
+  // 给 render 200ms 初始渲染时间，再开始定位
+  setTimeout(() => requestAnimationFrame(tryLocate), 200);
+}
 
       function jumpToPost(id) {
         // 关闭搜索模态框
@@ -5254,18 +5299,22 @@
         return el;
       }
 
-      function scrollToPostWithRetry(id, mode = "center", attempts = 10) {
-        let count = 0;
-        const tick = () => {
-          startMasonrySettle(300);
-          focusPostById(id, mode);
-          count += 1;
-          if (count < attempts) {
-            setTimeout(() => requestAnimationFrame(tick), 180);
-          }
-        };
-        requestAnimationFrame(tick);
+       function scrollToPostWithRetry(id, mode = "center", attempts = 20) {
+  let count = 0;
+  const tick = () => {
+    // 每次先刷新瀑布流布局
+    startMasonrySettle(300);
+    // 等一帧，让布局生效后再读取位置
+    requestAnimationFrame(() => {
+      focusPostById(id, mode);
+      count += 1;
+      if (count < attempts) {
+        setTimeout(() => requestAnimationFrame(tick), 180);
       }
+    });
+  };
+  requestAnimationFrame(tick);
+}
 
       function escapeHTML(value) {
         return String(value)
