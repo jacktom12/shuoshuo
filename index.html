@@ -4266,7 +4266,63 @@
         font-weight: 900;
         padding: 0 4px;
       }
-      @media (max-width: 600px) {
+      
+      .tmdb-searchbar {
+        display: flex;
+        gap: 10px;
+        margin: 0 0 16px;
+        padding: 12px;
+        background: var(--paper);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-1);
+        box-shadow: 3px 3px 0 var(--border);
+      }
+      .tmdb-search-input {
+        flex: 1;
+        min-width: 0;
+        border: 2px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        border-radius: var(--sketch-radius-btn);
+        padding: 10px 14px;
+        font-size: .95rem;
+        outline: none;
+      }
+      .tmdb-search-btn,
+      .tmdb-admin-btn {
+        border: 2px solid var(--border);
+        background: var(--paper);
+        color: var(--text);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 2px 2px 0 var(--border);
+        padding: 8px 12px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+      }
+      .tmdb-search-btn:hover,
+      .tmdb-admin-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 3px 3px 0 var(--border);
+      }
+      .tmdb-admin-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .tmdb-admin-btn[data-kind="watchlist"] {
+        background: rgba(240, 204, 118, .35);
+      }
+      .tmdb-admin-btn[data-kind="watched"] {
+        background: rgba(167, 197, 163, .35);
+      }
+      .tmdb-admin-btn:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+        transform: none;
+      }
+@media (max-width: 600px) {
         .tmdb-modal {
           padding: calc(56px + env(safe-area-inset-top)) 12px
             calc(16px + env(safe-area-inset-bottom));
@@ -4498,7 +4554,19 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
+        
         <button
+          class="menu-item"
+          id="openTmdbAdminBtn"
+          title="添加影视剧"
+          type="button"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20">
+            <path d="M0 0h20v20H0z" fill="none" />
+            <path fill="currentColor" d="M6 3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM4 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2 13a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1zm-2-1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2zm-2-6a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1h-15A.5.5 0 0 1 2 10" />
+          </svg>
+        </button>
+<button
           class="menu-item"
           id="openPublishBtn"
           title="发布"
@@ -4549,7 +4617,12 @@
           <div class="tmdb-modal-title" id="tmdbModalTitle">想看</div>
           <div class="close-search-btn" id="closeTmdbModal">×</div>
         </div>
-        <div class="tmdb-genre-row" id="tmdbGenreRow"></div>
+        
+        <div class="tmdb-searchbar" id="tmdbSearchBar" style="display:none;">
+          <input id="tmdbSearchInput" class="tmdb-search-input" type="text" placeholder="搜索电影 / 电视剧名称...">
+          <button id="tmdbSearchBtn" class="tmdb-search-btn" type="button">搜索</button>
+        </div>
+<div class="tmdb-genre-row" id="tmdbGenreRow"></div>
         <div class="tmdb-type-tabs" id="tmdbTypeTabs">
           <button class="tmdb-tab active" data-media="all">全部</button>
           <button class="tmdb-tab" data-media="movie">电影</button>
@@ -7094,10 +7167,10 @@
           9648: "悬疑",
           10763: "新闻",
           10764: "真人秀",
-          10765: "Sci-Fi & Fantasy",
+          10765: "科幻奇幻",
           10766: "肥皂剧",
           10767: "脱口秀",
-          10768: "War & Politics",
+          10768: "战争政治",
           37: "西部",
         };
         const ALL_GENRES = Object.assign({}, MOVIE_GENRES, TV_GENRES);
@@ -7108,107 +7181,126 @@
         const tmdbTypeTabs = document.getElementById("tmdbTypeTabs");
         const tmdbGrid = document.getElementById("tmdbGrid");
         const tmdbPagination = document.getElementById("tmdbPagination");
+        const tmdbPaginationTop = document.getElementById("tmdbPaginationTop");
         const closeTmdbModal = document.getElementById("closeTmdbModal");
         const openWatchlistBtn = document.getElementById("openWatchlistBtn");
         const openWatchedBtn = document.getElementById("openWatchedBtn");
+        const openTmdbAdminBtn = document.getElementById("openTmdbAdminBtn");
 
-        let tmdbCurrentType = null;
+        const tmdbSearchBar = document.getElementById("tmdbSearchBar");
+        const tmdbSearchInput = document.getElementById("tmdbSearchInput");
+        const tmdbSearchBtn = document.getElementById("tmdbSearchBtn");
+
+        let tmdbMode = "watchlist";
         let tmdbRawItems = [];
         let tmdbMediaFilter = "all";
         let tmdbSelectedGenres = new Set();
         let tmdbPage = 1;
         const TMDB_PAGE_SIZE = 10;
-        const tmdbCache = { watchlist: null, watched: null };
+
+        const tmdbCache = {
+          watchlist: null,
+          watched: null,
+        };
 
         function esc(v) {
-          return typeof escapeHTML === "function"
-            ? escapeHTML(v)
-            : String(v || "").replace(
-                /[&<>"']/g,
-                (c) =>
-                  ({
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#39;",
-                  })[c],
-              );
+          return String(v ?? "").replace(/[&<>"']/g, (c) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          })[c]);
+        }
+
+        async function tmdbRequest(url, options = {}) {
+          const res = await fetch(url, options);
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok || (json.code && json.code !== 0)) {
+            throw new Error(json.msg || json.status_message || `请求失败 ${res.status}`);
+          }
+          return json;
         }
 
         async function tmdbFetchJSON(type, page) {
-          const res = await fetch(
-            TMDB_WORKER +
-              "/?type=" +
-              encodeURIComponent(type) +
-              "&page=" +
-              (page || 1),
-          );
-          if (!res.ok) throw new Error("TMDB请求失败 " + res.status);
-          return res.json();
+          return tmdbRequest(`${TMDB_WORKER}?type=${encodeURIComponent(type)}&page=${page || 1}`);
         }
 
-        function normalizeItem(it, mediaType) {
-          const title =
-            mediaType === "movie"
-              ? it.title || it.original_title || "未知"
-              : it.name || it.original_name || "未知";
-          const dateStr =
-            mediaType === "movie" ? it.release_date : it.first_air_date;
+        async function tmdbSearch(query, page) {
+          return tmdbRequest(`${TMDB_WORKER}?action=search&query=${encodeURIComponent(query)}&page=${page || 1}`);
+        }
+
+        async function tmdbAdd(action, mediaId, mediaType) {
+          return tmdbRequest(TMDB_WORKER, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action,
+              media_id: Number(mediaId),
+              media_type: mediaType,
+            }),
+          });
+        }
+
+        function normalizeItem(it, fallbackMediaType = null) {
+          const mediaType = it.media_type || fallbackMediaType || (it.title ? "movie" : "tv");
+          const title = it.display_title || it.title || it.name || it.original_title || it.original_name || "";
+          const dateStr = mediaType === "movie" ? it.release_date : it.first_air_date;
+
           return {
             id: it.id,
             media_type: mediaType,
             title,
             poster_path: it.poster_path || null,
+            backdrop_path: it.backdrop_path || null,
+            overview: it.overview || "",
             year: dateStr ? String(dateStr).slice(0, 4) : "",
             lang: (it.original_language || "").toUpperCase(),
             genre_ids: Array.isArray(it.genre_ids) ? it.genre_ids : [],
+            vote_average: it.vote_average ?? null,
+            vote_count: it.vote_count ?? null,
+            release_date: it.release_date || null,
+            first_air_date: it.first_air_date || null,
           };
         }
 
         async function loadWatchlistItems() {
-          const movies = [],
-            tv = [];
-          let page = 1,
-            totalPages = 1;
+          const movies = [];
+          const tv = [];
+          let page = 1;
+          let totalPages = 1;
+
           do {
             const data = await tmdbFetchJSON("watchlist_movies", page);
-            (data.results || []).forEach((it) =>
-              movies.push(normalizeItem(it, "movie")),
-            );
+            (data.results || []).forEach((it) => movies.push(normalizeItem(it, "movie")));
             totalPages = data.total_pages || 1;
             page++;
-          } while (page <= totalPages && page <= 20);
+          } while (page <= totalPages);
 
           page = 1;
           totalPages = 1;
           do {
             const data = await tmdbFetchJSON("watchlist_tv", page);
-            (data.results || []).forEach((it) =>
-              tv.push(normalizeItem(it, "tv")),
-            );
+            (data.results || []).forEach((it) => tv.push(normalizeItem(it, "tv")));
             totalPages = data.total_pages || 1;
             page++;
-          } while (page <= totalPages && page <= 20);
+          } while (page <= totalPages);
 
           return movies.concat(tv);
         }
 
         async function loadWatchedItems() {
           const all = [];
-          let page = 1,
-            totalPages = 1;
+          let page = 1;
+          let totalPages = 1;
+
           do {
             const data = await tmdbFetchJSON("watched", page);
-            const items = data.items || [];
-            items.forEach((it) =>
-              all.push(
-                normalizeItem(it, it.media_type || (it.title ? "movie" : "tv")),
-              ),
-            );
+            (data.results || []).forEach((it) => all.push(normalizeItem(it, it.media_type)));
             totalPages = data.total_pages || 1;
             page++;
-          } while (page <= totalPages && page <= 50);
+          } while (page <= totalPages);
+
           return all;
         }
 
@@ -7216,139 +7308,21 @@
           const chips = Object.entries(ALL_GENRES)
             .map(([id, name]) => {
               const active = tmdbSelectedGenres.has(Number(id));
-              return `<button class="tmdb-genre-chip${active ? " active" : ""}" data-genre="${id}">${esc(name)}</button>`;
+              return `<button class="tmdb-genre-chip ${active ? "active" : ""}" data-genre="${id}">${esc(name)}</button>`;
             })
             .join("");
-          tmdbGenreRow.innerHTML =
-            `<button class="tmdb-genre-chip${tmdbSelectedGenres.size === 0 ? " active" : ""}" data-genre="__all__">全部</button>` +
-            chips;
-        }
 
-        function getFilteredItems() {
-          return tmdbRawItems.filter((it) => {
-            if (tmdbMediaFilter !== "all" && it.media_type !== tmdbMediaFilter)
-              return false;
-            if (tmdbSelectedGenres.size === 0) return true;
-            return [...tmdbSelectedGenres].every((gid) =>
-              it.genre_ids.includes(gid),
-            );
-          });
-        }
-
-        function buildCardHTML(item) {
-          const posterHtml = item.poster_path
-            ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
-            : `<div class="tmdb-card-poster placeholder">暂无海报</div>`;
-          const genreMap =
-            item.media_type === "movie" ? MOVIE_GENRES : TV_GENRES;
-          const genreNames = item.genre_ids
-            .map((g) => genreMap[g])
-            .filter(Boolean)
-            .slice(0, 3)
-            .join("、");
-          const typeLabel = item.media_type === "movie" ? "电影" : "剧集";
-          const url = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
-          return `<a class="tmdb-card" href="${url}" target="_blank" rel="noopener">
-      <div class="tmdb-card-poster">${item.poster_path ? posterHtml : posterHtml}</div>
-      <div class="tmdb-card-body">
-        <div class="tmdb-card-title">${esc(item.title)}</div>
-        <div class="tmdb-card-meta">${typeLabel} · ${esc(item.year || "未知")} · ${esc(item.lang || "")}</div>
-        ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
-      </div>
-    </a>`;
-        }
-
-        function renderPagination(totalItems) {
-          const totalPages = Math.max(
-            1,
-            Math.ceil(totalItems / TMDB_PAGE_SIZE),
-          );
-          if (tmdbPage > totalPages) tmdbPage = totalPages;
-          if (totalPages <= 1) {
-            document.getElementById("tmdbPaginationTop").innerHTML = "";
-            document.getElementById("tmdbPagination").innerHTML = "";
-            return;
-          }
-
-          // 生成翻页按钮 HTML（复用）
-          let html = `<button class="tmdb-page-btn" data-action="prev" ${tmdbPage === 1 ? "disabled" : ""}>&lt;</button>`;
-          const pages = new Set([
-            1,
-            totalPages,
-            tmdbPage,
-            tmdbPage - 1,
-            tmdbPage + 1,
-          ]);
-          let lastRendered = 0;
-          [...pages]
-            .filter((p) => p >= 1 && p <= totalPages)
-            .sort((a, b) => a - b)
-            .forEach((p) => {
-              if (lastRendered && p - lastRendered > 1)
-                html += `<span class="tmdb-page-ellipsis">…</span>`;
-              html += `<button class="tmdb-page-btn${p === tmdbPage ? " active" : ""}" data-page="${p}">${p}</button>`;
-              lastRendered = p;
-            });
-          html += `<button class="tmdb-page-btn" data-action="next" ${tmdbPage === totalPages ? "disabled" : ""}>&gt;</button>`;
-
-          // 同时更新顶部和底部的容器
-          ["tmdbPaginationTop", "tmdbPagination"].forEach((id) => {
-            const container = document.getElementById(id);
-            if (!container) return;
-            container.innerHTML = html;
-
-            // 绑定事件（使用事件委托）
-            container.querySelectorAll("button").forEach((btn) => {
-              btn.onclick = (e) => {
-                e.stopPropagation();
-                const action = btn.dataset.action;
-                const page = btn.dataset.page;
-                if (action === "prev" && tmdbPage > 1) tmdbPage--;
-                else if (action === "next" && tmdbPage < totalPages) tmdbPage++;
-                else if (page) tmdbPage = Number(page);
-                renderTmdbGrid(); // 重绘
-              };
-            });
-          });
-        }
-
-        function renderTmdbGrid() {
-          const filtered = getFilteredItems();
-          if (!filtered.length) {
-            tmdbGrid.innerHTML =
-              '<div class="tmdb-empty">没有找到符合条件的影视剧</div>';
-            document.getElementById("tmdbPaginationTop").innerHTML = "";
-            tmdbPagination.innerHTML = "";
-            return;
-          }
-          const start = (tmdbPage - 1) * TMDB_PAGE_SIZE;
-          const pageItems = filtered.slice(start, start + TMDB_PAGE_SIZE);
-          tmdbGrid.innerHTML = pageItems.map(buildCardHTML).join("");
-          renderPagination(filtered.length);
-          // 🔽 翻页后滚动到模态框顶部
-          const modal = document.getElementById("tmdbModal");
-          if (modal) modal.scrollTop = 0;
-        }
-
-        function bindTypeTabs() {
-          tmdbTypeTabs.querySelectorAll(".tmdb-tab").forEach((btn) => {
-            btn.onclick = () => {
-              tmdbTypeTabs
-                .querySelectorAll(".tmdb-tab")
-                .forEach((b) => b.classList.remove("active"));
-              btn.classList.add("active");
-              tmdbMediaFilter = btn.dataset.media;
-              tmdbPage = 1;
-              renderTmdbGrid();
-            };
-          });
+          tmdbGenreRow.innerHTML = `
+            <button class="tmdb-genre-chip ${tmdbSelectedGenres.size === 0 ? "active" : ""}" data-genre="all">全部</button>
+            ${chips}
+          `;
         }
 
         function bindGenreChips() {
           tmdbGenreRow.querySelectorAll(".tmdb-genre-chip").forEach((chip) => {
             chip.onclick = () => {
               const gid = chip.dataset.genre;
-              if (gid === "__all__") {
+              if (gid === "all") {
                 tmdbSelectedGenres.clear();
               } else {
                 const num = Number(gid);
@@ -7363,40 +7337,155 @@
           });
         }
 
-        async function openTmdbModal(type) {
-          tmdbCurrentType = type;
+        function bindTypeTabs() {
+          tmdbTypeTabs.querySelectorAll(".tmdb-tab").forEach((btn) => {
+            btn.onclick = () => {
+              tmdbTypeTabs.querySelectorAll(".tmdb-tab").forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+              tmdbMediaFilter = btn.dataset.media;
+              tmdbPage = 1;
+              renderTmdbGrid();
+            };
+          });
+        }
+
+        function getFilteredItems() {
+          return tmdbRawItems.filter((it) => {
+            if (tmdbMediaFilter !== "all" && it.media_type !== tmdbMediaFilter) return false;
+            if (tmdbSelectedGenres.size === 0) return true;
+            return [...tmdbSelectedGenres].every((gid) => it.genre_ids.includes(gid));
+          });
+        }
+
+        function buildCardHTML(item) {
+          const genreMap = item.media_type === "movie" ? MOVIE_GENRES : TV_GENRES;
+          const genreNames = (item.genre_ids || []).map((g) => genreMap[g]).filter(Boolean).slice(0, 3).join(" / ");
+          const typeLabel = item.media_type === "movie" ? "电影" : "电视剧";
+          const metaBits = [typeLabel, item.year, item.lang].filter(Boolean).join(" · ");
+          const posterHtml = item.poster_path
+            ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
+            : "暂无海报";
+
+          const adminActions = tmdbMode === "search"
+            ? `
+              <div class="tmdb-admin-actions">
+                <button class="tmdb-admin-btn" data-kind="watchlist" data-id="${item.id}" data-media="${item.media_type}">加入待看</button>
+                <button class="tmdb-admin-btn" data-kind="watched" data-id="${item.id}" data-media="${item.media_type}">加入看过</button>
+              </div>
+            `
+            : "";
+
+          return `
+            <div class="tmdb-card" data-id="${item.id}" data-media="${item.media_type}">
+              <div class="tmdb-card-poster ${item.poster_path ? "" : "placeholder"}">${posterHtml}</div>
+              <div class="tmdb-card-body">
+                <div class="tmdb-card-title">${esc(item.title)}</div>
+                <div class="tmdb-card-meta">${esc(metaBits)}</div>
+                ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
+                ${adminActions}
+              </div>
+            </div>
+          `;
+        }
+
+        function renderPagination(totalItems) {
+          const totalPages = Math.max(1, Math.ceil(totalItems / TMDB_PAGE_SIZE));
+          if (tmdbPage > totalPages) tmdbPage = totalPages;
+
+          if (totalPages <= 1) {
+            tmdbPaginationTop.innerHTML = "";
+            tmdbPagination.innerHTML = "";
+            return;
+          }
+
+          let html = `<button class="tmdb-page-btn" data-action="prev" ${tmdbPage === 1 ? "disabled" : ""}>&lt;</button>`;
+          const pages = new Set([1, totalPages, tmdbPage - 1, tmdbPage, tmdbPage + 1].filter((p) => p >= 1 && p <= totalPages));
+          let last = 0;
+
+          [...pages].sort((a, b) => a - b).forEach((p) => {
+            if (last && p - last > 1) html += `<span class="tmdb-page-ellipsis">...</span>`;
+            html += `<button class="tmdb-page-btn ${p === tmdbPage ? "active" : ""}" data-page="${p}">${p}</button>`;
+            last = p;
+          });
+
+          html += `<button class="tmdb-page-btn" data-action="next" ${tmdbPage === totalPages ? "disabled" : ""}>&gt;</button>`;
+
+          [tmdbPaginationTop, tmdbPagination].forEach((container) => {
+            container.innerHTML = html;
+            container.querySelectorAll("button").forEach((btn) => {
+              btn.onclick = (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                const page = btn.dataset.page;
+                if (action === "prev" && tmdbPage > 1) tmdbPage--;
+                else if (action === "next" && tmdbPage < totalPages) tmdbPage++;
+                else if (page) tmdbPage = Number(page);
+                renderTmdbGrid();
+              };
+            });
+          });
+        }
+
+        function renderTmdbGrid() {
+          const filtered = getFilteredItems();
+
+          if (!filtered.length) {
+            tmdbGrid.innerHTML = `<div class="tmdb-empty">${tmdbMode === "search" ? "没有搜索结果" : "这里还是空的"}</div>`;
+            tmdbPaginationTop.innerHTML = "";
+            tmdbPagination.innerHTML = "";
+            return;
+          }
+
+          const start = (tmdbPage - 1) * TMDB_PAGE_SIZE;
+          const pageItems = filtered.slice(start, start + TMDB_PAGE_SIZE);
+          tmdbGrid.innerHTML = pageItems.map(buildCardHTML).join("");
+          renderPagination(filtered.length);
+          if (tmdbModal) tmdbModal.scrollTop = 0;
+        }
+
+        function openTmdbModalBase(mode, title) {
+          tmdbMode = mode;
           tmdbMediaFilter = "all";
           tmdbSelectedGenres = new Set();
           tmdbPage = 1;
-          tmdbModalTitle.textContent = type === "watchlist" ? "想看" : "看过";
-          tmdbTypeTabs
-            .querySelectorAll(".tmdb-tab")
-            .forEach((b) =>
-              b.classList.toggle("active", b.dataset.media === "all"),
-            );
-          tmdbGrid.innerHTML = '<div class="tmdb-loading">加载中…</div>';
-          tmdbPagination.innerHTML = "";
+          tmdbModalTitle.textContent = title;
+          tmdbTypeTabs.querySelectorAll(".tmdb-tab").forEach((b) => b.classList.toggle("active", b.dataset.media === "all"));
           renderGenreChips();
           bindGenreChips();
           bindTypeTabs();
           tmdbModal.classList.add("open");
           document.body.style.overflow = "hidden";
+        }
+
+        async function openTmdbModal(mode) {
+          openTmdbModalBase(mode, mode === "watchlist" ? "想看" : "看过");
+          tmdbSearchBar.style.display = "none";
+          tmdbGrid.innerHTML = '<div class="tmdb-loading">载入中...</div>';
+          tmdbPaginationTop.innerHTML = "";
+          tmdbPagination.innerHTML = "";
 
           try {
-            if (tmdbCache[type]) {
-              tmdbRawItems = tmdbCache[type];
+            if (tmdbCache[mode]) {
+              tmdbRawItems = tmdbCache[mode];
             } else {
-              tmdbRawItems =
-                type === "watchlist"
-                  ? await loadWatchlistItems()
-                  : await loadWatchedItems();
-              tmdbCache[type] = tmdbRawItems;
+              tmdbRawItems = mode === "watchlist" ? await loadWatchlistItems() : await loadWatchedItems();
+              tmdbCache[mode] = tmdbRawItems;
             }
             renderTmdbGrid();
           } catch (err) {
-            tmdbGrid.innerHTML = `<div class="tmdb-error">加载失败：${esc(String(err.message || err))}</div>`;
-            if (typeof showToast === "function") showToast("加载失败", "error");
+            tmdbGrid.innerHTML = `<div class="tmdb-error">${esc(String(err.message || err))}</div>`;
+            if (typeof showToast === "function") showToast("加载影视数据失败", "error");
           }
+        }
+
+        function openTmdbSearchModal() {
+          openTmdbModalBase("search", "添加影视剧");
+          tmdbSearchBar.style.display = "flex";
+          tmdbRawItems = [];
+          tmdbGrid.innerHTML = '<div class="tmdb-empty">先搜一部电影或电视剧吧</div>';
+          tmdbPaginationTop.innerHTML = "";
+          tmdbPagination.innerHTML = "";
+          setTimeout(() => tmdbSearchInput && tmdbSearchInput.focus(), 60);
         }
 
         function closeTmdb() {
@@ -7404,21 +7493,97 @@
           document.body.style.overflow = "";
         }
 
-        if (openWatchlistBtn)
-          openWatchlistBtn.addEventListener("click", () =>
-            openTmdbModal("watchlist"),
-          );
-        if (openWatchedBtn)
-          openWatchedBtn.addEventListener("click", () =>
-            openTmdbModal("watched"),
-          );
-        if (closeTmdbModal) closeTmdbModal.addEventListener("click", closeTmdb);
-        tmdbModal.addEventListener("click", (e) => {
-          if (e.target === tmdbModal) closeTmdb();
+        async function doTmdbSearch() {
+          const q = ((tmdbSearchInput && tmdbSearchInput.value) || "").trim();
+          if (!q) {
+            tmdbGrid.innerHTML = '<div class="tmdb-empty">请输入关键词</div>';
+            return;
+          }
+
+          tmdbGrid.innerHTML = '<div class="tmdb-loading">搜索中...</div>';
+          tmdbPaginationTop.innerHTML = "";
+          tmdbPagination.innerHTML = "";
+
+          try {
+            const data = await tmdbSearch(q, 1);
+            tmdbRawItems = (data.results || []).map((it) => normalizeItem(it, it.media_type));
+            tmdbPage = 1;
+            renderTmdbGrid();
+          } catch (err) {
+            tmdbGrid.innerHTML = `<div class="tmdb-error">${esc(String(err.message || err))}</div>`;
+            if (typeof showToast === "function") showToast("搜索失败", "error");
+          }
+        }
+
+        async function handleTmdbAdd(btn) {
+          const id = Number(btn.dataset.id);
+          const media = btn.dataset.media;
+          const kind = btn.dataset.kind;
+          const oldText = btn.textContent;
+
+          btn.disabled = true;
+          btn.textContent = "处理中...";
+
+          try {
+            await tmdbAdd(kind === "watchlist" ? "add_watchlist" : "add_watched", id, media);
+            if (kind === "watchlist") tmdbCache.watchlist = null;
+            if (kind === "watched") tmdbCache.watched = null;
+            btn.textContent = kind === "watchlist" ? "已加入待看" : "已加入看过";
+            if (typeof showToast === "function") {
+              showToast(kind === "watchlist" ? "已加入待看" : "已加入看过", "success");
+            }
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = oldText;
+            if (typeof showToast === "function") showToast(String(err.message || err), "error");
+          }
+        }
+
+        if (tmdbGrid) {
+          tmdbGrid.addEventListener("click", (e) => {
+            const btn = e.target.closest(".tmdb-admin-btn");
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            handleTmdbAdd(btn);
+          });
+        }
+
+        openWatchlistBtn && openWatchlistBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openTmdbModal("watchlist");
+          if (typeof setActiveMenu === "function") setActiveMenu("openWatchlistBtn");
         });
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && tmdbModal.classList.contains("open"))
+
+        openWatchedBtn && openWatchedBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openTmdbModal("watched");
+          if (typeof setActiveMenu === "function") setActiveMenu("openWatchedBtn");
+        });
+
+        openTmdbAdminBtn && openTmdbAdminBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          openTmdbSearchModal();
+          if (typeof setActiveMenu === "function") setActiveMenu("openTmdbAdminBtn");
+        });
+
+        closeTmdbModal && closeTmdbModal.addEventListener("click", (e) => {
+          e.preventDefault();
+          closeTmdb();
+          if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+        });
+
+        tmdbModal && tmdbModal.addEventListener("click", (e) => {
+          if (e.target === tmdbModal) {
             closeTmdb();
+            if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+          }
+        });
+
+        tmdbSearchBtn && tmdbSearchBtn.addEventListener("click", doTmdbSearch);
+        tmdbSearchInput && tmdbSearchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") doTmdbSearch();
+          if (e.key === "Escape") closeTmdb();
         });
       })();
     </script>
