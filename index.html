@@ -4235,6 +4235,22 @@
         margin-top: 24px;
         flex-wrap: wrap;
       }
+      #tmdbPaginationTop {
+        margin-top: 0;
+        margin-bottom: 24px;
+      }
+      #tmdbPaginationTop:empty {
+        display: none;
+        margin-bottom: 0;
+      }
+      .tmdb-card {
+        cursor: default;
+      }
+      .tmdb-card-link {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
       .tmdb-page-btn {
         background: var(--paper);
         border: 2px solid var(--border);
@@ -7265,41 +7281,42 @@
         }
 
         async function loadWatchlistItems() {
-          const movies = [];
-          const tv = [];
-          let page = 1;
-          let totalPages = 1;
+          const collect = async (type, fallbackType) => {
+            const first = await tmdbFetchJSON(type, 1);
+            const items = (first.results || []).map((it) => normalizeItem(it, fallbackType));
+            const totalPages = first.total_pages || 1;
+            if (totalPages > 1) {
+              const rest = await Promise.all(
+                Array.from({ length: totalPages - 1 }, (_, i) => tmdbFetchJSON(type, i + 2)),
+              );
+              rest.forEach((data) => {
+                (data.results || []).forEach((it) => items.push(normalizeItem(it, fallbackType)));
+              });
+            }
+            return items;
+          };
 
-          do {
-            const data = await tmdbFetchJSON("watchlist_movies", page);
-            (data.results || []).forEach((it) => movies.push(normalizeItem(it, "movie")));
-            totalPages = data.total_pages || 1;
-            page++;
-          } while (page <= totalPages);
-
-          page = 1;
-          totalPages = 1;
-          do {
-            const data = await tmdbFetchJSON("watchlist_tv", page);
-            (data.results || []).forEach((it) => tv.push(normalizeItem(it, "tv")));
-            totalPages = data.total_pages || 1;
-            page++;
-          } while (page <= totalPages);
+          const [movies, tv] = await Promise.all([
+            collect("watchlist_movies", "movie"),
+            collect("watchlist_tv", "tv"),
+          ]);
 
           return movies.concat(tv);
         }
 
         async function loadWatchedItems() {
-          const all = [];
-          let page = 1;
-          let totalPages = 1;
+          const first = await tmdbFetchJSON("watched", 1);
+          const all = (first.results || []).map((it) => normalizeItem(it, it.media_type));
+          const totalPages = first.total_pages || 1;
 
-          do {
-            const data = await tmdbFetchJSON("watched", page);
-            (data.results || []).forEach((it) => all.push(normalizeItem(it, it.media_type)));
-            totalPages = data.total_pages || 1;
-            page++;
-          } while (page <= totalPages);
+          if (totalPages > 1) {
+            const rest = await Promise.all(
+              Array.from({ length: totalPages - 1 }, (_, i) => tmdbFetchJSON("watched", i + 2)),
+            );
+            rest.forEach((data) => {
+              (data.results || []).forEach((it) => all.push(normalizeItem(it, it.media_type)));
+            });
+          }
 
           return all;
         }
@@ -7362,6 +7379,7 @@
           const genreNames = (item.genre_ids || []).map((g) => genreMap[g]).filter(Boolean).slice(0, 3).join(" / ");
           const typeLabel = item.media_type === "movie" ? "电影" : "电视剧";
           const metaBits = [typeLabel, item.year, item.lang].filter(Boolean).join(" · ");
+          const detailUrl = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
           const posterHtml = item.poster_path
             ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
             : "暂无海报";
@@ -7377,11 +7395,15 @@
 
           return `
             <div class="tmdb-card" data-id="${item.id}" data-media="${item.media_type}">
-              <div class="tmdb-card-poster ${item.poster_path ? "" : "placeholder"}">${posterHtml}</div>
+              <a class="tmdb-card-link" href="${detailUrl}" target="_blank" rel="noopener noreferrer">
+                <div class="tmdb-card-poster ${item.poster_path ? "" : "placeholder"}">${posterHtml}</div>
+              </a>
               <div class="tmdb-card-body">
-                <div class="tmdb-card-title">${esc(item.title)}</div>
-                <div class="tmdb-card-meta">${esc(metaBits)}</div>
-                ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
+                <a class="tmdb-card-link" href="${detailUrl}" target="_blank" rel="noopener noreferrer">
+                  <div class="tmdb-card-title">${esc(item.title)}</div>
+                  <div class="tmdb-card-meta">${esc(metaBits)}</div>
+                  ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
+                </a>
                 ${adminActions}
               </div>
             </div>
@@ -7493,6 +7515,27 @@
           document.body.style.overflow = "";
         }
 
+        function syncTmdbAdminVisibility() {
+          if (!openTmdbAdminBtn) return;
+          const authed = typeof getPublishPassword === "function" && !!getPublishPassword();
+          openTmdbAdminBtn.style.display = authed ? "" : "none";
+        }
+
+        function patchTmdbAdminAuthHooks() {
+          ["setPublishPassword", "clearPublishPassword"].forEach((name) => {
+            if (typeof window[name] !== "function") return;
+            if (window[name].__tmdbPatched) return;
+            const original = window[name];
+            const wrapped = function (...args) {
+              const result = original.apply(this, args);
+              setTimeout(syncTmdbAdminVisibility, 0);
+              return result;
+            };
+            wrapped.__tmdbPatched = true;
+            window[name] = wrapped;
+          });
+        }
+
         async function doTmdbSearch() {
           const q = ((tmdbSearchInput && tmdbSearchInput.value) || "").trim();
           if (!q) {
@@ -7579,6 +7622,9 @@
             if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
           }
         });
+
+        patchTmdbAdminAuthHooks();
+        syncTmdbAdminVisibility();
 
         tmdbSearchBtn && tmdbSearchBtn.addEventListener("click", doTmdbSearch);
         tmdbSearchInput && tmdbSearchInput.addEventListener("keydown", (e) => {
