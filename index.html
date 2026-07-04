@@ -7214,11 +7214,6 @@
         let tmdbPage = 1;
         const TMDB_PAGE_SIZE = 10;
 
-        const tmdbCache = {
-          watchlist: null,
-          watched: null,
-        };
-
         function esc(v) {
           return String(v ?? "").replace(/[&<>"']/g, (c) => ({
             "&": "&amp;",
@@ -7487,12 +7482,7 @@
           tmdbPagination.innerHTML = "";
 
           try {
-            if (tmdbCache[mode]) {
-              tmdbRawItems = tmdbCache[mode];
-            } else {
-              tmdbRawItems = mode === "watchlist" ? await loadWatchlistItems() : await loadWatchedItems();
-              tmdbCache[mode] = tmdbRawItems;
-            }
+            tmdbRawItems = mode === "watchlist" ? await loadWatchlistItems() : await loadWatchedItems();
             renderTmdbGrid();
           } catch (err) {
             tmdbGrid.innerHTML = `<div class="tmdb-error">${esc(String(err.message || err))}</div>`;
@@ -7569,8 +7559,6 @@
 
           try {
             await tmdbAdd(kind === "watchlist" ? "add_watchlist" : "add_watched", id, media);
-            if (kind === "watchlist") tmdbCache.watchlist = null;
-            if (kind === "watched") tmdbCache.watched = null;
             btn.textContent = kind === "watchlist" ? "已加入待看" : "已加入看过";
             if (typeof showToast === "function") {
               showToast(kind === "watchlist" ? "已加入待看" : "已加入看过", "success");
