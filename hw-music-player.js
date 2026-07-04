@@ -1,7 +1,7 @@
 (function () {
-   const NETEASE_SONG_INFO_API = (id) => `https://api.injahow.cn/meting/?server=netease&type=song&id=${id}&format=json`;
-  const NETEASE_LRC_API = (id) => `https://api.injahow.cn/meting/?server=netease&type=lrc&id=${id}`;
-  const NETEASE_PLAYLIST_API = (id) => `https://api.injahow.cn/meting/?server=netease&type=playlist&id=${id}`;
+    const NETEASE_SONG_INFO_API = (id) => `https://meting.zhheo.com/?server=netease&type=song&id=${id}`;
+const NETEASE_LRC_API = (id) => `https://meting.zhheo.com/?server=netease&type=lrc&id=${id}`;
+const NETEASE_PLAYLIST_API = (id) => `https://meting.zhheo.com/?server=netease&type=playlist&id=${id}`;
   const LIKE_STORAGE_KEY = 'hwPlayerLikes';
 
   const ICONS = {
