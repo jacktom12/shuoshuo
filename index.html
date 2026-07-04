@@ -4576,53 +4576,34 @@
     <div class="toast-wrap" id="toastWrap"></div>
     <script>
       // 全局函数：点击“查看”后关闭搜索，定位到指定手账
-      function viewPost(id) {
-        // 1. 关闭搜索模态框
-        closeSearchModalFunc();
+       function viewPost(id) {
+    // 关闭搜索框
+    closeSearchModalFunc();
 
-        // 2. 确保该条数据在 allPosts 中（理论上一定有）
-        const post = allPosts.find((p) => p.id === id);
-        if (!post) {
-          showToast("未找到该手账", "error");
-          return;
-        }
+    const post = allPosts.find(p => p.id === id);
+    if (!post) {
+        showToast('未找到该手账', 'error');
+        return;
+    }
 
-        // 3. 检查该条是否已经渲染在 DOM 中
-        const existingEl = document.getElementById(`post-${id}`);
-        if (existingEl) {
-          // 已经在 DOM 中，直接滚动定位
-          focusPostById(id, "center");
-          return;
-        }
+    // 检查是否已经在 DOM 中
+    const existingEl = document.getElementById(`post-${id}`);
+    if (existingEl) {
+        // 直接使用已有的重试定位函数（内部会处理布局和高亮）
+        scrollToPostWithRetry(id, 'center', 10);
+        return;
+    }
 
-        // 4. 不在 DOM 中 => 加载全部数据并重新渲染所有卡片（保证该条出现）
-        // 注意：这样做会重置分页，但能确保所有条目都在 DOM 中
-        preserveViewportDuring(() => {
-          // 重置过滤（如果之前有搜索过滤，请恢复为所有数据）
-          filtered = sortPostsByDateDesc([...allPosts]);
-          page = 1;
-          render(true);
-        });
+    // 不在 DOM 中：重新加载全部数据并渲染
+    preserveViewportDuring(() => {
+        filtered = sortPostsByDateDesc([...allPosts]);
+        page = 1;
+        render(true);
+    });
 
-        // 5. 等待 Masonry 布局完成后滚动定位
-        // 用重试机制等待元素出现
-        let attempts = 0;
-        const maxAttempts = 20;
-        const interval = setInterval(() => {
-          attempts++;
-          const el = document.getElementById(`post-${id}`);
-          if (el) {
-            clearInterval(interval);
-            focusPostById(id, "center");
-            // 高亮闪烁
-            el.classList.add("post-flash-focus");
-            setTimeout(() => el.classList.remove("post-flash-focus"), 1800);
-          } else if (attempts >= maxAttempts) {
-            clearInterval(interval);
-            showToast("定位失败，请刷新重试", "error");
-          }
-        }, 200);
-      }
+    // 使用重试定位（此时新卡片会被渲染出来）
+    scrollToPostWithRetry(id, 'center', 20);
+}
 
       function jumpToPost(id) {
         // 关闭搜索模态框
@@ -6186,10 +6167,7 @@
           let actionsHtml = "";
           if (hasAuth) {
             actionsHtml = `<div class="post-actions">
-                <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
-                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                </button>
-                <button class="post-action-btn" onclick="viewPost('${post.id}')" title="查看">
+            <button class="post-action-btn" onclick="viewPost('${post.id}')" title="查看">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                         <path d="M0 0h24v24H0z" fill="none" />
                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -6198,6 +6176,10 @@
                         </g>
                     </svg>
                 </button>
+                <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
+                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                </button>
+                
                 <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
                     <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                 </button>
