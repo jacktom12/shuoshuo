@@ -3796,19 +3796,60 @@
           7px 8px 0 rgba(0, 0, 0, 0.4) !important;
       }
 
-      #postsContainer .post.post-flash-focus {
-        box-shadow:
+      /* 原有的保留，后面追加这些增强属性 */
+#postsContainer .post.post-flash-focus {
+  /* 原有的属性保留不变，新增下面这几行： */
+  box-shadow:
           0 0 0 4px rgba(255, 198, 84, 0.5),
           0 16px 28px rgba(54, 31, 16, 0.18),
           0 8px 0 rgba(35, 27, 22, 0.16) !important;
-      }
+  animation: flash-focus 2.4s ease forwards;
+  z-index: 10;
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
 
-      body.dark #postsContainer .post.post-flash-focus {
-        box-shadow:
-          0 0 0 4px rgba(255, 214, 128, 0.38),
+body.dark #postsContainer .post.post-flash-focus {
+  0 0 0 4px rgba(255, 214, 128, 0.38),
           0 18px 34px rgba(0, 0, 0, 0.44),
           0 8px 0 rgba(0, 0, 0, 0.3) !important;
-      }
+  /* 暗色模式也增加动画 */
+  animation: flash-focus-dark 2.4s ease forwards;
+  z-index: 10;
+  position: relative;
+}
+
+/* 新增闪烁动画（亮色模式） */
+@keyframes flash-focus {
+  0% {
+    box-shadow: 0 0 0 6px rgba(255, 198, 84, 0.8), 0 0 40px rgba(255, 198, 84, 0.5), 0 16px 28px rgba(54, 31, 16, 0.18), 0 8px 0 rgba(35, 27, 22, 0.16);
+  }
+  30% {
+    box-shadow: 0 0 0 8px rgba(255, 198, 84, 0.9), 0 0 60px rgba(255, 198, 84, 0.6), 0 16px 28px rgba(54, 31, 16, 0.18), 0 8px 0 rgba(35, 27, 22, 0.16);
+  }
+  60% {
+    box-shadow: 0 0 0 4px rgba(255, 198, 84, 0.6), 0 0 30px rgba(255, 198, 84, 0.4), 0 16px 28px rgba(54, 31, 16, 0.18), 0 8px 0 rgba(35, 27, 22, 0.16);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(255, 198, 84, 0.3), 0 0 20px rgba(255, 198, 84, 0.2), 0 16px 28px rgba(54, 31, 16, 0.18), 0 8px 0 rgba(35, 27, 22, 0.16);
+  }
+}
+
+/* 暗色模式闪烁动画 */
+@keyframes flash-focus-dark {
+  0% {
+    box-shadow: 0 0 0 6px rgba(255, 214, 128, 0.7), 0 0 40px rgba(255, 214, 128, 0.4), 0 18px 34px rgba(0, 0, 0, 0.44), 0 8px 0 rgba(0, 0, 0, 0.3);
+  }
+  30% {
+    box-shadow: 0 0 0 8px rgba(255, 214, 128, 0.85), 0 0 60px rgba(255, 214, 128, 0.55), 0 18px 34px rgba(0, 0, 0, 0.44), 0 8px 0 rgba(0, 0, 0, 0.3);
+  }
+  60% {
+    box-shadow: 0 0 0 4px rgba(255, 214, 128, 0.5), 0 0 30px rgba(255, 214, 128, 0.3), 0 18px 34px rgba(0, 0, 0, 0.44), 0 8px 0 rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(255, 214, 128, 0.25), 0 0 20px rgba(255, 214, 128, 0.15), 0 18px 34px rgba(0, 0, 0, 0.44), 0 8px 0 rgba(0, 0, 0, 0.3);
+  }
+}
 
       @media (hover: hover) and (pointer: fine) {
         body:not(.dark) #postsContainer .post,
@@ -4672,7 +4713,7 @@
     <div class="toast-wrap" id="toastWrap"></div>
     <script>
       // 全局函数：点击“查看”后关闭搜索，定位到指定手账
-       function viewPost(id) {
+        function viewPost(id) {
   // 1. 关闭搜索框
   closeSearchModalFunc();
 
@@ -4682,14 +4723,14 @@
     return;
   }
 
-  // 2. 如果卡片已经在 DOM 中，直接定位（快速路径）
+  // 2. 快速路径：卡片已在 DOM 中
   const existingEl = document.getElementById(`post-${id}`);
   if (existingEl) {
     scrollToPostWithRetry(id, "center", 10);
     return;
   }
 
-  // 3. 计算该卡片在排序后列表中的索引
+  // 3. 计算目标卡片在排序列表中的索引
   const sorted = sortPostsByDateDesc([...allPosts]);
   const index = sorted.findIndex((p) => p.id === id);
   if (index === -1) {
@@ -4700,45 +4741,55 @@
   // 4. 计算目标页码（从 1 开始）
   const targetPage = Math.floor(index / perPage) + 1;
 
-  // 5. 重置数据并一次性渲染到目标页（目标卡片会包含在 DOM 中）
+  // 5. 重置数据并一次性渲染到目标页
   filtered = sorted;
   page = targetPage;
   render(true);
 
-  // 6. 启动重试定位（因为卡片现在已经在 DOM 里了）
+  // 6. 启动重试定位（新增持久化等待 + getBoundingClientRect 精确定位）
   let attempts = 0;
-  const maxAttempts = 30; // 30 次 × 150ms = 4.5秒，足够瀑布流稳定
+  const maxAttempts = 45;      // 尝试 45 次
+  const interval = 180;        // 每次间隔 180ms，总时长约 8 秒
 
   const tryLocate = () => {
     attempts++;
-    startMasonrySettle(300);
+    // 强制同步重排，让浏览器计算最新布局
+    void postsContainer?.offsetHeight;
 
     requestAnimationFrame(() => {
       const el = document.getElementById(`post-${id}`);
       if (el) {
         const sc = getScrollContainer();
         if (sc) {
+          // 用 getBoundingClientRect 计算精确滚动位置
+          const containerRect = sc.getBoundingClientRect();
+          const elRect = el.getBoundingClientRect();
           const targetOffset =
-            el.offsetTop -
-            Math.max(24, (sc.clientHeight - el.offsetHeight) / 2);
+            sc.scrollTop + elRect.top - containerRect.top -
+            (sc.clientHeight - elRect.height) / 2;
           sc.scrollTo({ top: Math.max(0, targetOffset), behavior: "smooth" });
-          el.classList.add("post-flash-focus");
-          setTimeout(() => el.classList.remove("post-flash-focus"), 1800);
+
+          // 等待滚动动画完成（约 600ms）后再添加高亮
+          setTimeout(() => {
+            el.classList.add("post-flash-focus");
+            // 高亮持续 2.6 秒，略长于动画时长
+            setTimeout(() => el.classList.remove("post-flash-focus"), 2800);
+          }, 600);
         }
         return; // 定位成功
       }
 
-      // 未找到，继续重试
+      // 未找到卡片，继续重试
       if (attempts < maxAttempts) {
-        setTimeout(() => requestAnimationFrame(tryLocate), 150);
+        setTimeout(() => requestAnimationFrame(tryLocate), interval);
       } else {
         showToast("定位失败，请刷新后重试", "error");
       }
     });
   };
 
-  // 给 render 200ms 初始渲染时间，再开始定位
-  setTimeout(() => requestAnimationFrame(tryLocate), 200);
+  // 初始等待 500ms，给 render 和瀑布流布局充足时间
+  setTimeout(() => requestAnimationFrame(tryLocate), 500);
 }
 
       function jumpToPost(id) {
