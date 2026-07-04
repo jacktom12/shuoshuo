@@ -4634,12 +4634,18 @@ function stripPinKeyword(text) {
         filtered = sortPostsByDateDesc(filtered.filter((p) => p.id !== id));
       }
 
-      function getOrderedGroups(list) {
-        const sorted = sortPostsByDateDesc(list);
-        const pinned = sorted.filter(isPinned);
-        const rest = sorted.filter((p) => !isPinned(p));
-        return { pinned, rest, sorted };
-      }
+       function isMusiclist(p) {
+  const text = Array.isArray(p.content) ? p.content.join('') : p.content;
+  return !!text && text.includes('musiclist');
+}
+
+function getOrderedGroups(list) {
+  const sorted = sortPostsByDateDesc(list);
+  const pinned = sorted.filter(isPinned);
+  const musiclists = sorted.filter(p => !isPinned(p) && isMusiclist(p));
+  const rest = sorted.filter(p => !isPinned(p) && !isMusiclist(p));
+  return { pinned, rest: musiclists.concat(rest), sorted };
+}
 
       function ensurePinnedHeroContainer() {
         let el = document.getElementById("pinnedHero");
