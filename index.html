@@ -4575,6 +4575,55 @@
     </button>
     <div class="toast-wrap" id="toastWrap"></div>
     <script>
+      // 全局函数：点击“查看”后关闭搜索，定位到指定手账
+      function viewPost(id) {
+        // 1. 关闭搜索模态框
+        closeSearchModalFunc();
+
+        // 2. 确保该条数据在 allPosts 中（理论上一定有）
+        const post = allPosts.find((p) => p.id === id);
+        if (!post) {
+          showToast("未找到该手账", "error");
+          return;
+        }
+
+        // 3. 检查该条是否已经渲染在 DOM 中
+        const existingEl = document.getElementById(`post-${id}`);
+        if (existingEl) {
+          // 已经在 DOM 中，直接滚动定位
+          focusPostById(id, "center");
+          return;
+        }
+
+        // 4. 不在 DOM 中 => 加载全部数据并重新渲染所有卡片（保证该条出现）
+        // 注意：这样做会重置分页，但能确保所有条目都在 DOM 中
+        preserveViewportDuring(() => {
+          // 重置过滤（如果之前有搜索过滤，请恢复为所有数据）
+          filtered = sortPostsByDateDesc([...allPosts]);
+          page = 1;
+          render(true);
+        });
+
+        // 5. 等待 Masonry 布局完成后滚动定位
+        // 用重试机制等待元素出现
+        let attempts = 0;
+        const maxAttempts = 20;
+        const interval = setInterval(() => {
+          attempts++;
+          const el = document.getElementById(`post-${id}`);
+          if (el) {
+            clearInterval(interval);
+            focusPostById(id, "center");
+            // 高亮闪烁
+            el.classList.add("post-flash-focus");
+            setTimeout(() => el.classList.remove("post-flash-focus"), 1800);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            showToast("定位失败，请刷新重试", "error");
+          }
+        }, 200);
+      }
+
       function jumpToPost(id) {
         // 关闭搜索模态框
         closeSearchModalFunc();
@@ -6096,14 +6145,13 @@
         pageR.forEach((post) => {
           const div = document.createElement("article");
           div.className = "post";
-
           const hasImages =
             Array.isArray(post.images) && post.images.length > 0;
           const hasSingleImage =
             Array.isArray(post.images) && post.images.length === 1;
 
-          // 1️⃣ 先处理短代码，再解析 Markdown
-          const raw = Array.isArray(post.content)
+          // 处理内容：先解析短代码，再解析 Markdown
+          let raw = Array.isArray(post.content)
             ? post.content.join("\n\n")
             : post.content || "";
           let processed = raw;
@@ -6133,57 +6181,66 @@
             }
           }
 
+          // 操作按钮：编辑 + 查看
           const hasAuth = !!getPublishPassword();
           let actionsHtml = "";
           if (hasAuth) {
-            // 2️⃣ 新增"查看"按钮（在编辑左侧）
             actionsHtml = `<div class="post-actions">
-        <button class="post-action-btn view-btn" onclick="jumpToPost('${post.id}')" title="查看">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
-            </g>
-          </svg>
-        </button>
-        <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
-          <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-        </button>
-        <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
-          <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-        </button>
-      </div>`;
+                <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
+                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                </button>
+                <button class="post-action-btn" onclick="viewPost('${post.id}')" title="查看">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+                        </g>
+                    </svg>
+                </button>
+                <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
+                    <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+            </div>`;
           }
 
           const postRightClass = hasImages
             ? `post-right${hasSingleImage ? " single-media" : ""}`
             : "post-content-only";
 
-          div.innerHTML = `<div class="post-header"><span class="post-time">${randomColorBlock()} ${showTime}</span>${actionsHtml}</div>
-      <div class="${postRightClass}">${imagesHtml}<div class="post-content">${parsed}</div></div>`;
-
+          div.innerHTML = `
+            <div class="post-header">
+                <span class="post-time">${randomColorBlock()} ${showTime}</span>
+                ${actionsHtml}
+            </div>
+            <div class="${postRightClass}">
+                ${imagesHtml}
+                <div class="post-content">${parsed}</div>
+            </div>
+        `;
           searchResultsDiv.appendChild(div);
         });
 
-        // 绑定图片相关事件
+        // 绑定图片点击灯箱
         bindImagesInContainer(searchResultsDiv);
+
+        // 绑定剪贴簿预览点击
         if (window.__scrapbookPreview) {
           window.__scrapbookPreview.bindScrapbookPreviewClicks(
             searchResultsDiv,
           );
         }
 
-        // 3️⃣ 挂载播放器（解析短代码生成的实际播放器）
+        // **挂载播放器（关键）**
         if (window.HWPlayer && typeof window.HWPlayer.mountAll === "function") {
           window.HWPlayer.mountAll(searchResultsDiv);
         }
 
-        // 移除旧的加载按钮
+        // 移除旧的“加载更多”按钮
         const oldLoader = document.getElementById("searchLoader");
         if (oldLoader) oldLoader.remove();
 
-        // 如果还有更多结果，添加加载更多按钮
+        // 如果有更多结果，添加“加载更多”按钮
         if (end < currentSearchResults.length) {
           const ldr = document.createElement("button");
           ldr.type = "button";
