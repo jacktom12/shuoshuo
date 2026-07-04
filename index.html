@@ -111,8 +111,8 @@ body.dark {
         height: 100vh;
         height: 100dvh;
         overflow-y: auto;
-        background: transparent;  
-         overflow-x: hidden;  
+        background: transparent; /* 改为透明，让 body 的壁纸透出来 */
+         overflow-x: hidden; /* 👉 添加这一行，禁止水平方向滚动 */
         position: relative;
          display: flex;
         flex-direction: column;
@@ -120,7 +120,7 @@ body.dark {
         padding-bottom: 0; /* 去掉之前的 padding */
       }
 
-       
+      /* 顶部导航条改造 */
       .topbar {
        
         z-index: 20;
@@ -3997,6 +3997,46 @@ main::-webkit-scrollbar {
 }
 
 </style>
+<style id="tmdb-modal-style">
+.tmdb-modal{position:fixed;inset:0;background:rgba(243,233,221,0.97);backdrop-filter:blur(18px);z-index:200000;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 20px 20px;overflow-y:auto}
+body.dark .tmdb-modal{background:rgba(26,25,23,0.97)}
+.tmdb-modal.open{display:flex}
+.tmdb-modal-inner{width:100%;max-width:900px;margin:0 auto;position:relative}
+.tmdb-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;background:var(--paper);border:2px solid var(--border);padding:12px 18px;border-radius:var(--sketch-radius-1);box-shadow:5px 5px 0 var(--border)}
+.tmdb-modal-title{font-size:1.2rem;font-weight:900;color:var(--accent-dark)}
+.tmdb-genre-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tmdb-genre-chip{background:var(--paper);border:2px solid var(--border);color:var(--text);padding:5px 14px;font-size:.82rem;font-weight:700;border-radius:999px;cursor:pointer;transition:all .15s ease;box-shadow:2px 2px 0 var(--border)}
+.tmdb-genre-chip:hover{transform:translateY(-1px);box-shadow:3px 3px 0 var(--border)}
+.tmdb-genre-chip.active{background:var(--accent);color:var(--ink);border-color:var(--border)}
+.tmdb-type-tabs{display:flex;gap:8px;margin-bottom:18px;border-bottom:1.5px dashed var(--border);padding-bottom:14px}
+.tmdb-tab{background:var(--paper);border:2px solid var(--border);color:var(--text);padding:6px 16px;font-size:.88rem;font-weight:900;border-radius:var(--sketch-radius-btn);cursor:pointer;box-shadow:2px 2px 0 var(--border);transition:all .15s ease}
+.tmdb-tab.active{background:var(--accent-dark);color:#fff}
+.tmdb-tab:hover{transform:translateY(-1px)}
+.tmdb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;min-height:200px}
+.tmdb-card{background:var(--paper);border:2px solid var(--border);border-radius:var(--sketch-radius-1);overflow:hidden;box-shadow:3px 3px 0 var(--border);cursor:pointer;transition:all .15s ease;display:flex;flex-direction:column;text-decoration:none;color:var(--text)}
+.tmdb-card:hover{transform:translateY(-3px);box-shadow:5px 5px 0 var(--border)}
+.tmdb-card-poster{width:100%;aspect-ratio:2/3;background:var(--bg);overflow:hidden}
+.tmdb-card-poster img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(var(--img-brightness))}
+.tmdb-card-poster.placeholder{display:flex;align-items:center;justify-content:center;color:var(--secondary-text);font-size:.8rem;font-weight:700}
+.tmdb-card-body{padding:8px 10px 10px}
+.tmdb-card-title{font-size:.88rem;font-weight:900;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tmdb-card-meta{font-size:.72rem;color:var(--secondary-text);margin-bottom:4px}
+.tmdb-card-genres{font-size:.7rem;color:var(--accent-dark);line-height:1.4}
+.tmdb-loading,.tmdb-empty,.tmdb-error{grid-column:1/-1;text-align:center;padding:40px 10px;color:var(--secondary-text);font-weight:900}
+.tmdb-pagination{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;flex-wrap:wrap}
+.tmdb-page-btn{background:var(--paper);border:2px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:var(--sketch-radius-btn);cursor:pointer;font-weight:900;box-shadow:2px 2px 0 var(--border);display:flex;align-items:center;justify-content:center;transition:all .15s ease}
+.tmdb-page-btn:hover{transform:translateY(-1px)}
+.tmdb-page-btn.active{background:var(--accent-dark);color:#fff}
+.tmdb-page-btn:disabled{opacity:.4;cursor:not-allowed}
+.tmdb-page-ellipsis{color:var(--secondary-text);font-weight:900;padding:0 4px}
+@media (max-width:600px){
+.tmdb-modal{padding:calc(56px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom))}
+.tmdb-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.tmdb-modal-title{font-size:1.05rem}
+}
+</style>
+<link rel="stylesheet" href="hw-music-player.css">
+<script src="hw-music-player.js"></script>
 </head>
 <body>
 <!-- 手绘漂浮装饰（来自登录页） -->
@@ -4040,6 +4080,22 @@ main::-webkit-scrollbar {
 <nav aria-label="快捷菜单" class="menu">
 <button class="menu-item" id="homeNavBtn" title="主页" type="button"><svg aria-hidden="true" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3 11.99v2.51c0 3.3 0 4.95 1.025 5.975S6.7 21.5 10 21.5h4c3.3 0 4.95 0 5.975-1.025S21 17.8 21 14.5v-2.51c0-1.682 0-2.522-.356-3.25s-1.02-1.244-2.346-2.276l-2-1.555C14.233 3.303 13.2 2.5 12 2.5s-2.233.803-4.298 2.409l-2 1.555C4.375 7.496 3.712 8.012 3.356 8.74S3 10.308 3 11.99"></path><path d="M15 17c-.8.622-1.85 1-3 1s-2.2-.378-3-1"></path></g></svg></button>
 <button class="menu-item" id="openSearchBtn" title="搜索" type="button"><svg aria-hidden="true" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M18.651 8.86a.52.52 0 0 1 .724-.143a3.32 3.32 0 0 1 1.36 1.903a.522.522 0 1 1-1.008.27a2.28 2.28 0 0 0-.933-1.306a.52.52 0 0 1-.143-.724" fill="currentColor"></path><path d="M21.395 7.605a5.481 5.481 0 0 0-7.909 7.59l-1.873 2.341a.783.783 0 1 0 1.222.979l1.865-2.33a5.484 5.484 0 0 0 6.695-8.58M14.75 8.713a3.915 3.915 0 1 1 5.537 5.537a3.915 3.915 0 0 1-5.537-5.537M1 11.761a3.915 3.915 0 0 1 3.915-3.915h6.265a.783.783 0 1 1 0 1.566H4.915a2.35 2.35 0 0 0 0 4.698h4.177a.783.783 0 0 1 0 1.566H4.915A3.915 3.915 0 0 1 1 11.761" fill="currentColor"></path><path d="M4.393 11.761c0-.288.234-.522.522-.522h4.699a.522.522 0 1 1 0 1.044H4.915a.52.52 0 0 1-.522-.522" fill="currentColor"></path></svg></button>
+
+<button class="menu-item" id="openWatchlistBtn" title="想看" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+    <path d="M0 0h24v24H0z" fill="none" />
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+      <path d="M13 5h8m-8 7h8m-8 7h8M3 17l2 2l4-4" />
+      <rect width="6" height="6" x="3" y="4" rx="1" />
+    </g>
+  </svg>
+</button>
+<button class="menu-item" id="openWatchedBtn" title="看过" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256">
+    <path d="M0 0h256v256H0z" fill="none" />
+    <path fill="currentColor" d="M216 106H86.68l122.85-32.43a6 6 0 0 0 4.26-7.38l-8.16-30a13.94 13.94 0 0 0-17-9.72L36.32 66.67a13.77 13.77 0 0 0-8.48 6.47a13.57 13.57 0 0 0-1.36 10.42L34 111.34V200a14 14 0 0 0 14 14h160a14 14 0 0 0 14-14v-88a6 6 0 0 0-6-6m-90.25-50.52l33 19.07l-42.43 11.2l-33-19.07Zm66-17.41a1.92 1.92 0 0 1 2.34 1.26l6.57 24.18l-25.4 6.69l-33-19.07ZM38.23 79.14a1.85 1.85 0 0 1 1.15-.87L66.86 71l33 19.08l-55.2 14.6l-6.6-24.27a1.63 1.63 0 0 1 .17-1.27M210 200a2 2 0 0 1-2 2H48a2 2 0 0 1-2-2v-82h164Z" />
+  </svg>
+</button>
 <button class="menu-item" id="themeToggleBtn" title="切换主题" type="button">
 <svg class="size-6" fill="none" id="themeIcon" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
 
@@ -4153,7 +4209,7 @@ main::-webkit-scrollbar {
         {
           id: "mock-1",
           date: "2026-06-28 08:30",
-          content: "#置顶\n## 在展光里，遇见更好的自己\n清晨的阳光透过窗帘洒进房间，\n一杯热咖啡，一本喜欢的书，\n把今天写成轻轻发亮的一页。",
+          content: "#置顶\n## 在展光里，遇见更好的自己。",
           images: []
         },
         {
@@ -4243,6 +4299,7 @@ main::-webkit-scrollbar {
         }));
       }
 
+      window.HWonMasonryNeeded = (...args) => startMasonrySettle(...args);
       const loaderDom = document.getElementById("loader");
       const postsContainer = document.getElementById("postsContainer");
       const lb = document.getElementById("p5Lightbox");
@@ -4614,6 +4671,7 @@ function stripPinKeyword(text) {
       function buildPinnedHeroHTML(p) {
         let text = Array.isArray(p.content) ? p.content.join('') : p.content;
         text = stripPinKeyword(text);
+        text = window.HWPlayer ? window.HWPlayer.parseShortcodes(text) : text;
         const pinnedTheme = getRandomPinnedTheme();
         const pinStyle = ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-gradient-dark:${pinnedTheme.gradientDark};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`;
         const showTime = formatRelativeTime(p.date);
@@ -4644,6 +4702,7 @@ function stripPinKeyword(text) {
            let text = Array.isArray(p.content) ? p.content.join('') : p.content;
   const isPinned = text.includes(PIN_KEYWORD);
   if (isPinned) text = stripPinKeyword(text);
+  text = window.HWPlayer ? window.HWPlayer.parseShortcodes(text) : text;
   const parsed = (typeof marked !== 'undefined') ? marked.parse(text) : text;   // 
         const pinnedTheme = isPinned ? getRandomPinnedTheme() : null;
         const pinStyle = pinnedTheme
@@ -4768,6 +4827,7 @@ function stripPinKeyword(text) {
         if (window.__scrapbookPreview) {
           window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
         }
+        if (window.HWPlayer) window.HWPlayer.mountAll(postsContainer);
         requestAnimationFrame(() => {
           startMasonrySettle();
           const imgNodes = Array.from(postsContainer.querySelectorAll("img"));
@@ -5651,6 +5711,7 @@ lbImg.onerror = () => resetLightboxBackdrop();
             : postsContainer.appendChild(t.firstElementChild);
           bindImagesInContainer(postsContainer);
         if (window.__scrapbookPreview) window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
+        if (window.HWPlayer) window.HWPlayer.mountAll(postsContainer);
         }
       }
       function enhanceHorizontalScroller(el) {
@@ -6301,6 +6362,225 @@ lbImg.onerror = () => resetLightboxBackdrop();
 
     return { buildScrapbookPreview, bindScrapbookPreviewClicks };
   })();
+</script>
+<script>
+(function(){
+  const TMDB_WORKER = 'https://tmdb.199105.xyz';
+  const TMDB_IMG = 'https://image.tmdb.org/t/p/w342';
+  const MOVIE_GENRES = {28:'动作',12:'冒险',16:'动画',35:'喜剧',80:'犯罪',99:'纪录',18:'剧情',10751:'家庭',14:'奇幻',36:'历史',27:'恐怖',10402:'音乐',9648:'悬疑',10749:'爱情',878:'科幻',10770:'电视电影',53:'惊悚',10752:'战争',37:'西部'};
+  const TV_GENRES = {10759:'动作冒险',16:'动画',35:'喜剧',80:'犯罪',99:'纪录',18:'剧情',10751:'家庭',10762:'儿童',9648:'悬疑',10763:'新闻',10764:'真人秀',10765:'Sci-Fi & Fantasy',10766:'肥皂剧',10767:'脱口秀',10768:'War & Politics',37:'西部'};
+  const ALL_GENRES = Object.assign({}, MOVIE_GENRES, TV_GENRES);
+
+  const tmdbModal = document.getElementById('tmdbModal');
+  const tmdbModalTitle = document.getElementById('tmdbModalTitle');
+  const tmdbGenreRow = document.getElementById('tmdbGenreRow');
+  const tmdbTypeTabs = document.getElementById('tmdbTypeTabs');
+  const tmdbGrid = document.getElementById('tmdbGrid');
+  const tmdbPagination = document.getElementById('tmdbPagination');
+  const closeTmdbModal = document.getElementById('closeTmdbModal');
+  const openWatchlistBtn = document.getElementById('openWatchlistBtn');
+  const openWatchedBtn = document.getElementById('openWatchedBtn');
+
+  let tmdbCurrentType = null;
+  let tmdbRawItems = [];
+  let tmdbMediaFilter = 'all';
+  let tmdbSelectedGenres = new Set();
+  let tmdbPage = 1;
+  const TMDB_PAGE_SIZE = 10;
+  const tmdbCache = { watchlist: null, watched: null };
+
+  function esc(v){ return typeof escapeHTML === 'function' ? escapeHTML(v) : String(v || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function tmdbFetchJSON(type, page){
+    const res = await fetch(TMDB_WORKER + '/?type=' + encodeURIComponent(type) + '&page=' + (page||1));
+    if(!res.ok) throw new Error('TMDB请求失败 ' + res.status);
+    return res.json();
+  }
+
+  function normalizeItem(it, mediaType){
+    const title = mediaType === 'movie' ? (it.title || it.original_title || '未知') : (it.name || it.original_name || '未知');
+    const dateStr = mediaType === 'movie' ? it.release_date : it.first_air_date;
+    return {
+      id: it.id,
+      media_type: mediaType,
+      title,
+      poster_path: it.poster_path || null,
+      year: dateStr ? String(dateStr).slice(0,4) : '',
+      lang: (it.original_language || '').toUpperCase(),
+      genre_ids: Array.isArray(it.genre_ids) ? it.genre_ids : []
+    };
+  }
+
+  async function loadWatchlistItems(){
+    const movies = [], tv = [];
+    let page = 1, totalPages = 1;
+    do {
+      const data = await tmdbFetchJSON('watchlist_movies', page);
+      (data.results || []).forEach(it => movies.push(normalizeItem(it, 'movie')));
+      totalPages = data.total_pages || 1;
+      page++;
+    } while (page <= totalPages && page <= 20);
+
+    page = 1; totalPages = 1;
+    do {
+      const data = await tmdbFetchJSON('watchlist_tv', page);
+      (data.results || []).forEach(it => tv.push(normalizeItem(it, 'tv')));
+      totalPages = data.total_pages || 1;
+      page++;
+    } while (page <= totalPages && page <= 20);
+
+    return movies.concat(tv);
+  }
+
+  async function loadWatchedItems(){
+    const data = await tmdbFetchJSON('watched', 1);
+    const items = data.items || [];
+    return items.map(it => normalizeItem(it, it.media_type || (it.title ? 'movie' : 'tv')));
+  }
+
+  function renderGenreChips(){
+    const chips = Object.entries(ALL_GENRES).map(([id, name]) => {
+      const active = tmdbSelectedGenres.has(Number(id));
+      return `<button class="tmdb-genre-chip${active ? ' active' : ''}" data-genre="${id}">${esc(name)}</button>`;
+    }).join('');
+    tmdbGenreRow.innerHTML = `<button class="tmdb-genre-chip${tmdbSelectedGenres.size === 0 ? ' active' : ''}" data-genre="__all__">全部</button>` + chips;
+  }
+
+  function getFilteredItems(){
+    return tmdbRawItems.filter(it => {
+      if (tmdbMediaFilter !== 'all' && it.media_type !== tmdbMediaFilter) return false;
+      if (tmdbSelectedGenres.size === 0) return true;
+      return [...tmdbSelectedGenres].every(gid => it.genre_ids.includes(gid));
+    });
+  }
+
+  function buildCardHTML(item){
+    const posterHtml = item.poster_path
+      ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
+      : `<div class="tmdb-card-poster placeholder">暂无海报</div>`;
+    const genreMap = item.media_type === 'movie' ? MOVIE_GENRES : TV_GENRES;
+    const genreNames = item.genre_ids.map(g => genreMap[g]).filter(Boolean).slice(0, 3).join('、');
+    const typeLabel = item.media_type === 'movie' ? '电影' : '剧集';
+    const url = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
+    return `<a class="tmdb-card" href="${url}" target="_blank" rel="noopener">
+      <div class="tmdb-card-poster">${item.poster_path ? posterHtml : posterHtml}</div>
+      <div class="tmdb-card-body">
+        <div class="tmdb-card-title">${esc(item.title)}</div>
+        <div class="tmdb-card-meta">${typeLabel} · ${esc(item.year || '未知')} · ${esc(item.lang || '')}</div>
+        ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ''}
+      </div>
+    </a>`;
+  }
+
+  function renderPagination(totalItems){
+    const totalPages = Math.max(1, Math.ceil(totalItems / TMDB_PAGE_SIZE));
+    if (tmdbPage > totalPages) tmdbPage = totalPages;
+    if (totalPages <= 1) { tmdbPagination.innerHTML = ''; return; }
+
+    let html = `<button class="tmdb-page-btn" id="tmdbPagePrev" ${tmdbPage === 1 ? 'disabled' : ''}>&lt;</button>`;
+    const pages = new Set([1, totalPages, tmdbPage, tmdbPage - 1, tmdbPage + 1]);
+    let lastRendered = 0;
+    [...pages].filter(p => p >= 1 && p <= totalPages).sort((a,b) => a - b).forEach(p => {
+      if (lastRendered && p - lastRendered > 1) html += `<span class="tmdb-page-ellipsis">…</span>`;
+      html += `<button class="tmdb-page-btn${p === tmdbPage ? ' active' : ''}" data-page="${p}">${p}</button>`;
+      lastRendered = p;
+    });
+    html += `<button class="tmdb-page-btn" id="tmdbPageNext" ${tmdbPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
+    tmdbPagination.innerHTML = html;
+
+    const prevBtn = document.getElementById('tmdbPagePrev');
+    const nextBtn = document.getElementById('tmdbPageNext');
+    if (prevBtn) prevBtn.onclick = () => { tmdbPage--; renderTmdbGrid(); };
+    if (nextBtn) nextBtn.onclick = () => { tmdbPage++; renderTmdbGrid(); };
+    tmdbPagination.querySelectorAll('[data-page]').forEach(btn => {
+      btn.onclick = () => { tmdbPage = Number(btn.dataset.page); renderTmdbGrid(); };
+    });
+  }
+
+  function renderTmdbGrid(){
+    const filtered = getFilteredItems();
+    if (!filtered.length){
+      tmdbGrid.innerHTML = '<div class="tmdb-empty">没有找到符合条件的影视剧</div>';
+      tmdbPagination.innerHTML = '';
+      return;
+    }
+    const start = (tmdbPage - 1) * TMDB_PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + TMDB_PAGE_SIZE);
+    tmdbGrid.innerHTML = pageItems.map(buildCardHTML).join('');
+    renderPagination(filtered.length);
+  }
+
+  function bindTypeTabs(){
+    tmdbTypeTabs.querySelectorAll('.tmdb-tab').forEach(btn => {
+      btn.onclick = () => {
+        tmdbTypeTabs.querySelectorAll('.tmdb-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        tmdbMediaFilter = btn.dataset.media;
+        tmdbPage = 1;
+        renderTmdbGrid();
+      };
+    });
+  }
+
+  function bindGenreChips(){
+    tmdbGenreRow.querySelectorAll('.tmdb-genre-chip').forEach(chip => {
+      chip.onclick = () => {
+        const gid = chip.dataset.genre;
+        if (gid === '__all__'){
+          tmdbSelectedGenres.clear();
+        } else {
+          const num = Number(gid);
+          if (tmdbSelectedGenres.has(num)) tmdbSelectedGenres.delete(num);
+          else tmdbSelectedGenres.add(num);
+        }
+        tmdbPage = 1;
+        renderGenreChips();
+        bindGenreChips();
+        renderTmdbGrid();
+      };
+    });
+  }
+
+  async function openTmdbModal(type){
+    tmdbCurrentType = type;
+    tmdbMediaFilter = 'all';
+    tmdbSelectedGenres = new Set();
+    tmdbPage = 1;
+    tmdbModalTitle.textContent = type === 'watchlist' ? '想看' : '看过';
+    tmdbTypeTabs.querySelectorAll('.tmdb-tab').forEach(b => b.classList.toggle('active', b.dataset.media === 'all'));
+    tmdbGrid.innerHTML = '<div class="tmdb-loading">加载中…</div>';
+    tmdbPagination.innerHTML = '';
+    renderGenreChips();
+    bindGenreChips();
+    bindTypeTabs();
+    tmdbModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    try {
+      if (tmdbCache[type]) {
+        tmdbRawItems = tmdbCache[type];
+      } else {
+        tmdbRawItems = type === 'watchlist' ? await loadWatchlistItems() : await loadWatchedItems();
+        tmdbCache[type] = tmdbRawItems;
+      }
+      renderTmdbGrid();
+    } catch (err) {
+      tmdbGrid.innerHTML = `<div class="tmdb-error">加载失败：${esc(String(err.message || err))}</div>`;
+      if (typeof showToast === 'function') showToast('加载失败', 'error');
+    }
+  }
+
+  function closeTmdb(){
+    tmdbModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (openWatchlistBtn) openWatchlistBtn.addEventListener('click', () => openTmdbModal('watchlist'));
+  if (openWatchedBtn) openWatchedBtn.addEventListener('click', () => openTmdbModal('watched'));
+  if (closeTmdbModal) closeTmdbModal.addEventListener('click', closeTmdb);
+  tmdbModal.addEventListener('click', (e) => { if (e.target === tmdbModal) closeTmdb(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tmdbModal.classList.contains('open')) closeTmdb(); });
+})();
 </script>
 </body>
 </html>
