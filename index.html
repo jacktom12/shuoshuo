@@ -4103,6 +4103,26 @@ body.dark #postsContainer .post.post-flash-focus {
 }
     </style>
     <style id="tmdb-modal-style">
+    
+    .tmdb-douban-link {
+  text-decoration: none;
+  background: #07a85d !important; /* 豆瓣绿 */
+  color: #fff !important;
+  border-color: #07a85d !important;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: var(--sketch-radius-btn);
+  transition: all 0.15s ease;
+}
+.tmdb-douban-link:hover {
+  background: #05964e !important;
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.12);
+}
+body.dark .tmdb-douban-link {
+  background: #0b8f4f !important;
+  color: #fff !important;
+}
       .tmdb-modal {
         position: fixed;
         inset: 0;
@@ -7469,41 +7489,49 @@ body.dark #postsContainer .post.post-flash-focus {
           });
         }
 
-        function buildCardHTML(item) {
-          const genreMap = item.media_type === "movie" ? MOVIE_GENRES : TV_GENRES;
-          const genreNames = (item.genre_ids || []).map((g) => genreMap[g]).filter(Boolean).slice(0, 3).join(" / ");
-          const typeLabel = item.media_type === "movie" ? "电影" : "电视剧";
-          const metaBits = [typeLabel, item.year, item.lang].filter(Boolean).join(" · ");
-          const detailUrl = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
-          const posterHtml = item.poster_path
-            ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
-            : "暂无海报";
+         function buildCardHTML(item) {
+  const genreMap = item.media_type === "movie" ? MOVIE_GENRES : TV_GENRES;
+  const genreNames = (item.genre_ids || []).map((g) => genreMap[g]).filter(Boolean).slice(0, 3).join(" / ");
+  const typeLabel = item.media_type === "movie" ? "电影" : "电视剧";
+  const metaBits = [typeLabel, item.year, item.lang].filter(Boolean).join(" · ");
+  const tmdbUrl = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
+  // 豆瓣搜索链接：用影片标题搜索
+  const doubanUrl = `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(item.title)}`;
+  const posterHtml = item.poster_path
+    ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
+    : "暂无海报";
 
-          const adminActions = tmdbMode === "search"
-            ? `
-              <div class="tmdb-admin-actions">
-                <button class="tmdb-admin-btn" data-kind="watchlist" data-id="${item.id}" data-media="${item.media_type}">加入待看</button>
-                <button class="tmdb-admin-btn" data-kind="watched" data-id="${item.id}" data-media="${item.media_type}">加入看过</button>
-              </div>
-            `
-            : "";
+  const adminActions = tmdbMode === "search"
+    ? `
+      <div class="tmdb-admin-actions">
+        <button class="tmdb-admin-btn" data-kind="watchlist" data-id="${item.id}" data-media="${item.media_type}">想看</button>
+        <button class="tmdb-admin-btn" data-kind="watched" data-id="${item.id}" data-media="${item.media_type}">看过</button>
+        <a class="tmdb-admin-btn tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
+      </div>
+    `
+    : // 非搜索模式（想看/看过列表）也加豆瓣链接
+      `
+      <div class="tmdb-admin-actions">
+        <a class="tmdb-admin-btn tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
+      </div>
+    `;
 
-          return `
-            <div class="tmdb-card" data-id="${item.id}" data-media="${item.media_type}">
-              <a class="tmdb-card-link" href="${detailUrl}" target="_blank" rel="noopener noreferrer">
-                <div class="tmdb-card-poster ${item.poster_path ? "" : "placeholder"}">${posterHtml}</div>
-              </a>
-              <div class="tmdb-card-body">
-                <a class="tmdb-card-link" href="${detailUrl}" target="_blank" rel="noopener noreferrer">
-                  <div class="tmdb-card-title">${esc(item.title)}</div>
-                  <div class="tmdb-card-meta">${esc(metaBits)}</div>
-                  ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
-                </a>
-                ${adminActions}
-              </div>
-            </div>
-          `;
-        }
+  return `
+    <div class="tmdb-card" data-id="${item.id}" data-media="${item.media_type}">
+      <a class="tmdb-card-link" href="${tmdbUrl}" target="_blank" rel="noopener noreferrer">
+        <div class="tmdb-card-poster ${item.poster_path ? "" : "placeholder"}">${posterHtml}</div>
+      </a>
+      <div class="tmdb-card-body">
+        <a class="tmdb-card-link" href="${tmdbUrl}" target="_blank" rel="noopener noreferrer">
+          <div class="tmdb-card-title">${esc(item.title)}</div>
+          <div class="tmdb-card-meta">${esc(metaBits)}</div>
+          ${genreNames ? `<div class="tmdb-card-genres">${esc(genreNames)}</div>` : ""}
+        </a>
+        ${adminActions}
+      </div>
+    </div>
+  `;
+}
 
         function renderPagination(totalItems) {
           const totalPages = Math.max(1, Math.ceil(totalItems / TMDB_PAGE_SIZE));
