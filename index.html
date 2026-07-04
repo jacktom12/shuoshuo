@@ -121,7 +121,7 @@
               height: 100dvh;
               overflow-y: auto;
               background: transparent; /* 改为透明，让 body 的壁纸透出来 */
-               overflow-x: hidden;  
+               overflow-x: hidden;
               position: relative;
                display: flex;
               flex-direction: column;
@@ -4555,6 +4555,7 @@
           <button class="tmdb-tab" data-media="movie">电影</button>
           <button class="tmdb-tab" data-media="tv">剧集</button>
         </div>
+        <div class="tmdb-pagination" id="tmdbPagination"></div>
         <div class="tmdb-grid" id="tmdbGrid">
           <div class="tmdb-loading">加载中…</div>
         </div>
@@ -4576,34 +4577,34 @@
     <div class="toast-wrap" id="toastWrap"></div>
     <script>
       // 全局函数：点击“查看”后关闭搜索，定位到指定手账
-       function viewPost(id) {
-    // 关闭搜索框
-    closeSearchModalFunc();
+      function viewPost(id) {
+        // 关闭搜索框
+        closeSearchModalFunc();
 
-    const post = allPosts.find(p => p.id === id);
-    if (!post) {
-        showToast('未找到该手账', 'error');
-        return;
-    }
+        const post = allPosts.find((p) => p.id === id);
+        if (!post) {
+          showToast("未找到该手账", "error");
+          return;
+        }
 
-    // 检查是否已经在 DOM 中
-    const existingEl = document.getElementById(`post-${id}`);
-    if (existingEl) {
-        // 直接使用已有的重试定位函数（内部会处理布局和高亮）
-        scrollToPostWithRetry(id, 'center', 10);
-        return;
-    }
+        // 检查是否已经在 DOM 中
+        const existingEl = document.getElementById(`post-${id}`);
+        if (existingEl) {
+          // 直接使用已有的重试定位函数（内部会处理布局和高亮）
+          scrollToPostWithRetry(id, "center", 10);
+          return;
+        }
 
-    // 不在 DOM 中：重新加载全部数据并渲染
-    preserveViewportDuring(() => {
-        filtered = sortPostsByDateDesc([...allPosts]);
-        page = 1;
-        render(true);
-    });
+        // 不在 DOM 中：重新加载全部数据并渲染
+        preserveViewportDuring(() => {
+          filtered = sortPostsByDateDesc([...allPosts]);
+          page = 1;
+          render(true);
+        });
 
-    // 使用重试定位（此时新卡片会被渲染出来）
-    scrollToPostWithRetry(id, 'center', 20);
-}
+        // 使用重试定位（此时新卡片会被渲染出来）
+        scrollToPostWithRetry(id, "center", 20);
+      }
 
       function jumpToPost(id) {
         // 关闭搜索模态框
@@ -7263,11 +7264,13 @@
           );
           if (tmdbPage > totalPages) tmdbPage = totalPages;
           if (totalPages <= 1) {
-            tmdbPagination.innerHTML = "";
+            document.getElementById("tmdbPaginationTop").innerHTML = "";
+            document.getElementById("tmdbPagination").innerHTML = "";
             return;
           }
 
-          let html = `<button class="tmdb-page-btn" id="tmdbPagePrev" ${tmdbPage === 1 ? "disabled" : ""}>&lt;</button>`;
+          // 生成翻页按钮 HTML（复用）
+          let html = `<button class="tmdb-page-btn" data-action="prev" ${tmdbPage === 1 ? "disabled" : ""}>&lt;</button>`;
           const pages = new Set([
             1,
             totalPages,
@@ -7285,26 +7288,26 @@
               html += `<button class="tmdb-page-btn${p === tmdbPage ? " active" : ""}" data-page="${p}">${p}</button>`;
               lastRendered = p;
             });
-          html += `<button class="tmdb-page-btn" id="tmdbPageNext" ${tmdbPage === totalPages ? "disabled" : ""}>&gt;</button>`;
-          tmdbPagination.innerHTML = html;
+          html += `<button class="tmdb-page-btn" data-action="next" ${tmdbPage === totalPages ? "disabled" : ""}>&gt;</button>`;
 
-          const prevBtn = document.getElementById("tmdbPagePrev");
-          const nextBtn = document.getElementById("tmdbPageNext");
-          if (prevBtn)
-            prevBtn.onclick = () => {
-              tmdbPage--;
-              renderTmdbGrid();
-            };
-          if (nextBtn)
-            nextBtn.onclick = () => {
-              tmdbPage++;
-              renderTmdbGrid();
-            };
-          tmdbPagination.querySelectorAll("[data-page]").forEach((btn) => {
-            btn.onclick = () => {
-              tmdbPage = Number(btn.dataset.page);
-              renderTmdbGrid();
-            };
+          // 同时更新顶部和底部的容器
+          ["tmdbPaginationTop", "tmdbPagination"].forEach((id) => {
+            const container = document.getElementById(id);
+            if (!container) return;
+            container.innerHTML = html;
+
+            // 绑定事件（使用事件委托）
+            container.querySelectorAll("button").forEach((btn) => {
+              btn.onclick = (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                const page = btn.dataset.page;
+                if (action === "prev" && tmdbPage > 1) tmdbPage--;
+                else if (action === "next" && tmdbPage < totalPages) tmdbPage++;
+                else if (page) tmdbPage = Number(page);
+                renderTmdbGrid(); // 重绘
+              };
+            });
           });
         }
 
@@ -7313,6 +7316,7 @@
           if (!filtered.length) {
             tmdbGrid.innerHTML =
               '<div class="tmdb-empty">没有找到符合条件的影视剧</div>';
+            document.getElementById("tmdbPaginationTop").innerHTML = "";
             tmdbPagination.innerHTML = "";
             return;
           }
@@ -7320,6 +7324,9 @@
           const pageItems = filtered.slice(start, start + TMDB_PAGE_SIZE);
           tmdbGrid.innerHTML = pageItems.map(buildCardHTML).join("");
           renderPagination(filtered.length);
+          // 🔽 翻页后滚动到模态框顶部
+          const modal = document.getElementById("tmdbModal");
+          if (modal) modal.scrollTop = 0;
         }
 
         function bindTypeTabs() {
