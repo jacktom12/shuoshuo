@@ -4123,6 +4123,23 @@ body.dark .tmdb-modal{background:rgba(26,25,23,0.97)}
 <div class="search-results" id="searchResults"></div>
 <div class="close-search-btn" id="closeSearchModal">✕</div>
 </div>
+<div class="tmdb-modal" id="tmdbModal">
+  <div class="tmdb-modal-inner">
+    <div class="tmdb-modal-header">
+      <div class="tmdb-modal-title" id="tmdbModalTitle">想看</div>
+      <div class="close-search-btn" id="closeTmdbModal">×</div>
+    </div>
+    <div class="tmdb-genre-row" id="tmdbGenreRow"></div>
+    <div class="tmdb-type-tabs" id="tmdbTypeTabs">
+      <button class="tmdb-tab active" data-media="all">不限</button>
+      <button class="tmdb-tab" data-media="movie">电影</button>
+      <button class="tmdb-tab" data-media="tv">剧集</button>
+    </div>
+    <div class="tmdb-grid" id="tmdbGrid"><div class="tmdb-loading">加载中…</div></div>
+    <div class="tmdb-pagination" id="tmdbPagination"></div>
+  </div>
+</div>
+	
 <button aria-label="回到顶部" id="searchBackToTopBtn" type="button"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5l-6 6m6-6l6 6m-6-6v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 <div class="toast-wrap" id="toastWrap"></div>
 <script>
