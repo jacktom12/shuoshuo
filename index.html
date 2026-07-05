@@ -7489,13 +7489,13 @@ body.dark .tmdb-douban-link {
           });
         }
 
-         function buildCardHTML(item) {
+          function buildCardHTML(item) {
   const genreMap = item.media_type === "movie" ? MOVIE_GENRES : TV_GENRES;
   const genreNames = (item.genre_ids || []).map((g) => genreMap[g]).filter(Boolean).slice(0, 3).join(" / ");
   const typeLabel = item.media_type === "movie" ? "电影" : "电视剧";
   const metaBits = [typeLabel, item.year, item.lang].filter(Boolean).join(" · ");
   const tmdbUrl = `https://www.themoviedb.org/${item.media_type}/${item.id}?language=zh-CN`;
-  // 豆瓣搜索链接：用影片标题搜索
+  // 豆瓣搜索链接
   const doubanUrl = `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(item.title)}`;
   const posterHtml = item.poster_path
     ? `<img src="${TMDB_IMG}${item.poster_path}" alt="${esc(item.title)}" loading="lazy">`
@@ -7506,13 +7506,12 @@ body.dark .tmdb-douban-link {
       <div class="tmdb-admin-actions">
         <button class="tmdb-admin-btn" data-kind="watchlist" data-id="${item.id}" data-media="${item.media_type}">想看</button>
         <button class="tmdb-admin-btn" data-kind="watched" data-id="${item.id}" data-media="${item.media_type}">看过</button>
-        <a class="tmdb-admin-btn tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
+        <a class="tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
       </div>
     `
-    : // 非搜索模式（想看/看过列表）也加豆瓣链接
-      `
+    : `
       <div class="tmdb-admin-actions">
-        <a class="tmdb-admin-btn tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
+        <a class="tmdb-douban-link" href="${doubanUrl}" target="_blank" rel="noopener noreferrer" title="在豆瓣查看">豆瓣</a>
       </div>
     `;
 
