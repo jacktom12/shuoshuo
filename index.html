@@ -4417,6 +4417,31 @@ body.dark .tmdb-douban-link {
           font-size: 1.05rem;
         }
       }
+      .tmdb-modal-header .close-search-btn {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0 var(--border);
+  border-radius: var(--sketch-radius-btn);
+  background: var(--paper);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.tmdb-modal-header .close-search-btn:hover {
+  background: var(--accent);
+  color: var(--ink);
+  transform: scale(1.05) rotate(5deg);
+}
     </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
@@ -6607,7 +6632,12 @@ body.dark .tmdb-douban-link {
             selectedPublishFiles = [];
           }
         };
-        publishModal.onclick = () => close();
+         publishModal.onclick = (e) => {
+  if (e.target === publishModal) {
+    // 强制不关闭：只有点击关闭/取消按钮才退出
+    return;
+  }
+};
         document.getElementById("closeMemo").onclick = close;
         document.getElementById("closeMemo2").onclick = close;
         document.getElementById("selectImg").onclick = () =>
@@ -6641,7 +6671,15 @@ body.dark .tmdb-douban-link {
         });
         document.getElementById("submitMemo").onclick = submitMemo;
         renderSelectedImages();
-
+const contentArea = document.getElementById("memoContent");
+if (contentArea) {
+  contentArea.addEventListener("keydown", function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      document.getElementById("submitMemo")?.click();
+    }
+  });
+}
         setTimeout(() => {
           document.querySelector(".publish-textarea")?.focus();
         }, 50); // 用 setTimeout 延迟 50 毫秒可以确保弹窗在完全显示出来后再执行聚焦，体验最稳妥
@@ -6935,7 +6973,12 @@ body.dark .tmdb-douban-link {
             selectedPublishFiles = [];
           }
         };
-        publishModal.onclick = close;
+       publishModal.onclick = (e) => {
+  if (e.target === publishModal) {
+    // 强制不关闭：只有点击关闭/取消按钮才退出
+    return;
+  }
+};
         document.getElementById("closeMemo").onclick = close;
         document.getElementById("closeMemo2").onclick = close;
         enhanceHorizontalScroller(
@@ -6948,6 +6991,17 @@ body.dark .tmdb-douban-link {
           e.target.value = "";
         });
         document.getElementById("submitEditMemo").onclick = submitEditMemo;
+        // ========== ✨ 新增：自动聚焦 + Ctrl+Enter 快捷提交 ==========
+  const contentArea = document.getElementById("memoContent");
+  if (contentArea) {
+    setTimeout(() => contentArea.focus(), 100);
+    contentArea.addEventListener("keydown", function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("submitEditMemo")?.click();
+      }
+    });
+  }
       }
 
       window.removeExistingImage = function (index) {
@@ -7137,8 +7191,7 @@ body.dark .tmdb-douban-link {
       }
       searchModal?.addEventListener("click", (e) => {
         if (e.target === searchModal) {
-          closeSearchModalFunc();
-          if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+           return;
         }
       });
       document
@@ -7733,8 +7786,7 @@ body.dark .tmdb-douban-link {
 
         tmdbModal && tmdbModal.addEventListener("click", (e) => {
           if (e.target === tmdbModal) {
-            closeTmdb();
-            if (typeof setActiveMenu === "function") setActiveMenu("homeNavBtn");
+			return;
           }
         });
 
