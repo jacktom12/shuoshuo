@@ -7263,6 +7263,18 @@ if (contentArea) {
       document.addEventListener("DOMContentLoaded", () => {
         init();
         initBackToTop();
+         // 👇 新增全局快捷键
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'b' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+        return;
+      }
+      if (publishModal) return;
+      openPublishEditor();
+    }
+  });
+        
       });
     </script>
     <script>
