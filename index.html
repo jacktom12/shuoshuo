@@ -4301,6 +4301,10 @@ body.dark .tmdb-douban-link {
         margin-top: 24px;
         flex-wrap: wrap;
       }
+      #memoPaginationWrap {
+        margin-top: 28px;
+        margin-bottom: 20px;
+      }
       #tmdbPaginationTop {
         margin-top: 0;
         margin-bottom: 24px;
@@ -4791,10 +4795,10 @@ body.dark .tmdb-douban-link {
   page = targetPage;
   render(true);
 
-  // 6. 启动重试定位（新增持久化等待 + getBoundingClientRect 精确定位）
+  // 6. 启动重试定位（分页后目标必定在当前页内，重试次数可大幅减少）
   let attempts = 0;
-  const maxAttempts = 45;      // 尝试 45 次
-  const interval = 180;        // 每次间隔 180ms，总时长约 8 秒
+  const maxAttempts = 15;      // 尝试 15 次即可
+  const interval = 120;        // 每次间隔 120ms，总时长约 1.8 秒
 
   const tryLocate = () => {
     attempts++;
@@ -4889,7 +4893,7 @@ body.dark .tmdb-douban-link {
       let allPosts = [],
         filtered = [],
         page = 1;
-      const perPage = 10;
+      const perPage = 20;
       let isLoading = false;
       const START_YEAR = new Date().getFullYear();
       const MIN_YEAR = 2025;
@@ -5363,8 +5367,8 @@ body.dark .tmdb-douban-link {
       }
 
       function expandLoadedRangeForPrependedPost() {
-        const visibleCount = Math.max(perPage, page * perPage);
-        page = Math.max(page, Math.ceil((visibleCount + 1) / perPage));
+        // 新发布的手账会置于列表最前，直接跳回第 1 页即可看到
+        page = 1;
       }
 
       function removePostFromLists(id) {
@@ -5567,39 +5571,101 @@ body.dark .tmdb-douban-link {
         loaderDom.style.display = "none";
         isLoading = false;
         render(true);
-        setupInfiniteScroll();
         setupLightbox();
+      }
+
+      function buildMemoPaginationHTML(totalItems) {
+        const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+        if (totalPages <= 1) return "";
+        const cur = page;
+        const pages = [];
+        pages.push(1);
+        if (cur > 3) pages.push("...");
+        for (
+          let p = Math.max(2, cur - 1);
+          p <= Math.min(totalPages - 1, cur + 1);
+          p++
+        ) {
+          pages.push(p);
+        }
+        if (cur < totalPages - 2) pages.push("...");
+        if (totalPages > 1) pages.push(totalPages);
+        const seen = new Set();
+        const dedup = pages.filter((p) => {
+          const k = p === "..." ? Math.random() : p;
+          if (p !== "..." && seen.has(p)) return false;
+          if (p !== "...") seen.add(p);
+          return true;
+        });
+        const btns = dedup
+          .map((p) => {
+            if (p === "...") {
+              return '<span class="tmdb-page-ellipsis">...</span>';
+            }
+            return `<button class="tmdb-page-btn${
+              p === cur ? " active" : ""
+            }" onclick="goToMemoPage(${p})">${p}</button>`;
+          })
+          .join("");
+        const prevDisabled = cur <= 1 ? "disabled" : "";
+        const nextDisabled = cur >= totalPages ? "disabled" : "";
+        return `<div class="tmdb-pagination" id="memoPagination">
+          <button class="tmdb-page-btn" ${prevDisabled} onclick="goToMemoPage(${
+          cur - 1
+        })">‹</button>
+          ${btns}
+          <button class="tmdb-page-btn" ${nextDisabled} onclick="goToMemoPage(${
+          cur + 1
+        })">›</button>
+        </div>`;
+      }
+
+      function goToMemoPage(p) {
+        const { rest } = getOrderedGroups(filtered);
+        const totalPages = Math.max(1, Math.ceil(rest.length / perPage));
+        const target = Math.min(Math.max(1, p), totalPages);
+        if (target === page) return;
+        page = target;
+        render(true);
+        const sc = getScrollContainer();
+        if (sc) sc.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       function render(reset = false) {
         if (!postsContainer) return;
         const pinnedHero = ensurePinnedHeroContainer();
         if (pinnedHero) pinnedHero.innerHTML = "";
-        if (reset) {
-          postsContainer.classList.remove("masonry-ready");
-          postsContainer.innerHTML = "";
-        }
+        postsContainer.classList.remove("masonry-ready");
         const { pinned, rest } = getOrderedGroups(filtered);
-        const start = reset ? 0 : (page - 1) * perPage;
+        const totalPages = Math.max(1, Math.ceil(rest.length / perPage));
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = (page - 1) * perPage;
         const end = page * perPage;
         const show = rest.slice(start, end);
-        const html = reset
-          ? [
-              ...pinned.map(buildPinnedHeroHTML),
-              ...show.map(buildPostHTML),
-            ].join("")
-          : show.map(buildPostHTML).join("");
-        if (!html && reset) {
+        const html =
+          page === 1
+            ? [
+                ...pinned.map(buildPinnedHeroHTML),
+                ...show.map(buildPostHTML),
+              ].join("")
+            : show.map(buildPostHTML).join("");
+        if (!html) {
           postsContainer.innerHTML =
             '<div style="text-align:center;color:var(--secondary-text);padding:40px;font-weight:900;">暂无数据</div>';
-        } else if (html) {
-          if (reset) postsContainer.innerHTML = html;
-          else {
-            const t = document.createElement("div");
-            t.innerHTML = html;
-            while (t.firstChild) postsContainer.appendChild(t.firstChild);
-          }
+        } else {
+          postsContainer.innerHTML = html;
         }
+        let pagWrap = document.getElementById("memoPaginationWrap");
+        if (!pagWrap) {
+          pagWrap = document.createElement("div");
+          pagWrap.id = "memoPaginationWrap";
+          postsContainer.parentNode.insertBefore(
+            pagWrap,
+            postsContainer.nextSibling
+          );
+        }
+        pagWrap.innerHTML = buildMemoPaginationHTML(rest.length);
         bindImagesInContainer(postsContainer);
         if (window.__scrapbookPreview) {
           window.__scrapbookPreview.bindScrapbookPreviewClicks(postsContainer);
@@ -5623,40 +5689,7 @@ body.dark .tmdb-douban-link {
         });
       }
 
-      function setupInfiniteScroll() {
-        const scrollContainer = document.querySelector("main"); // 把滚动监听绑定给 main
-        if (!scrollContainer) return;
-        let noMoreShown = false;
-        let hideTimer = null;
-        const handleScroll = () => {
-          if (isLoading) return;
-          const { scrollTop, clientHeight, scrollHeight } = scrollContainer;
-          const nearBottom = scrollTop + clientHeight >= scrollHeight - 150;
-          if (!nearBottom) {
-            noMoreShown = false;
-            return;
-          }
-          const { rest } = getOrderedGroups(filtered);
-          if (page * perPage < rest.length) {
-            noMoreShown = false;
-            page++;
-            if (loaderDom) loaderDom.style.display = "block";
-            render(false);
-            if (loaderDom) loaderDom.style.display = "none";
-          } else if (loaderDom && rest.length && !noMoreShown) {
-            noMoreShown = true;
-            loaderDom.style.display = "block";
-            loaderDom.textContent = "已经没有更多手账了";
-            clearTimeout(hideTimer);
-            hideTimer = setTimeout(() => {
-              if (loaderDom) loaderDom.style.display = "none";
-            }, 800);
-          }
-        };
-        scrollContainer.addEventListener("scroll", handleScroll, {
-          passive: true,
-        });
-      }
+      // setupInfiniteScroll 已移除：改为分页控件跳转
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
