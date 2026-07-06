@@ -4434,6 +4434,34 @@ body.dark .tmdb-douban-link {
   color: var(--ink);
   transform: scale(1.05) rotate(5deg);
 }
+/* ====== 拍立得风格 (桌面+移动端统一) ====== */
+.post-images img,
+.post-image-single .post-images img,
+.post-image-single .post-images.single-image img {
+  border: 10px solid #fff !important;
+  border-bottom: 32px solid #fff !important;   /* 底部留白更宽，更像拍立得 */
+  border-radius: 4px !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
+  background: #fff !important;
+}
+
+body.dark .post-images img,
+body.dark .post-image-single .post-images img {
+  border-color: #f3e9dd !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45) !important;
+}
+
+/* 移动端沿用同一套，覆盖掉之前把 radius 改成 12px、shadow 清零的规则 */
+@media (max-width: 768px) {
+  .post-images img,
+  .post-image-single .post-images img,
+  .post-image-single .post-images.single-image img {
+    border: 8px solid #fff !important;
+    border-bottom: 26px solid #fff !important;
+    border-radius: 4px !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
+  }
+}
     </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
