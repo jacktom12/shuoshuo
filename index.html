@@ -178,13 +178,13 @@
       }
 
       /* 让第一张像刚“打印”出来 */
-      #postsContainer > .post:first-child {
+      #postsContainer.is-first-page > .post:first-child {
         position: relative;
         margin-top: 0;
         z-index: 1;
       }
 
-      #postsContainer > .post:first-child::before {
+      #postsContainer.is-first-page > .post:first-child::before {
         content: "";
         position: absolute;
         top: -18px;
@@ -219,7 +219,7 @@
         box-shadow: inset 0 6px 10px rgba(255,255,255,0.03);
       }
 
-      body.dark #postsContainer > .post:first-child::before {
+      body.dark #postsContainer.is-first-page > .post:first-child::before {
         display: none !important;
       }
 
@@ -238,7 +238,7 @@
           height: 22px;
         }
 
-        #postsContainer > .post:first-child::before {
+        #postsContainer.is-first-page > .post:first-child::before {
           top: -14px;
           left: 12px;
           right: 12px;
@@ -252,7 +252,7 @@
           top: -6px;
         }
 
-        #postsContainer > .post:first-child::before {
+        #postsContainer.is-first-page > .post:first-child::before {
           top: -11px;
           left: 10px;
           right: 10px;
@@ -5367,8 +5367,8 @@ body.dark .tmdb-douban-link {
       }
 
       function expandLoadedRangeForPrependedPost() {
-        // 新发布的手账会置于列表最前，直接跳回第 1 页即可看到
-        page = 1;
+        // 分页模式下不再强制跳转到第 1 页，保留用户当前浏览的页码，
+        // 新手账已插入列表最前，如需查看可手动跳转到第 1 页
       }
 
       function removePostFromLists(id) {
@@ -5592,7 +5592,6 @@ body.dark .tmdb-douban-link {
         if (totalPages > 1) pages.push(totalPages);
         const seen = new Set();
         const dedup = pages.filter((p) => {
-          const k = p === "..." ? Math.random() : p;
           if (p !== "..." && seen.has(p)) return false;
           if (p !== "...") seen.add(p);
           return true;
@@ -5640,6 +5639,8 @@ body.dark .tmdb-douban-link {
         const totalPages = Math.max(1, Math.ceil(rest.length / perPage));
         if (page > totalPages) page = totalPages;
         if (page < 1) page = 1;
+        // 只在第一页时挂上这个类，避免每页第一条卡片都出现“撕纸装订”装饰条
+        postsContainer.classList.toggle("is-first-page", page === 1);
         const start = (page - 1) * perPage;
         const end = page * perPage;
         const show = rest.slice(start, end);
@@ -6836,7 +6837,7 @@ if (contentArea) {
               selectedPublishFiles = [];
               render(true);
             });
-            showToast("本地演示已发布", "success");
+            showToast("本地演示已发布，前往第一页可查看", "success");
             return;
           }
 
@@ -6869,7 +6870,7 @@ if (contentArea) {
               selectedPublishFiles = [];
               render(true);
             });
-            showToast("发布成功", "success");
+            showToast("发布成功，前往第一页可查看", "success");
           } else {
             if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "发布失败", "error");
