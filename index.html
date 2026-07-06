@@ -4435,39 +4435,34 @@ body.dark .tmdb-douban-link {
   transform: scale(1.05) rotate(5deg);
 }
     
-    /* ===== 拍立得风格：仅对竖版实拍照片生效（单图场景） ===== */
-    .post-image-single .post-images img.is-portrait,
-    .post-image-single .post-images.single-image img.is-portrait {
+    /* ===== 拍立得风格：仅当文本含 #iphone13 标签 且为单图时生效 ===== */
+    .post-image-single.polaroid .post-images img,
+    .post-image-single.polaroid .post-images.single-image img {
       border: 10px solid #fff !important;
       border-bottom: 32px solid #fff !important;
       border-radius: 4px !important;
       box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
       background: #fff !important;
-      transform: rotate(-0.8deg) !important;
     }
-    .post-image-single:has(img.is-portrait) .post-images-wrap {
+    .post-image-single.polaroid .post-images-wrap {
       border-radius: 0 !important;
       border: none !important;
       background: transparent !important;
       padding: 0 !important;
     }
-    body.dark .post-image-single .post-images img.is-portrait,
-    body.dark .post-image-single .post-images.single-image img.is-portrait {
+    body.dark .post-image-single.polaroid .post-images img,
+    body.dark .post-image-single.polaroid .post-images.single-image img {
       border-color: #f3e9dd !important;
       box-shadow: 0 6px 14px rgba(0,0,0,0.45) !important;
     }
     @media (max-width: 768px) {
-      .post-image-single .post-images img.is-portrait,
-      .post-image-single .post-images.single-image img.is-portrait {
+      .post-image-single.polaroid .post-images img,
+      .post-image-single.polaroid .post-images.single-image img {
         border: 8px solid #fff !important;
         border-bottom: 26px solid #fff !important;
         border-radius: 4px !important;
         box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
       }
-    }
-    /* 非竖图（截图/横图/方图）：保留原有圆润卡纸相框，不受拍立得样式影响 */
-    .post-image-single .post-images-wrap {
-      /* 已由原样式定义 border-radius / border / padding，此处不重复覆盖 */
     }
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
@@ -4918,6 +4913,7 @@ body.dark .tmdb-douban-link {
       }
       // ---------- 数据层 ----------
       const PIN_KEYWORD = "#置顶";
+      const POLAROID_KEYWORD = "#iphone13";
       let allPosts = [],
         filtered = [],
         page = 1;
@@ -5089,6 +5085,12 @@ body.dark .tmdb-douban-link {
 
       function stripPinKeyword(text) {
         return text.split(PIN_KEYWORD).join("");
+      }
+      function hasPolaroidTag(text) {
+        return text.includes(POLAROID_KEYWORD);
+      }
+      function stripPolaroidKeyword(text) {
+        return text.split(POLAROID_KEYWORD).join("");
       }
 
       // ---------- 工具函数 ----------
@@ -5501,6 +5503,8 @@ body.dark .tmdb-douban-link {
         let text = Array.isArray(p.content) ? p.content.join("") : p.content;
         const isPinned = text.includes(PIN_KEYWORD);
         if (isPinned) text = stripPinKeyword(text);
+        const isPolaroid = hasPolaroidTag(text);
+        if (isPolaroid) text = stripPolaroidKeyword(text);
         text = window.HWPlayer ? window.HWPlayer.parseShortcodes(text) : text;
         const parsed =
           typeof marked !== "undefined" ? marked.parse(text) : text; //
@@ -5516,7 +5520,8 @@ body.dark .tmdb-douban-link {
             .map((url) => `<img src="${url}" alt="" draggable="false">`)
             .join("");
           if (hasSingleImage) {
-            imagesHtml = `<div class="post-image-single"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
+            const polaroidClass = isPolaroid ? " polaroid" : "";
+            imagesHtml = `<div class="post-image-single${polaroidClass}"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
           } else {
             const scrapbookHtml = window.__scrapbookPreview
               ? window.__scrapbookPreview.buildScrapbookPreview(p)
@@ -5722,19 +5727,7 @@ body.dark .tmdb-douban-link {
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
-      function markPortraitImages(container) {
-        container.querySelectorAll(".post-images img").forEach((img) => {
-          function apply() {
-            if (img.naturalWidth && img.naturalHeight) {
-              img.classList.toggle("is-portrait", img.naturalHeight > img.naturalWidth);
-            }
-          }
-          if (img.complete) apply();
-          else img.addEventListener("load", apply, { once: true });
-        });
-      }
       function bindImagesInContainer(container) {
-        markPortraitImages(container);
         container.querySelectorAll(".post-images").forEach((wrap) => {
           if (wrap.dataset.boundDrag) return;
           wrap.dataset.boundDrag = "true";
@@ -6445,6 +6438,8 @@ body.dark .tmdb-douban-link {
           let raw = Array.isArray(post.content)
             ? post.content.join("\n\n")
             : post.content || "";
+          const isPolaroid = hasPolaroidTag(raw);
+          if (isPolaroid) raw = stripPolaroidKeyword(raw);
           let processed = raw;
           if (
             window.HWPlayer &&
@@ -6463,7 +6458,8 @@ body.dark .tmdb-douban-link {
               .map((url) => `<img src="${url}" alt="" draggable="false">`)
               .join("");
             if (hasSingleImage) {
-              imagesHtml = `<div class="post-image-single"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
+              const polaroidClass = isPolaroid ? " polaroid" : "";
+              imagesHtml = `<div class="post-image-single${polaroidClass}"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
             } else {
               const scrapbookHtml = window.__scrapbookPreview
                 ? window.__scrapbookPreview.buildScrapbookPreview(post)
