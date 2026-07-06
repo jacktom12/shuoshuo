@@ -4435,29 +4435,42 @@ body.dark .tmdb-douban-link {
   transform: scale(1.05) rotate(5deg);
 }
     
-    /* ===== 拍立得风格：仅当文本含 #iphone13 标签 且为单图时生效 ===== */
-    .post-image-single.polaroid .post-images img,
-    .post-image-single.polaroid .post-images.single-image img {
+    /* ===== 拍立得风格：仅当文本含 #iphone13 标签 且为单图时生效 =====
+       注意：因页面在移动端启用了 JS 瀑布流（#postsContainer masonry），
+       该模式下的图片选择器权重更高（带 #postsContainer ID），
+       所以这里的拍立得规则也要加上 #postsContainer 前缀，
+       确保在 PC 端和手机瀑布流端都能正确覆盖，不再被压缩变形。 */
+    #postsContainer .post-image-single.polaroid .post-images img,
+    #postsContainer .post-image-single.polaroid .post-images.single-image img,
+    .search-results .post-image-single.polaroid .post-images img,
+    .search-results .post-image-single.polaroid .post-images.single-image img {
+      max-height: none !important;
       border: 10px solid #fff !important;
       border-bottom: 32px solid #fff !important;
       border-radius: 4px !important;
       box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
       background: #fff !important;
     }
-    .post-image-single.polaroid .post-images-wrap {
+    #postsContainer .post-image-single.polaroid .post-images-wrap,
+    .search-results .post-image-single.polaroid .post-images-wrap {
       border-radius: 0 !important;
       border: none !important;
       background: transparent !important;
       padding: 0 !important;
     }
-    body.dark .post-image-single.polaroid .post-images img,
-    body.dark .post-image-single.polaroid .post-images.single-image img {
+    body.dark #postsContainer .post-image-single.polaroid .post-images img,
+    body.dark #postsContainer .post-image-single.polaroid .post-images.single-image img,
+    body.dark .search-results .post-image-single.polaroid .post-images img,
+    body.dark .search-results .post-image-single.polaroid .post-images.single-image img {
       border-color: #f3e9dd !important;
       box-shadow: 0 6px 14px rgba(0,0,0,0.45) !important;
     }
     @media (max-width: 768px) {
-      .post-image-single.polaroid .post-images img,
-      .post-image-single.polaroid .post-images.single-image img {
+      #postsContainer .post-image-single.polaroid .post-images img,
+      #postsContainer .post-image-single.polaroid .post-images.single-image img,
+      .search-results .post-image-single.polaroid .post-images img,
+      .search-results .post-image-single.polaroid .post-images.single-image img {
+        max-height: none !important;
         border: 8px solid #fff !important;
         border-bottom: 26px solid #fff !important;
         border-radius: 4px !important;
