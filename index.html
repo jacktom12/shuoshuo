@@ -4434,35 +4434,42 @@ body.dark .tmdb-douban-link {
   color: var(--ink);
   transform: scale(1.05) rotate(5deg);
 }
-/* ====== 拍立得风格 (桌面+移动端统一) ====== */
-.post-images img,
-.post-image-single .post-images img,
-.post-image-single .post-images.single-image img {
-  border: 10px solid #fff !important;
-  border-bottom: 32px solid #fff !important;   /* 底部留白更宽，更像拍立得 */
-  border-radius: 4px !important;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
-  background: #fff !important;
-}
-
-body.dark .post-images img,
-body.dark .post-image-single .post-images img {
-  border-color: #f3e9dd !important;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.45) !important;
-}
-
-/* 移动端沿用同一套，覆盖掉之前把 radius 改成 12px、shadow 清零的规则 */
-@media (max-width: 768px) {
-  .post-images img,
-  .post-image-single .post-images img,
-  .post-image-single .post-images.single-image img {
-    border: 8px solid #fff !important;
-    border-bottom: 26px solid #fff !important;
-    border-radius: 4px !important;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
-  }
-}
-    </style>
+    
+    /* ===== 拍立得风格：仅对竖版实拍照片生效（单图场景） ===== */
+    .post-image-single .post-images img.is-portrait,
+    .post-image-single .post-images.single-image img.is-portrait {
+      border: 10px solid #fff !important;
+      border-bottom: 32px solid #fff !important;
+      border-radius: 4px !important;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
+      background: #fff !important;
+      transform: rotate(-0.8deg) !important;
+    }
+    .post-image-single:has(img.is-portrait) .post-images-wrap {
+      border-radius: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+    body.dark .post-image-single .post-images img.is-portrait,
+    body.dark .post-image-single .post-images.single-image img.is-portrait {
+      border-color: #f3e9dd !important;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.45) !important;
+    }
+    @media (max-width: 768px) {
+      .post-image-single .post-images img.is-portrait,
+      .post-image-single .post-images.single-image img.is-portrait {
+        border: 8px solid #fff !important;
+        border-bottom: 26px solid #fff !important;
+        border-radius: 4px !important;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15) !important;
+      }
+    }
+    /* 非竖图（截图/横图/方图）：保留原有圆润卡纸相框，不受拍立得样式影响 */
+    .post-image-single .post-images-wrap {
+      /* 已由原样式定义 border-radius / border / padding，此处不重复覆盖 */
+    }
+</style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
   </head>
@@ -5715,7 +5722,19 @@ body.dark .post-image-single .post-images img {
 
       // ---------- 图片轮播 + 灯箱绑定 ----------
       let globalGalleryLock = false;
+      function markPortraitImages(container) {
+        container.querySelectorAll(".post-images img").forEach((img) => {
+          function apply() {
+            if (img.naturalWidth && img.naturalHeight) {
+              img.classList.toggle("is-portrait", img.naturalHeight > img.naturalWidth);
+            }
+          }
+          if (img.complete) apply();
+          else img.addEventListener("load", apply, { once: true });
+        });
+      }
       function bindImagesInContainer(container) {
+        markPortraitImages(container);
         container.querySelectorAll(".post-images").forEach((wrap) => {
           if (wrap.dataset.boundDrag) return;
           wrap.dataset.boundDrag = "true";
