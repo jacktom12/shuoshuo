@@ -4085,11 +4085,10 @@
       main::-webkit-scrollbar {
         display: none;
       }
-      /* 让瀑布流中不可见的卡片只占位不绘制，极速定位 */
-#postsContainer .post {
-  content-visibility: auto;
-  contain-intrinsic-size: 320px; /* 预估卡片高度，保持滚动条稳定 */
-}
+      /* 已移除 content-visibility:auto —— 该属性会让视口外卡片的 offsetHeight
+         被浏览器强制替换为 contain-intrinsic-size 的占位值(320px)，
+         而手写的 layoutMasonry() 恰好依赖 offsetHeight 计算真实位置，
+         两者冲突导致分页/翻页后部分卡片高度算错，出现忽大忽小的空隙或重叠。 */
     </style>
     <style id="tmdb-modal-style">
     
