@@ -4780,18 +4780,23 @@ body.dark .tmdb-douban-link {
   }
 
   // 3. 计算目标卡片在排序列表中的索引
+  // 关键修复：必须用 getOrderedGroups() 处理后的 rest 列表来计算索引，
+  // 因为 render() 实际分页用的就是 rest（已剔除置顶手账和音乐歌单卡片），
+  // 如果这里用 allPosts 全量排序计算，遇到置顶/歌单卡片穿插时会导致页码算错，
+  // 从而跳转到错误的页面，定位失败、甚至误将别的卡片当作目标高亮。
   const sorted = sortPostsByDateDesc([...allPosts]);
-  const index = sorted.findIndex((p) => p.id === id);
+  filtered = sorted;
+  const { rest } = getOrderedGroups(filtered);
+  const index = rest.findIndex((p) => p.id === id);
   if (index === -1) {
     showToast("数据异常，未找到该手账", "error");
     return;
   }
 
-  // 4. 计算目标页码（从 1 开始）
+  // 4. 计算目标页码（从 1 开始），与 render() 的分页逻辑保持一致
   const targetPage = Math.floor(index / perPage) + 1;
 
-  // 5. 重置数据并一次性渲染到目标页
-  filtered = sorted;
+  // 5. 一次性渲染到目标页
   page = targetPage;
   render(true);
 
