@@ -5666,15 +5666,52 @@ body.dark .tmdb-douban-link {
       }
 
       function goToMemoPage(p) {
-        const { rest } = getOrderedGroups(filtered);
-        const totalPages = Math.max(1, Math.ceil(rest.length / perPage));
-        const target = Math.min(Math.max(1, p), totalPages);
-        if (target === page) return;
-        page = target;
-        render(true);
-        const sc = getScrollContainer();
-        if (sc) sc.scrollTo({ top: 0, behavior: "smooth" });
-      }
+  const { rest } = getOrderedGroups(filtered);
+  const totalPages = Math.max(1, Math.ceil(rest.length / perPage));
+  const target = Math.min(Math.max(1, p), totalPages);
+  if (target === page) return;
+  page = target;
+
+  // 先渲染（重建DOM + 触发瀑布流重排）
+  render(true);
+
+  const sc = getScrollContainer();
+  if (!sc) return;
+
+  // 判断是否为移动设备（手机 / 平板触屏设备）
+  const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+
+  // 移动端延迟更长，给瀑布流布局充分稳定时间
+  const delay = isMobile ? 480 : 120;
+
+  // 滚动执行函数（带重试修正）
+  const scrollToTop = () => {
+    // 先用平滑滚动到顶部
+    sc.scrollTo({ top: 0, behavior: "smooth" });
+
+    // 手机端额外做一次“强制修正”，防止被后续布局变化冲走
+    if (isMobile) {
+      let retries = 0;
+      const maxRetries = 6;
+      const checkAndFix = () => {
+        // 如果滚动位置偏离顶部超过 10px，强制瞬间拉回
+        if (sc.scrollTop > 10 && retries < maxRetries) {
+          sc.scrollTo({ top: 0, behavior: "auto" });
+          retries++;
+          // 每 160ms 检查一次，直到稳定
+          setTimeout(checkAndFix, 160);
+        }
+      };
+      // 首次检查延迟 280ms，让平滑滚动先完成一部分
+      setTimeout(checkAndFix, 280);
+    }
+  };
+
+  // 在下一帧 + 延迟后执行滚动，确保 DOM 更新和初次布局已完成
+  requestAnimationFrame(() => {
+    setTimeout(scrollToTop, delay);
+  });
+}
 
       function render(reset = false) {
         if (!postsContainer) return;
