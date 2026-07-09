@@ -5640,6 +5640,7 @@ body.dark .tmdb-douban-link {
               headers: {
                 "Content-Type": "application/json",
               },
+              body: JSON.stringify({ publishPassword: getPublishPassword() || "" })
             });
             if (!res.ok) throw new Error("网络响应错误");
             const json = await res.json();
