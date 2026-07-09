@@ -3222,7 +3222,15 @@
             #existingImagesList:active {
               cursor: grabbing;
             }
-    </style>
+    
+    /* 隐私手账搜索筛选 */
+    .private-search-filter-btn { width:42px; height:42px; flex:0 0 42px; padding:0!important; display:inline-flex; align-items:center; justify-content:center; background:var(--paper)!important; color:var(--text)!important; border:2px solid var(--border)!important; border-radius:var(--sketch-radius-btn); box-shadow:3px 3px 0 var(--border); cursor:pointer; transition:all .15s ease; }
+    .private-search-filter-btn svg { width:1.25rem; height:1.25rem; }
+    .private-search-filter-btn:hover { background:var(--accent)!important; color:var(--ink)!important; transform:translateY(-1px); }
+    .private-search-filter-btn.active { background:var(--accent)!important; color:var(--ink)!important; transform:translate(2px,2px); box-shadow:0 0 0 var(--border); }
+    .private-search-filter-btn[hidden] { display:none!important; }
+    @media (max-width:768px) { .private-search-filter-btn { width:38px; height:38px; flex-basis:38px; } }
+</style>
     <style id="handwritten-card-overrides">
       :root {
         --hw-bg: #f6eddc;
@@ -4793,6 +4801,7 @@ body.dark .tmdb-douban-link {
           placeholder="输入关键词，多个关键词用空格隔开"
           type="text"
         />
+        <button id="privateSearchFilterBtn" class="private-search-filter-btn" type="button" title="仅搜索隐私手账" aria-label="仅搜索隐私手账" aria-pressed="false" hidden><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M9.367 2.25h5.266c1.092 0 1.958 0 2.655.057c.714.058 1.317.18 1.869.46a4.75 4.75 0 0 1 2.075 2.077c.281.55.403 1.154.461 1.868c.057.697.057 1.563.057 2.655V10.8a.75.75 0 0 1-1.5 0V9.4c0-1.132 0-1.937-.052-2.566c-.05-.62-.147-1.005-.302-1.31a3.25 3.25 0 0 0-1.42-1.42c-.305-.155-.69-.251-1.31-.302c-.63-.051-1.434-.052-2.566-.052H9.4c-1.132 0-1.937 0-2.566.052c-.62.05-1.005.147-1.31.302a3.25 3.25 0 0 0-1.42 1.42c-.155.305-.251.69-.302 1.31c-.051.63-.052 1.434-.052 2.566v5.2c0 1.133 0 1.937.052 2.566c.05.62.147 1.005.302 1.31a3.25 3.25 0 0 0 1.42 1.42c.305.155.69.251 1.31.302c.63.051 1.434.052 2.566.052H12a.75.75 0 0 1 0 1.5H9.367c-1.092 0-1.958 0-2.655-.057c-.714-.058-1.317-.18-1.868-.46a4.75 4.75 0 0 1-2.076-2.076c-.281-.552-.403-1.155-.461-1.869c-.057-.697-.057-1.563-.057-2.655V9.367c0-1.092 0-1.958.057-2.655c.058-.714.18-1.317.46-1.868a4.75 4.75 0 0 1 2.077-2.076c.55-.281 1.154-.403 1.868-.461c.697-.057 1.563-.057 2.655-.057"/><path fill="currentColor" d="M15.536 14.778c0-1.37 1.077-2.528 2.464-2.528s2.464 1.158 2.464 2.528v.732q.093.036.184.083c.386.204.694.526.885.915c.13.264.176.535.197.802c.02.252.02.557.02.907v.677c0 .35 0 .655-.02.907a2.2 2.2 0 0 1-.197.802c-.192.39-.5.711-.885.915a2 2 0 0 1-.797.211c-.247.021-.544.021-.88.021h-1.943c-.335 0-.632 0-.879-.02a2 2 0 0 1-.797-.212a2.06 2.06 0 0 1-.885-.915a2.2 2.2 0 0 1-.197-.802c-.02-.252-.02-.557-.02-.907v-.677c0-.35 0-.655.02-.907c.02-.267.068-.538.197-.802c.191-.39.5-.711.885-.915q.09-.048.184-.083zm1.5.583h1.928v-.583c0-.594-.457-1.028-.964-1.028s-.964.434-.964 1.028zm-.76 1.516c-.166.014-.212.036-.224.043a.56.56 0 0 0-.239.25a.8.8 0 0 0-.048.258a12 12 0 0 0-.015.816v.623c0 .385 0 .63.015.816c.014.178.038.237.048.258c.055.112.14.198.24.25c.011.007.057.03.223.044c.175.014.408.015.781.015h1.886c.373 0 .606 0 .781-.015c.166-.014.212-.037.224-.043a.56.56 0 0 0 .239-.25a.8.8 0 0 0 .048-.259c.015-.186.015-.431.015-.816v-.623c0-.385 0-.63-.015-.816a.8.8 0 0 0-.048-.258a.56.56 0 0 0-.24-.25c-.011-.007-.057-.03-.223-.043a10 10 0 0 0-.781-.016h-1.886c-.373 0-.606 0-.781.016"/><path fill="currentColor" d="M18 17.75a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-1.5 0v-.5a.75.75 0 0 1 .75-.75M5.25 6A.75.75 0 0 1 6 5.25h12a.75.75 0 0 1 0 1.5H6A.75.75 0 0 1 5.25 6m0 3A.75.75 0 0 1 6 8.25h8.5a.75.75 0 0 1 0 1.5H6A.75.75 0 0 1 5.25 9m0 3a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75m0 3a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75m3-3a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75m0 3a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75m-3 3a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1 0-1.5"/></svg></button>
         <button id="modalSearchBtn">搜索</button>
       </div>
       <div class="search-results" id="searchResults"></div>
@@ -4999,6 +5008,7 @@ body.dark .tmdb-douban-link {
       let currentSearchResults = [],
         currentSearchKeyword = "";
       let currentSearchTerms = [];
+      let privateSearchEnabled = false;
       let searchPage = 1;
       const searchPerPage = 12;
       let lastScrollY = 0;
@@ -6659,39 +6669,53 @@ body.dark .tmdb-douban-link {
         });
       }
 
-      function performSearch() {
+      async function performSearch() {
         const rawKeyword = modalSearchInput.value.trim();
         const terms = parseSearchTerms(rawKeyword);
         currentSearchKeyword = rawKeyword.toLowerCase();
         currentSearchTerms = terms;
         if (!terms.length) {
           currentSearchResults = [];
-          searchResultsDiv.innerHTML =
-            '<div class="search-loader">✨ 输入关键词看看</div>';
+          searchResultsDiv.innerHTML = '<div class="search-loader">✨ 输入关键词看看</div>';
           return;
         }
-        searchResultsDiv.innerHTML =
-          '<div class="search-loader">🔍 搜索中...</div>';
-        setTimeout(() => {
-          currentSearchResults = allPosts.filter((p) => {
+        searchResultsDiv.innerHTML = '<div class="search-loader">🔍 搜索中...</div>';
+        try {
+          let searchSource = allPosts;
+          if (privateSearchEnabled) {
+            const pwd = getPublishPassword();
+            if (!pwd) throw new Error("请先输入发布手账密码");
+            const res = await fetch(`${WORKER_URL}/api/get-private-memos`, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ publishPassword: pwd })
+            });
+            const json = await res.json();
+            if (!res.ok || json.code !== 200) throw new Error(json.msg || "获取隐私手账失败");
+            searchSource = json.data || [];
+          }
+          currentSearchResults = searchSource.filter((p) => {
             const text = getCleanTextForSearch(p.content).toLowerCase();
             return terms.every((term) => text.includes(term));
           });
-          if (!currentSearchResults.length)
-            searchResultsDiv.innerHTML =
-              '<div class="search-loader">😢 没有找到相关手账</div>';
-          else {
-            searchResultsDiv.innerHTML = "";
-            renderSearchResults(true);
-          }
-        }, 50);
+          if (!currentSearchResults.length) searchResultsDiv.innerHTML = '<div class="search-loader">😢 没有找到相关手账</div>';
+          else { searchResultsDiv.innerHTML = ""; renderSearchResults(true); }
+        } catch (err) {
+          console.error(err);
+          currentSearchResults = [];
+          searchResultsDiv.innerHTML = `<div class="search-loader">搜索失败：${err.message}</div>`;
+        }
       }
+      function refreshSearchAfterMutation() {
+        if (searchModal?.classList.contains("open") && currentSearchKeyword) performSearch();
+      }
+
       function openSearchModal() {
         lastScrollY = window.scrollY;
         searchModal.classList.add("open");
         requestAnimationFrame(updateSearchBackToTop);
         document.body.style.overflow = "hidden";
         modalSearchInput.value = "";
+        updatePrivateSearchFilterAccess();
         modalSearchInput.focus();
         performSearch();
       }
@@ -7098,6 +7122,7 @@ if (contentArea) {
                 render(true);
               });
               showToast("删除成功", "delete");
+              refreshSearchAfterMutation();
             } else {
               if (json.code === 403) clearPublishPassword();
               showToast(json.msg || "删除失败", "error");
@@ -7334,6 +7359,7 @@ if (contentArea) {
               render(true);
             });
             showToast("更新成功", "edit");
+            refreshSearchAfterMutation();
             scrollToPostWithRetry(updatedPost.id, "center", 12);
           } else {
             if (json.code === 403) clearPublishPassword();
@@ -7382,6 +7408,21 @@ if (contentArea) {
       const closeSearchBtnEl = document.getElementById("closeSearchModal");
       const modalSearchBtnEl = document.getElementById("modalSearchBtn");
       const modalSearchInputEl = document.getElementById("modalSearchInput");
+      const privateSearchFilterBtnEl = document.getElementById("privateSearchFilterBtn");
+      function updatePrivateSearchFilterAccess() {
+        if (!privateSearchFilterBtnEl) return;
+        const allowed = Boolean(getPublishPassword());
+        privateSearchFilterBtnEl.hidden = !allowed;
+        if (!allowed) privateSearchEnabled = false;
+        privateSearchFilterBtnEl.classList.toggle("active", privateSearchEnabled);
+        privateSearchFilterBtnEl.setAttribute("aria-pressed", String(privateSearchEnabled));
+      }
+      privateSearchFilterBtnEl?.addEventListener("click", () => {
+        if (!getPublishPassword()) return;
+        privateSearchEnabled = !privateSearchEnabled;
+        updatePrivateSearchFilterAccess();
+        performSearch();
+      });
 
       if (openSearchBtnEl) {
         openSearchBtnEl.onclick = null;
