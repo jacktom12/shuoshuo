@@ -4344,6 +4344,40 @@ body.dark .tmdb-douban-link {
         margin-top: 24px;
         flex-wrap: wrap;
       }
+      
+      .memo-pagination { flex-wrap: wrap; row-gap: 10px; }
+ .memo-pagination .prev-next-btn {
+  width: auto; padding: 0 14px;
+  background: var(--accent-dark);
+  color: var(--ink);
+  border-color: var(--border);
+  font-weight: 900;
+}
+.memo-pagination .prev-next-btn:hover {
+  background: var(--accent);
+}
+.memo-pagination .prev-next-btn[disabled] {
+  background: var(--paper);
+  color: var(--secondary-text);
+  opacity: 0.4;
+}
+.memo-pagination .jump-ten-btn { width: auto; padding: 0 10px; font-size: 0.82rem; }
+.memo-pagination .memo-page-total { font-size: 0.85rem; color: var(--secondary-text); font-weight: 700; }
+.memo-pagination .memo-page-jump {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; color: var(--text); font-weight: 700;
+}
+.memo-pagination .memo-page-jump input {
+  width: 50px; text-align: center;
+  border: 2px solid var(--border); border-radius: var(--sketch-radius-btn);
+  background: var(--bg); color: var(--text);
+  padding: 6px 4px; font-size: 0.85rem;
+}
+@media (max-width: 480px) {
+  .memo-pagination { gap: 6px; }
+  .memo-pagination .jump-ten-btn { display: none; } 
+}
+      
       #memoPaginationWrap {
         margin-top: 28px;
         margin-bottom: 20px;
@@ -5877,50 +5911,52 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
         setupLightbox();
       }
 
-      function buildMemoPaginationHTML(totalItems) {
-        const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-        if (totalPages <= 1) return "";
-        const cur = page;
-        const pages = [];
-        pages.push(1);
-        if (cur > 3) pages.push("...");
-        for (
-          let p = Math.max(2, cur - 1);
-          p <= Math.min(totalPages - 1, cur + 1);
-          p++
-        ) {
-          pages.push(p);
-        }
-        if (cur < totalPages - 2) pages.push("...");
-        if (totalPages > 1) pages.push(totalPages);
-        const seen = new Set();
-        const dedup = pages.filter((p) => {
-          if (p !== "..." && seen.has(p)) return false;
-          if (p !== "...") seen.add(p);
-          return true;
-        });
-        const btns = dedup
-          .map((p) => {
-            if (p === "...") {
-              return '<span class="tmdb-page-ellipsis">...</span>';
-            }
-            return `<button class="tmdb-page-btn${
-              p === cur ? " active" : ""
-            }" onclick="goToMemoPage(${p})">${p}</button>`;
-          })
-          .join("");
-        const prevDisabled = cur <= 1 ? "disabled" : "";
-        const nextDisabled = cur >= totalPages ? "disabled" : "";
-        return `<div class="tmdb-pagination" id="memoPagination">
-          <button class="tmdb-page-btn" ${prevDisabled} onclick="goToMemoPage(${
-          cur - 1
-        })">‹</button>
-          ${btns}
-          <button class="tmdb-page-btn" ${nextDisabled} onclick="goToMemoPage(${
-          cur + 1
-        })">›</button>
-        </div>`;
-      }
+       function buildMemoPaginationHTML(totalItems) {
+  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+  if (totalPages <= 1) return '';
+  const cur = page;
+
+  // 当前页前后各2页
+  const pages = [];
+  for (let p = Math.max(1, cur - 2); p <= Math.min(totalPages, cur + 2); p++) {
+    pages.push(p);
+  }
+
+  const numBtns = pages.map(p =>
+    `<button class="tmdb-page-btn${p === cur ? ' active' : ''}" onclick="goToMemoPage(${p})">${String(p).padStart(2, '0')}</button>`
+  ).join('');
+
+  const prevDisabled = cur <= 1 ? 'disabled' : '';
+  const nextDisabled = cur >= totalPages ? 'disabled' : '';
+  const backTenDisabled = cur <= 1 ? 'disabled' : '';
+  const fwdTenDisabled = cur >= totalPages ? 'disabled' : '';
+  const backTenTarget = Math.max(1, cur - 10);
+  const fwdTenTarget = Math.min(totalPages, cur + 10);
+
+  return `<div class="tmdb-pagination memo-pagination" id="memoPagination">
+    <span class="memo-page-total">${totalItems} 页</span>
+    <button class="tmdb-page-btn jump-ten-btn" ${backTenDisabled} onclick="goToMemoPage(${backTenTarget})" title="后退10页">◀ 10</button>
+    <button class="tmdb-page-btn prev-next-btn" ${prevDisabled} onclick="goToMemoPage(${cur - 1})">上页</button>
+    ${numBtns}
+    <button class="tmdb-page-btn prev-next-btn" ${nextDisabled} onclick="goToMemoPage(${cur + 1})">下页</button>
+    <button class="tmdb-page-btn jump-ten-btn" ${fwdTenDisabled} onclick="goToMemoPage(${fwdTenTarget})" title="前进10页">10 ▶</button>
+    <span class="memo-page-jump">
+      到<input type="number" id="memoPageJumpInput" min="1" max="${totalPages}" placeholder="${cur}"
+        onkeydown="if(event.key==='Enter'){jumpMemoPageFromInput(${totalPages});}">页
+      <button class="tmdb-page-btn" onclick="jumpMemoPageFromInput(${totalPages})">Go</button>
+    </span>
+  </div>`;
+}
+
+function jumpMemoPageFromInput(totalPages) {
+  const input = document.getElementById('memoPageJumpInput');
+  if (!input) return;
+  const val = parseInt(input.value, 10);
+  if (!val || isNaN(val)) return;
+  const target = Math.min(Math.max(1, val), totalPages);
+  goToMemoPage(target);
+  input.value = '';
+}
 
       function goToMemoPage(p) {
   const { rest } = getOrderedGroups(filtered);
