@@ -4367,11 +4367,16 @@ body.dark .tmdb-douban-link {
   display: flex; align-items: center; gap: 6px;
   font-size: 0.85rem; color: var(--text); font-weight: 700;
 }
-.memo-pagination .memo-page-jump input {
-  width: 50px; text-align: center;
-  border: 2px solid var(--border); border-radius: var(--sketch-radius-btn);
-  background: var(--bg); color: var(--text);
-  padding: 6px 4px; font-size: 0.85rem;
+ .memo-pagination .memo-page-jump input {
+  width: 44px;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: var(--sketch-radius-btn);
+  background: var(--bg);
+  color: var(--text);
+  padding: 6px 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 @media (max-width: 480px) {
   .memo-pagination { gap: 6px; }
@@ -5934,15 +5939,19 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   const fwdTenTarget = Math.min(totalPages, cur + 10);
 
   return `<div class="tmdb-pagination memo-pagination" id="memoPagination">
-    <span class="memo-page-total">${totalItems} 页</span>
+  <span class="memo-page-total">${totalItems} 条</span>
+    <span class="memo-page-total">${totalPages} 页</span>
+    
     <button class="tmdb-page-btn jump-ten-btn" ${backTenDisabled} onclick="goToMemoPage(${backTenTarget})" title="后退10页">◀ 10</button>
     <button class="tmdb-page-btn prev-next-btn" ${prevDisabled} onclick="goToMemoPage(${cur - 1})">上页</button>
     ${numBtns}
     <button class="tmdb-page-btn prev-next-btn" ${nextDisabled} onclick="goToMemoPage(${cur + 1})">下页</button>
     <button class="tmdb-page-btn jump-ten-btn" ${fwdTenDisabled} onclick="goToMemoPage(${fwdTenTarget})" title="前进10页">10 ▶</button>
     <span class="memo-page-jump">
-      到<input type="number" id="memoPageJumpInput" min="1" max="${totalPages}" placeholder="${cur}"
-        onkeydown="if(event.key==='Enter'){jumpMemoPageFromInput(${totalPages});}">页
+      到<input type="text" inputmode="numeric" pattern="[0-9]*" id="memoPageJumpInput" maxlength="4"
+  placeholder="${cur}"
+  oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+  onkeydown="if(event.key==='Enter'){jumpMemoPageFromInput(${totalPages});}">页
       <button class="tmdb-page-btn" onclick="jumpMemoPageFromInput(${totalPages})">Go</button>
     </span>
   </div>`;
