@@ -4562,188 +4562,168 @@ body.dark .tmdb-douban-link {
         .private-memo-mark { width: 27px; height: 27px; }
         .private-memo-mark svg { width: 18px; height: 18px; }
       }
-      
-      /* =========================
-   Markdown fenced code block
-   Marked.js: pre > code.language-xxx
-   ========================= */
+      /* ========================================
+   Markdown 代码块：纸张手账风，不引入 GitHub 全局样式
+   Marked.js 输出：pre > code.language-xxx
+   ======================================== */
 
 .post-content pre,
 .search-results .post-content pre {
   position: relative;
-  margin: 18px 0;
-  padding: 18px 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 16px 0;
+  padding: 15px 16px;
+
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 
-  color: #e6edf3;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-left: 5px solid #d9a066;
-  border-radius: 12px;
+  color: #4a3427;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(125, 88, 57, 0.045) 0,
+      rgba(125, 88, 57, 0.045) 27px,
+      rgba(125, 88, 57, 0.11) 28px,
+      rgba(125, 88, 57, 0.11) 29px
+    ),
+    #f7eedf;
+
+  border: 1.5px solid rgba(103, 72, 47, 0.32);
+  border-left: 4px solid #c98c55;
+  border-radius: 11px;
 
   box-shadow:
-    4px 4px 0 rgba(0, 0, 0, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    2px 3px 0 rgba(78, 51, 32, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
   font-family:
     ui-monospace,
-    SFMono-Regular,
+    "SFMono-Regular",
     "Cascadia Code",
-    "Roboto Mono",
+    "JetBrains Mono",
     Consolas,
     "Liberation Mono",
     Menlo,
     monospace !important;
 
-  font-size: 0.88rem;
-  line-height: 1.75;
+  font-size: 0.86rem !important;
+  font-weight: 500 !important;
+  line-height: 1.82 !important;
+  letter-spacing: 0;
   tab-size: 2;
-  -webkit-overflow-scrolling: touch;
 }
 
-/* 消除正文 code 样式对代码块内 code 的影响 */
+/* 覆盖正文中 inline code 的旧样式，避免每一行都变成一条底纹 */
 .post-content pre code,
 .search-results .post-content pre code {
   display: block;
-  min-width: max-content;
+  width: auto;
+  min-width: 0 !important;
+  max-width: 100%;
+
   padding: 0 !important;
   margin: 0 !important;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
 
   color: inherit !important;
   background: transparent !important;
   border: 0 !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
+  text-shadow: none !important;
 
   font-family: inherit !important;
   font-size: inherit !important;
-  font-weight: 500 !important;
+  font-weight: inherit !important;
+  font-style: normal !important;
   line-height: inherit !important;
-  white-space: pre;
 }
 
-/* Bash / Shell 的语言标签 */
-.post-content pre:has(code.language-bash)::before,
-.post-content pre:has(code.language-shell)::before,
-.post-content pre:has(code.language-sh)::before,
-.search-results .post-content pre:has(code.language-bash)::before,
-.search-results .post-content pre:has(code.language-shell)::before,
-.search-results .post-content pre:has(code.language-sh)::before {
-  content: "BASH";
+/* 深色模式：保留暖咖啡纸感，不使用死黑 */
+body.dark .post-content pre,
+body.dark .search-results .post-content pre {
+  color: #f3dfc6;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 224, 181, 0.035) 0,
+      rgba(255, 224, 181, 0.035) 27px,
+      rgba(255, 224, 181, 0.09) 28px,
+      rgba(255, 224, 181, 0.09) 29px
+    ),
+    #30251f;
+
+  border-color: rgba(241, 205, 161, 0.28);
+  border-left-color: #dca56c;
+
+  box-shadow:
+    2px 3px 0 rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 238, 210, 0.05);
 }
 
-/* JavaScript */
-.post-content pre:has(code.language-js)::before,
-.post-content pre:has(code.language-javascript)::before,
-.search-results .post-content pre:has(code.language-js)::before,
-.search-results .post-content pre:has(code.language-javascript)::before {
-  content: "JAVASCRIPT";
-}
-
-/* HTML */
-.post-content pre:has(code.language-html)::before,
-.search-results .post-content pre:has(code.language-html)::before {
-  content: "HTML";
-}
-
-/* CSS */
-.post-content pre:has(code.language-css)::before,
-.search-results .post-content pre:has(code.language-css)::before {
-  content: "CSS";
-}
-
-/* JSON */
-.post-content pre:has(code.language-json)::before,
-.search-results .post-content pre:has(code.language-json)::before {
-  content: "JSON";
-}
-
-/* Python */
-.post-content pre:has(code.language-python)::before,
-.post-content pre:has(code.language-py)::before,
-.search-results .post-content pre:has(code.language-python)::before,
-.search-results .post-content pre:has(code.language-py)::before {
-  content: "PYTHON";
-}
-
-.post-content pre:has(code[class*="language-"])::before,
-.search-results .post-content pre:has(code[class*="language-"])::before {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-
-  padding: 3px 8px;
-  border: 1px solid rgba(230, 237, 243, 0.22);
-  border-radius: 6px;
-
-  color: #d9a066;
-  background: rgba(255, 255, 255, 0.06);
-
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Consolas,
-    monospace;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1;
-}
-
-/* 滚动条 */
-.post-content pre::-webkit-scrollbar,
-.search-results .post-content pre::-webkit-scrollbar {
-  height: 8px;
-}
-
-.post-content pre::-webkit-scrollbar-thumb,
-.search-results .post-content pre::-webkit-scrollbar-thumb {
-  background: rgba(217, 160, 102, 0.62);
-  border: 2px solid #161b22;
-  border-radius: 99px;
-}
-
-.post-content pre::-webkit-scrollbar-track,
-.search-results .post-content pre::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* 正文中的单行 `code`，不影响三反引号代码块 */
+/* 单反引号：正文内联代码，不影响 pre 内的 code */
 .post-content :not(pre) > code,
 .search-results .post-content :not(pre) > code {
+  display: inline;
   padding: 0.12em 0.38em;
-  color: #9d4f26;
-  background: rgba(217, 160, 102, 0.16);
-  border: 1px solid rgba(217, 160, 102, 0.34);
+  color: #8a512b;
+  background: rgba(203, 146, 89, 0.15);
+  border: 1px solid rgba(176, 111, 60, 0.24);
   border-radius: 5px;
 
   font-family:
     ui-monospace,
-    SFMono-Regular,
+    "SFMono-Regular",
     Consolas,
     monospace !important;
-  font-size: 0.86em;
-  font-weight: 600;
+  font-size: 0.84em !important;
+  font-weight: 600 !important;
+  line-height: inherit !important;
 }
 
 body.dark .post-content :not(pre) > code,
 body.dark .search-results .post-content :not(pre) > code {
-  color: #ffd38d;
-  background: rgba(217, 160, 102, 0.14);
-  border-color: rgba(255, 211, 141, 0.32);
+  color: #ffd8a9;
+  background: rgba(214, 153, 92, 0.15);
+  border-color: rgba(255, 211, 157, 0.22);
+}
+
+/* 代码框内部的滚动条，仅在必须横向滚动时显示 */
+.post-content pre::-webkit-scrollbar,
+.search-results .post-content pre::-webkit-scrollbar {
+  height: 5px;
+}
+
+.post-content pre::-webkit-scrollbar-thumb,
+.search-results .post-content pre::-webkit-scrollbar-thumb {
+  background: rgba(166, 105, 57, 0.38);
+  border-radius: 999px;
+}
+
+body.dark .post-content pre::-webkit-scrollbar-thumb,
+body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
+  background: rgba(235, 184, 125, 0.4);
 }
 
 @media (max-width: 768px) {
   .post-content pre,
   .search-results .post-content pre {
     margin: 14px 0;
-    padding: 16px 13px;
-    border-left-width: 4px;
-    border-radius: 10px;
-    font-size: 0.82rem;
-    line-height: 1.7;
+    padding: 13px 12px;
+    border-left-width: 3px;
+    border-radius: 9px;
+    font-size: 0.79rem !important;
+    line-height: 1.76 !important;
   }
 }
+      
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
