@@ -4534,22 +4534,20 @@ body.dark .tmdb-douban-link {
       /* 私密手账标识：仅后端已授权返回 isPrivate 时才会渲染 */
       .post-header { position: relative; }
       .private-memo-mark {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 30px;
-        height: 30px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #9a5d78;
-        background: rgba(255, 237, 245, .86);
-        border: 1.5px solid rgba(154, 93, 120, .56);
-        border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(88, 44, 64, .14);
-        pointer-events: none;
-        z-index: 1;
+         display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 8px;          /* 与时间保持间距 */
+	flex-shrink: 0;            /* 防止被压缩 */
+	width: 30px;
+	height: 30px;
+	color: #9a5d78;
+	background: rgba(255, 237, 245, .86);
+	border: 1.5px solid rgba(154, 93, 120, .56);
+	border-radius: 50%;
+	box-shadow: 0 2px 6px rgba(88, 44, 64, .14);
+	pointer-events: none;
+	z-index: 1;
       }
       .private-memo-mark svg { width: 20px; height: 20px; stroke-width: 3; }
       body.dark .private-memo-mark {
