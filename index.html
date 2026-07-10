@@ -4562,6 +4562,188 @@ body.dark .tmdb-douban-link {
         .private-memo-mark { width: 27px; height: 27px; }
         .private-memo-mark svg { width: 18px; height: 18px; }
       }
+      
+      /* =========================
+   Markdown fenced code block
+   Marked.js: pre > code.language-xxx
+   ========================= */
+
+.post-content pre,
+.search-results .post-content pre {
+  position: relative;
+  margin: 18px 0;
+  padding: 18px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  color: #e6edf3;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-left: 5px solid #d9a066;
+  border-radius: 12px;
+
+  box-shadow:
+    4px 4px 0 rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    "Cascadia Code",
+    "Roboto Mono",
+    Consolas,
+    "Liberation Mono",
+    Menlo,
+    monospace !important;
+
+  font-size: 0.88rem;
+  line-height: 1.75;
+  tab-size: 2;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 消除正文 code 样式对代码块内 code 的影响 */
+.post-content pre code,
+.search-results .post-content pre code {
+  display: block;
+  min-width: max-content;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  color: inherit !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: 500 !important;
+  line-height: inherit !important;
+  white-space: pre;
+}
+
+/* Bash / Shell 的语言标签 */
+.post-content pre:has(code.language-bash)::before,
+.post-content pre:has(code.language-shell)::before,
+.post-content pre:has(code.language-sh)::before,
+.search-results .post-content pre:has(code.language-bash)::before,
+.search-results .post-content pre:has(code.language-shell)::before,
+.search-results .post-content pre:has(code.language-sh)::before {
+  content: "BASH";
+}
+
+/* JavaScript */
+.post-content pre:has(code.language-js)::before,
+.post-content pre:has(code.language-javascript)::before,
+.search-results .post-content pre:has(code.language-js)::before,
+.search-results .post-content pre:has(code.language-javascript)::before {
+  content: "JAVASCRIPT";
+}
+
+/* HTML */
+.post-content pre:has(code.language-html)::before,
+.search-results .post-content pre:has(code.language-html)::before {
+  content: "HTML";
+}
+
+/* CSS */
+.post-content pre:has(code.language-css)::before,
+.search-results .post-content pre:has(code.language-css)::before {
+  content: "CSS";
+}
+
+/* JSON */
+.post-content pre:has(code.language-json)::before,
+.search-results .post-content pre:has(code.language-json)::before {
+  content: "JSON";
+}
+
+/* Python */
+.post-content pre:has(code.language-python)::before,
+.post-content pre:has(code.language-py)::before,
+.search-results .post-content pre:has(code.language-python)::before,
+.search-results .post-content pre:has(code.language-py)::before {
+  content: "PYTHON";
+}
+
+.post-content pre:has(code[class*="language-"])::before,
+.search-results .post-content pre:has(code[class*="language-"])::before {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+
+  padding: 3px 8px;
+  border: 1px solid rgba(230, 237, 243, 0.22);
+  border-radius: 6px;
+
+  color: #d9a066;
+  background: rgba(255, 255, 255, 0.06);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+/* 滚动条 */
+.post-content pre::-webkit-scrollbar,
+.search-results .post-content pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.post-content pre::-webkit-scrollbar-thumb,
+.search-results .post-content pre::-webkit-scrollbar-thumb {
+  background: rgba(217, 160, 102, 0.62);
+  border: 2px solid #161b22;
+  border-radius: 99px;
+}
+
+.post-content pre::-webkit-scrollbar-track,
+.search-results .post-content pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 正文中的单行 `code`，不影响三反引号代码块 */
+.post-content :not(pre) > code,
+.search-results .post-content :not(pre) > code {
+  padding: 0.12em 0.38em;
+  color: #9d4f26;
+  background: rgba(217, 160, 102, 0.16);
+  border: 1px solid rgba(217, 160, 102, 0.34);
+  border-radius: 5px;
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace !important;
+  font-size: 0.86em;
+  font-weight: 600;
+}
+
+body.dark .post-content :not(pre) > code,
+body.dark .search-results .post-content :not(pre) > code {
+  color: #ffd38d;
+  background: rgba(217, 160, 102, 0.14);
+  border-color: rgba(255, 211, 141, 0.32);
+}
+
+@media (max-width: 768px) {
+  .post-content pre,
+  .search-results .post-content pre {
+    margin: 14px 0;
+    padding: 16px 13px;
+    border-left-width: 4px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+}
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
