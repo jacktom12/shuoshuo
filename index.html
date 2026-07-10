@@ -3406,6 +3406,8 @@
         letter-spacing: 0.5px;
         box-shadow: 0 4px 10px rgba(137, 154, 81, 0.12);
         transform: none;
+        white-space: nowrap; /* 日期始终保持一行 */
+	flex-shrink: 0;      /* 不允许被右侧按钮挤压缩小 */
       }
 
       body.dark .post-time {
