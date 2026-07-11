@@ -7885,17 +7885,23 @@ if (contentArea) {
           return json;
         }
 
-        async function tmdbFetchJSON(type, page) {
-          return tmdbRequest(`${TMDB_WORKER}?type=${encodeURIComponent(type)}&page=${page || 1}`);
+        
+async function tmdbFetchJSON(type, page) {
+          return tmdbRequest(`${TMDB_WORKER}?type=${encodeURIComponent(type)}&page=${page || 1}`, {
+            credentials: "include" // 👈 新增
+          });
         }
 
         async function tmdbSearch(query, page) {
-          return tmdbRequest(`${TMDB_WORKER}?action=search&query=${encodeURIComponent(query)}&page=${page || 1}`);
+          return tmdbRequest(`${TMDB_WORKER}?action=search&query=${encodeURIComponent(query)}&page=${page || 1}`, {
+            credentials: "include" // 👈 新增
+          });
         }
 
         async function tmdbAdd(action, mediaId, mediaType) {
           return tmdbRequest(TMDB_WORKER, {
             method: "POST",
+            credentials: "include", // 👈 新增
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               action,
@@ -7904,6 +7910,9 @@ if (contentArea) {
             }),
           });
         }
+         
+
+         
 
         function normalizeItem(it, fallbackMediaType = null) {
           const mediaType = it.media_type || fallbackMediaType || (it.title ? "movie" : "tv");
