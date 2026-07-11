@@ -5259,6 +5259,7 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         publishPreviewDragIndex = null;
       const PUBLISH_PREVIEW_DRAG_TYPE = "application/x-publish-preview-index";
       const WORKER_URL = "https://datas.199105.xyz";
+      let isLoggedIn = true;
       function isLocalPreviewMode() {
         return (
           ["file:", "about:"].includes(location.protocol) ||
@@ -5789,7 +5790,7 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         const pinnedTheme = getRandomPinnedTheme();
         const pinStyle = ` style="--pinned-gradient:${pinnedTheme.gradient};--pinned-gradient-dark:${pinnedTheme.gradientDark};--pinned-border:${pinnedTheme.border};--pinned-border-dark:${pinnedTheme.borderDark};"`;
         const showTime = formatRelativeTime(p.date);
-        const hasAuth = !!getPublishPassword();
+        const hasAuth = isLoggedIn;
         let actionsHtml = "";
         if (hasAuth) {
           actionsHtml = `<div class="post-actions">
@@ -5844,7 +5845,7 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
           }
         }
 
-        const hasAuth = !!getPublishPassword();
+        const hasAuth = isLoggedIn;
         let actionsHtml = "";
         if (hasAuth) {
           actionsHtml = `<div class="post-actions">
@@ -5894,17 +5895,20 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
           } else {
             const res = await fetch(`${WORKER_URL}/api/get-memos`, {
               method: "POST",
+              credentials: "include",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ publishPassword: getPublishPassword() || "" })
+              body: JSON.stringify({})
             });
             if (!res.ok) throw new Error("网络响应错误");
             const json = await res.json();
             if (json.code === 200) {
               allPosts = json.data || [];
+              isLoggedIn = true;
               if (!allPosts.length) allPosts = getMockPosts();
             } else {
+              if (json.code === 401) isLoggedIn = false;
               throw new Error(json.msg || "获取数据失败");
             }
           }
@@ -6829,7 +6833,7 @@ function jumpMemoPageFromInput(totalPages) {
           }
 
           // 操作按钮：编辑 + 查看
-          const hasAuth = !!getPublishPassword();
+          const hasAuth = isLoggedIn;
           let actionsHtml = "";
           if (hasAuth) {
             actionsHtml = `<div class="post-actions">
@@ -6938,11 +6942,11 @@ function jumpMemoPageFromInput(totalPages) {
         try {
           let searchSource = allPosts;
           if (privateSearchEnabled) {
-            const pwd = getPublishPassword();
-            if (!pwd) throw new Error("请先输入发布手账密码");
             const res = await fetch(`${WORKER_URL}/api/get-private-memos`, {
-              method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ publishPassword: pwd })
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({})
             });
             const json = await res.json();
             if (!res.ok || json.code !== 200) throw new Error(json.msg || "获取隐私手账失败");
@@ -6981,22 +6985,6 @@ function jumpMemoPageFromInput(totalPages) {
         window.scrollTo(0, lastScrollY);
       }
 
-      // ---------- 发布功能 ----------
-      function setPublishPassword(p) {
-        /* 简写保留完整 */ const e = new Date(
-          Date.now() + PUBLISH_PWD_DAYS * 86400000,
-        ).toUTCString();
-        document.cookie = `${PUBLISH_PWD_KEY}=${encodeURIComponent(p)}; expires=${e}; path=/; SameSite=Lax`;
-      }
-      function getPublishPassword() {
-        const m = document.cookie.match(
-          new RegExp(`(?:^|; )${PUBLISH_PWD_KEY}=([^;]*)`),
-        );
-        return m ? decodeURIComponent(m[1]) : "";
-      }
-      function clearPublishPassword() {
-        document.cookie = `${PUBLISH_PWD_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
-      }
       function getNowBeijingString() {
         const d = new Date(Date.now() + 8 * 3600000);
         const p = (n) => String(n).padStart(2, "0");
@@ -7058,13 +7046,12 @@ function jumpMemoPageFromInput(totalPages) {
         }
       }
       function openPublishEditor() {
-        /* 略 原样保留 */ if (publishModal) publishModal.remove();
+        if (publishModal) publishModal.remove();
         selectedPublishFiles = [];
         publishPreviewDragIndex = null;
-        const savedPwd = getPublishPassword();
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
-        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div>${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}<div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools upload-icon-zone" id="selectImg">
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div><div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools upload-icon-zone" id="selectImg">
     <div class="upload-icon-default">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
             <path d="M0 0h48v48H0z" fill="none" />
@@ -7236,13 +7223,10 @@ if (contentArea) {
         });
       }
       async function submitMemo() {
-        const savedPwd = getPublishPassword();
-        const pwdInput = document.getElementById("publishPwd");
-        const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
         const content = document.getElementById("memoContent").value.trim();
 
-        if (!pwd || (!content && !selectedPublishFiles.length)) {
-          return showToast("请填写完整内容和密码", "error");
+        if (!content && !selectedPublishFiles.length) {
+          return showToast("请填写内容或添加图片", "error");
         }
 
         const btn = document.getElementById("submitMemo");
@@ -7257,7 +7241,6 @@ if (contentArea) {
           }
 
           if (isLocalPreviewMode()) {
-            setPublishPassword(pwd);
             const newPostItem = {
               id: `local-${Date.now()}`,
               date: getNowBeijingString(),
@@ -7286,16 +7269,15 @@ if (contentArea) {
 
           const res = await fetch(WORKER_URL, {
             method: "POST",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              publishPassword: pwd,
               content,
               newImgList,
             }),
           });
           const json = await res.json();
           if (json.code === 200) {
-            setPublishPassword(pwd);
             const newPostItem = json.data;
             preserveViewportDuring(() => {
               allPosts.unshift(newPostItem);
@@ -7314,8 +7296,11 @@ if (contentArea) {
               render(true);
             });
             showToast("发布成功，前往第一页可查看", "success");
+          } else if (json.code === 401) {
+            isLoggedIn = false;
+            showToast("登录已过期，请重新登录", "error");
+            setTimeout(() => location.reload(), 1200);
           } else {
-            if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "发布失败", "error");
           }
         } catch (e) {
@@ -7349,10 +7334,6 @@ if (contentArea) {
 
         document.getElementById("confirmDeleteBtn").onclick = async () => {
           close();
-          const pwd = getPublishPassword();
-          if (!pwd) {
-            return showToast("凭证已过期，请重新点击发布校验密码", "error");
-          }
 
           if (isLocalPreviewMode()) {
             preserveViewportDuring(() => {
@@ -7366,20 +7347,23 @@ if (contentArea) {
           try {
             const res = await fetch(WORKER_URL, {
               method: "DELETE",
+              credentials: "include",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id, publishPassword: pwd }),
+              body: JSON.stringify({ id }),
             });
             const json = await res.json();
             if (json.code === 200) {
-              setPublishPassword(pwd);
               preserveViewportDuring(() => {
                 removePostFromLists(id);
                 render(true);
               });
               showToast("删除成功", "delete");
               refreshSearchAfterMutation();
+            } else if (json.code === 401) {
+              isLoggedIn = false;
+              showToast("登录已过期，请重新登录", "error");
+              setTimeout(() => location.reload(), 1200);
             } else {
-              if (json.code === 403) clearPublishPassword();
               showToast(json.msg || "删除失败", "error");
             }
           } catch (e) {
@@ -7401,7 +7385,6 @@ if (contentArea) {
         selectedPublishFiles = [];
         publishPreviewDragIndex = null;
 
-        const savedPwd = getPublishPassword();
         const contentText = Array.isArray(post.content)
           ? post.content.join("\n")
           : post.content || "";
@@ -7413,7 +7396,6 @@ if (contentArea) {
                 <h3 class="publish-title">编辑说说</h3>
                 <button id="closeMemo" class="publish-close">✕</button>
             </div>
-            ${savedPwd ? '<div class="publish-field"><div class="publish-empty">已记住发布密码，30天内无需重复输入。</div></div>' : `<div class="publish-field"><label class="publish-label">发布密码</label><input id="publishPwd" class="publish-input" type="password" placeholder="请输入发布密码"/></div>`}
             <div class="publish-field">
                 <label class="publish-label">内容</label>
                 <textarea id="memoContent" class="publish-textarea" placeholder="可以说点什么...">${contentText}</textarea>
@@ -7529,18 +7511,14 @@ if (contentArea) {
       };
 
       async function submitEditMemo() {
-        const savedPwd = getPublishPassword();
-        const pwdInput = document.getElementById("publishPwd");
-        const pwd = savedPwd || (pwdInput ? pwdInput.value.trim() : "");
         const content = document.getElementById("memoContent").value.trim();
 
         if (
-          !pwd ||
-          (!content &&
-            !selectedPublishFiles.length &&
-            !existingImagesForEdit.length)
+          !content &&
+          !selectedPublishFiles.length &&
+          !existingImagesForEdit.length
         ) {
-          return showToast("请填写完整内容和密码", "error");
+          return showToast("请填写内容或保留图片", "error");
         }
 
         const btn = document.getElementById("submitEditMemo");
@@ -7555,7 +7533,6 @@ if (contentArea) {
           }
 
           if (isLocalPreviewMode()) {
-            setPublishPassword(pwd);
             const originalPost =
               allPosts.find((p) => p.id === currentEditId) ||
               filtered.find((p) => p.id === currentEditId);
@@ -7584,10 +7561,10 @@ if (contentArea) {
 
           const res = await fetch(WORKER_URL, {
             method: "PUT",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               id: currentEditId,
-              publishPassword: pwd,
               content,
               existingImages: existingImagesForEdit,
               newImgList,
@@ -7595,7 +7572,6 @@ if (contentArea) {
           });
           const json = await res.json();
           if (json.code === 200) {
-            setPublishPassword(pwd);
             const updatedPost = json.data;
             const originalPost =
               allPosts.find((p) => p.id === currentEditId) ||
@@ -7616,8 +7592,11 @@ if (contentArea) {
             showToast("更新成功", "edit");
             refreshSearchAfterMutation();
             scrollToPostWithRetry(updatedPost.id, "center", 12);
+          } else if (json.code === 401) {
+            isLoggedIn = false;
+            showToast("登录已过期，请重新登录", "error");
+            setTimeout(() => location.reload(), 1200);
           } else {
-            if (json.code === 403) clearPublishPassword();
             showToast(json.msg || "更新失败", "error");
           }
         } catch (e) {
@@ -7666,14 +7645,14 @@ if (contentArea) {
       const privateSearchFilterBtnEl = document.getElementById("privateSearchFilterBtn");
       function updatePrivateSearchFilterAccess() {
         if (!privateSearchFilterBtnEl) return;
-        const allowed = Boolean(getPublishPassword());
+        const allowed = isLoggedIn;
         privateSearchFilterBtnEl.hidden = !allowed;
         if (!allowed) privateSearchEnabled = false;
         privateSearchFilterBtnEl.classList.toggle("active", privateSearchEnabled);
         privateSearchFilterBtnEl.setAttribute("aria-pressed", String(privateSearchEnabled));
       }
       privateSearchFilterBtnEl?.addEventListener("click", () => {
-        if (!getPublishPassword()) return;
+        if (!isLoggedIn) return;
         privateSearchEnabled = !privateSearchEnabled;
         updatePrivateSearchFilterAccess();
         performSearch();
@@ -8223,23 +8202,11 @@ if (contentArea) {
 
         function syncTmdbAdminVisibility() {
           if (!openTmdbAdminBtn) return;
-          const authed = typeof getPublishPassword === "function" && !!getPublishPassword();
-          openTmdbAdminBtn.style.display = authed ? "" : "none";
+          openTmdbAdminBtn.style.display = isLoggedIn ? "" : "none";
         }
 
         function patchTmdbAdminAuthHooks() {
-          ["setPublishPassword", "clearPublishPassword"].forEach((name) => {
-            if (typeof window[name] !== "function") return;
-            if (window[name].__tmdbPatched) return;
-            const original = window[name];
-            const wrapped = function (...args) {
-              const result = original.apply(this, args);
-              setTimeout(syncTmdbAdminVisibility, 0);
-              return result;
-            };
-            wrapped.__tmdbPatched = true;
-            window[name] = wrapped;
-          });
+          // 登录态由 isLoggedIn 全局变量统一管理，无需再劫持发布密码函数
         }
 
         async function doTmdbSearch() {
