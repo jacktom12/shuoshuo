@@ -74,10 +74,12 @@
               --p-shadow: 4px 4px 0px #f3e9dd;
             }
 
-            body.dark .post:hover {
-              box-shadow:
-                0 0 18px rgba(218, 160, 109, 0.25),
-                0 0 36px rgba(218, 160, 109, 0.12);
+            @media (hover: hover) and (pointer: fine) {
+              body.dark .post:hover {
+                box-shadow:
+                  0 0 18px rgba(218, 160, 109, 0.25),
+                  0 0 36px rgba(218, 160, 109, 0.12);
+              }
             }
 
             * {
@@ -691,6 +693,19 @@
               transform: rotate(-15deg) scale(0); /* 初始缩成0，比0.7更有弹出感 */
             }
 
+      .post,
+      .pinned-hero-card {
+        --hover-glow: rgba(255, 207, 132, 0.34);
+        --hover-glow-strong: rgba(255, 163, 122, 0.22);
+      }
+
+      body.dark .post,
+      body.dark .pinned-hero-card {
+        --hover-glow: rgba(137, 180, 255, 0.26);
+        --hover-glow-strong: rgba(255, 152, 214, 0.16);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
                .post:hover {
         transform: rotate(-1.5deg) skewX(-1deg) translate(-4px, -4px);
         border-color: var(--accent-dark);
@@ -705,19 +720,6 @@
       .post:hover::after {
         opacity: 1;
         transform: rotate(12deg) scale(1.15);
-      }
-
-
-      .post,
-      .pinned-hero-card {
-        --hover-glow: rgba(255, 207, 132, 0.34);
-        --hover-glow-strong: rgba(255, 163, 122, 0.22);
-      }
-
-      body.dark .post,
-      body.dark .pinned-hero-card {
-        --hover-glow: rgba(137, 180, 255, 0.26);
-        --hover-glow-strong: rgba(255, 152, 214, 0.16);
       }
 
       .post:hover {
@@ -755,6 +757,7 @@
           0 0 42px var(--hover-glow-strong),
           0 22px 38px rgba(0, 0, 0, 0.44),
           0 10px 0 rgba(0, 0, 0, 0.30);
+      }
       }
 
             .post-right {
@@ -1252,8 +1255,10 @@
               margin: 0 0 18px;
               transform: none;
             }
-            .search-results .post:hover {
-              transform: translate(-3px, -3px) rotate(-0.5deg);
+            @media (hover: hover) and (pointer: fine) {
+              .search-results .post:hover {
+                transform: translate(-3px, -3px) rotate(-0.5deg);
+              }
             }
             .search-results .post-right {
               transform: none;
@@ -1693,8 +1698,23 @@
                 border-width: 2px;
                 box-shadow: 4px 4px 0px var(--border);
               }
-              .post:hover {
-                 transform: none;
+              .post:hover,
+              #postsContainer .post:hover,
+              .search-results .post:hover,
+              body.dark .post:hover,
+              body.dark #postsContainer .post:hover {
+                 transform: none !important;
+                 animation: none !important;
+                 filter: none !important;
+                 border-color: var(--border) !important;
+                 box-shadow: 4px 4px 0px var(--border) !important;
+              }
+              .post:hover::before,
+              .post:hover::after,
+              #postsContainer .post:hover::before,
+              #postsContainer .post:hover::after {
+                 opacity: 0 !important;
+                 transform: none !important;
               }
               body.dark .post {
                 box-shadow: 4px 4px 0px var(--border);
@@ -1816,9 +1836,20 @@
       /* 3. 移动端 hover 时也不改变阴影/位移，防止触发重绘导致溢出 */
       .topbar-inner:hover,
       .blog-brand:hover,
-      .post:hover {
+      .post:hover,
+      #postsContainer .post:hover,
+      .search-results .post:hover,
+      body.dark .post:hover,
+      body.dark #postsContainer .post:hover,
+      body:not(.dark) .post:hover,
+      body:not(.dark) #postsContainer .post:hover {
         box-shadow: var(--p-shadow) !important;
         translate: none !important;
+        transform: none !important;
+        -webkit-transform: none !important;
+        filter: none !important;
+        animation: none !important;
+        border-color: var(--border) !important;
       }
 
       /* 4. 限制触摸滚动方向，禁止水平拖拽 */
@@ -2696,11 +2727,13 @@
               box-shadow: 4px 4px 0px rgba(50, 50, 50, 0.92) !important;
             }
 
-            body:not(.dark) #postsContainer .post:hover,
-            body:not(.dark) .post:hover {
-              transform: none !important;
-              border-color: var(--border) !important;
-              box-shadow: 0 0 18px rgba(229, 170, 112, 0.24) !important;
+            @media (hover: hover) and (pointer: fine) {
+              body:not(.dark) #postsContainer .post:hover,
+              body:not(.dark) .post:hover {
+                transform: none !important;
+                border-color: var(--border) !important;
+                box-shadow: 0 0 18px rgba(229, 170, 112, 0.24) !important;
+              }
             }
 
             body:not(.dark) #postsContainer .post::before,
@@ -3279,15 +3312,17 @@
         z-index: -1;
       }
 
-      .post:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--hw-shadow-soft);
-        border-color: var(--hw-accent);
-      }
+      @media (hover: hover) and (pointer: fine) {
+        .post:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--hw-shadow-soft);
+          border-color: var(--hw-accent);
+        }
 
-      .post:hover::before {
-        opacity: 0.98;
-        transform: none;
+        .post:hover::before {
+          opacity: 0.98;
+          transform: none;
+        }
       }
 
       .post.pinned {
@@ -3745,27 +3780,29 @@
         }
       }
 
-      #postsContainer .post:hover {
-        animation: none !important;
-        transform: translateY(-8px) scale(1.01) rotate(-0.5deg) !important;
-        border-color: var(--accent-dark) !important;
-        box-shadow:
-          0 0 0 2px rgba(255, 255, 255, 0.8) inset,
-          0 0 20px rgba(255, 205, 132, 0.6),
-          0 0 40px rgba(255, 171, 122, 0.35),
-          0 0 80px rgba(229, 170, 112, 0.15),
-          7px 8px 0 rgba(50, 50, 50, 0.72) !important;
-      }
+      @media (hover: hover) and (pointer: fine) {
+        #postsContainer .post:hover {
+          animation: none !important;
+          transform: translateY(-8px) scale(1.01) rotate(-0.5deg) !important;
+          border-color: var(--accent-dark) !important;
+          box-shadow:
+            0 0 0 2px rgba(255, 255, 255, 0.8) inset,
+            0 0 20px rgba(255, 205, 132, 0.6),
+            0 0 40px rgba(255, 171, 122, 0.35),
+            0 0 80px rgba(229, 170, 112, 0.15),
+            7px 8px 0 rgba(50, 50, 50, 0.72) !important;
+        }
 
-      body.dark #postsContainer .post:hover {
-        animation: card-hover-wiggle 0.42s ease-out 1;
-        transform: translate(-3px, -3px) rotate(-0.8deg) !important;
-        border-color: rgba(255, 224, 173, 0.48) !important;
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-          0 0 18px rgba(137, 180, 255, 0.26),
-          0 0 34px rgba(255, 152, 214, 0.16),
-          7px 8px 0 rgba(0, 0, 0, 0.4) !important;
+        body.dark #postsContainer .post:hover {
+          animation: card-hover-wiggle 0.42s ease-out 1;
+          transform: translate(-3px, -3px) rotate(-0.8deg) !important;
+          border-color: rgba(255, 224, 173, 0.48) !important;
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+            0 0 18px rgba(137, 180, 255, 0.26),
+            0 0 34px rgba(255, 152, 214, 0.16),
+            7px 8px 0 rgba(0, 0, 0, 0.4) !important;
+        }
       }
 
       /* ===== 定位高亮:与鼠标 hover 视觉完全统一 ===== */
@@ -3841,6 +3878,72 @@
           display: block !important;
           content: "" !important;
           opacity: 0.42 !important;
+        }
+      }
+
+      /* 非 PC：彻底关闭 post 卡片 hover 态，避免触控残留/粘滞 hover */
+      @media (hover: none), (pointer: coarse) {
+        .post:hover,
+        #postsContainer .post:hover,
+        .search-results .post:hover,
+        body.dark .post:hover,
+        body.dark #postsContainer .post:hover,
+        body.dark .search-results .post:hover,
+        body:not(.dark) .post:hover,
+        body:not(.dark) #postsContainer .post:hover,
+        body:not(.dark) .search-results .post:hover,
+        .pinned-hero-card:hover,
+        body.dark .pinned-hero-card:hover {
+          transform: none !important;
+          -webkit-transform: none !important;
+          translate: none !important;
+          filter: none !important;
+          animation: none !important;
+          border-color: var(--border) !important;
+          box-shadow: var(--p-shadow, 4px 4px 0 var(--border)) !important;
+        }
+
+        body:not(.dark) .post:hover,
+        body:not(.dark) #postsContainer .post:hover,
+        body:not(.dark) .search-results .post:hover {
+          box-shadow: 4px 4px 0px rgba(50, 50, 50, 0.92) !important;
+          border-color: var(--border) !important;
+        }
+
+        body.dark .post:hover,
+        body.dark #postsContainer .post:hover,
+        body.dark .search-results .post:hover {
+          box-shadow: var(--hw-shadow-soft, 0 18px 30px rgba(0, 0, 0, 0.35)) !important;
+          border-color: var(--border) !important;
+        }
+
+        .post.pinned:hover,
+        #postsContainer .post.pinned:hover,
+        body.dark .post.pinned:hover,
+        body.dark #postsContainer .post.pinned:hover {
+          transform: none !important;
+          filter: none !important;
+          animation: none !important;
+          border-color: var(--pinned-border, var(--accent-dark)) !important;
+        }
+
+        body.dark .post.pinned:hover,
+        body.dark #postsContainer .post.pinned:hover {
+          border-color: var(--pinned-border-dark, #f0c36d) !important;
+        }
+
+        .post:hover::before,
+        .post:hover::after,
+        #postsContainer .post:hover::before,
+        #postsContainer .post:hover::after,
+        .search-results .post:hover::before,
+        .search-results .post:hover::after,
+        body:not(.dark) #postsContainer .post:hover::before,
+        body:not(.dark) .search-results .post:hover::before {
+          opacity: 0 !important;
+          display: none !important;
+          content: none !important;
+          transform: none !important;
         }
       }
 
