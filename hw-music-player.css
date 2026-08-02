@@ -82,47 +82,56 @@ body.dark .hw-repeat.active,body.dark .hw-pl-shuffle.active,body.dark .hw-pl-rep
 /* ===== global music sheet ===== */
 .hw-music-sheet-backdrop{
   position:fixed;
-  left:0;right:0;top:0;
-  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  inset:0;
   z-index:6100;
-  background:rgba(30,24,18,.28);
-  opacity:0;pointer-events:none;
-  transition:opacity .28s ease;
+  background:transparent;
+  opacity:0;
+  pointer-events:none;
 }
-.hw-music-sheet-backdrop.open{opacity:1;pointer-events:auto}
-body.dark .hw-music-sheet-backdrop{background:rgba(0,0,0,.46)}
+.hw-music-sheet-backdrop.open{
+  opacity:1;
+  pointer-events:auto;
+}
+body.hw-music-sheet-open .menu{
+  z-index:6300;
+}
 
 .hw-music-sheet{
   --hw-menu-clearance: calc(84px + env(safe-area-inset-bottom, 0px));
   position:fixed;
   left:50%;
-  top: calc(10px + env(safe-area-inset-top, 0px));
   bottom: var(--hw-menu-clearance);
-  transform: translate(-50%, calc(100% + var(--hw-menu-clearance) + 24px));
+  top:auto;
   width: min(100% - 16px, 520px);
-  height: auto;
-  max-height: none;
+  height: min(72vh, calc(100dvh - var(--hw-menu-clearance) - 18px - env(safe-area-inset-top, 0px)));
+  max-height: min(720px, calc(100dvh - var(--hw-menu-clearance) - 18px - env(safe-area-inset-top, 0px)));
+  transform: translate(-50%, calc(100% + 28px));
   z-index: 6200;
   display:flex;
   flex-direction:column;
-  background: var(--paper, #fff9e6);
-  border: 1.5px solid var(--border, rgba(50,50,50,.14));
-  border-radius: 22px;
-  box-shadow: 0 18px 42px rgba(50,50,50,.16);
+  background: rgba(255, 249, 230, 0.94);
+  border: 1px solid rgba(50,50,50,.12);
+  border-radius: 24px;
+  box-shadow: 0 18px 48px rgba(50,50,50,.18), 0 2px 0 rgba(255,255,255,.35) inset;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   padding: 10px 14px 12px;
-  transition: transform .34s cubic-bezier(.22,1,.36,1);
+  transition: transform .34s cubic-bezier(.22,1,.36,1), opacity .24s ease;
+  opacity: 0;
   font-family: 'LXGW WenKai Screen', sans-serif;
   overflow: hidden;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 .hw-music-sheet.open{
   transform: translate(-50%, 0);
+  opacity: 1;
   pointer-events: auto;
 }
 body.dark .hw-music-sheet{
-  background: rgba(34,34,38,.96);
+  background: rgba(28, 28, 32, 0.94);
   border-color: rgba(255,255,255,.12);
-  box-shadow: 0 18px 48px rgba(0,0,0,.42);
+  box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 1px 0 rgba(255,255,255,.06) inset;
 }
 
 .hw-music-sheet-handle{
@@ -223,15 +232,13 @@ body.dark #openMusicBtn.playing-dot::after{
 }
 
 @media (max-width:480px){
-  .hw-music-sheet-backdrop{
-    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
-  }
   .hw-music-sheet{
     --hw-menu-clearance: calc(78px + env(safe-area-inset-bottom, 0px));
     width: calc(100% - 12px);
-    top: calc(8px + env(safe-area-inset-top, 0px));
+    height: min(74vh, calc(100dvh - var(--hw-menu-clearance) - 14px - env(safe-area-inset-top, 0px)));
+    max-height: calc(100dvh - var(--hw-menu-clearance) - 14px - env(safe-area-inset-top, 0px));
     padding: 10px 12px 10px;
-    border-radius: 18px;
+    border-radius: 20px;
   }
   .hw-music-sheet .hw-pl-view-lyrics{min-height:140px}
 }

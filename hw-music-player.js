@@ -662,6 +662,18 @@ const NETEASE_PLAYLIST_API = (id) => `https://meting.zhheo.com/?server=netease&t
     const toggle = () => setOpen(!isOpen());
 
     backdrop.addEventListener('click', close);
+
+    // Close when tapping other bottom-menu items (Win11-like flyout behavior).
+    if (!document.documentElement.dataset.hwMusicMenuCloseBound) {
+      document.documentElement.dataset.hwMusicMenuCloseBound = '1';
+      document.addEventListener('click', (e) => {
+        if (!globalSheet || !globalSheet.isOpen()) return;
+        const item = e.target && e.target.closest ? e.target.closest('.menu .menu-item') : null;
+        if (!item) return;
+        if (item.id === 'openMusicBtn') return;
+        globalSheet.close();
+      }, true);
+    }
     if (closeBtn) closeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); close(); });
     sheet.addEventListener('click', (e) => e.stopPropagation());
 
