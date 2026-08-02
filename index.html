@@ -4985,6 +4985,16 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
           </svg>
         </button>
 
+        <button class="menu-item" id="openMusicBtn" title="音乐" type="button" aria-label="音乐">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </g>
+          </svg>
+        </button>
         <button
           class="menu-item"
           id="openWatchlistBtn"
@@ -7833,6 +7843,9 @@ if (contentArea) {
       document.addEventListener("DOMContentLoaded", () => {
         init();
         initBackToTop();
+        if (window.HWPlayer && typeof window.HWPlayer.initGlobalPlayer === "function") {
+          window.HWPlayer.initGlobalPlayer("9127652363");
+        }
          // 👇 新增全局快捷键
   document.addEventListener('keydown', function(e) {
     if (e.key === 'b' && !e.ctrlKey && !e.altKey && !e.metaKey) {

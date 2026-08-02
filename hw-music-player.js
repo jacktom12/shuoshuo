@@ -596,5 +596,147 @@ const NETEASE_PLAYLIST_API = (id) => `https://meting.zhheo.com/?server=netease&t
     root.querySelectorAll('.hw-playlist-mount').forEach((el) => { if (el.dataset.hwMounted) return; el.dataset.hwMounted = '1'; mountOnePlaylist(el); });
   }
 
-  window.HWPlayer = { parseShortcodes, mountAll };
+  const DEFAULT_GLOBAL_LIST_ID = '9127652363';
+  let globalSheet = null;
+
+  function ensureGlobalSheet(listId) {
+    const targetListId = String(listId || DEFAULT_GLOBAL_LIST_ID);
+    if (globalSheet && globalSheet.el) return globalSheet;
+
+    let backdrop = document.getElementById('hwMusicSheetBackdrop');
+    let sheet = document.getElementById('hwMusicSheet');
+    let mountEl = document.getElementById('hwGlobalPlaylistMount');
+    let openBtn = document.getElementById('openMusicBtn');
+
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'hwMusicSheetBackdrop';
+      backdrop.className = 'hw-music-sheet-backdrop';
+      document.body.appendChild(backdrop);
+    }
+    if (!sheet) {
+      sheet = document.createElement('div');
+      sheet.id = 'hwMusicSheet';
+      sheet.className = 'hw-music-sheet';
+      sheet.setAttribute('role', 'dialog');
+      sheet.setAttribute('aria-modal', 'true');
+      sheet.setAttribute('aria-label', '歌单播放器');
+      sheet.innerHTML = `
+        <div class="hw-music-sheet-handle" aria-hidden="true"></div>
+        <div class="hw-music-sheet-header">
+          <div class="hw-music-sheet-title">歌单播放器</div>
+          <button type="button" class="hw-music-sheet-close" id="hwMusicSheetClose" title="关闭" aria-label="关闭">✕</button>
+        </div>
+        <div class="hw-music-sheet-body">
+          <div class="hw-playlist-mount" id="hwGlobalPlaylistMount" data-hw-list-id="${escapeAttr(targetListId)}" data-hw-mount-id="hw-global-list"></div>
+        </div>
+      `;
+      document.body.appendChild(sheet);
+      mountEl = document.getElementById('hwGlobalPlaylistMount');
+    } else if (mountEl) {
+      mountEl.setAttribute('data-hw-list-id', targetListId);
+    }
+
+    const closeBtn = document.getElementById('hwMusicSheetClose');
+    const isOpen = () => sheet.classList.contains('open');
+
+    const setOpen = (open) => {
+      sheet.classList.toggle('open', open);
+      backdrop.classList.toggle('open', open);
+      document.body.classList.toggle('hw-music-sheet-open', open);
+      if (openBtn) openBtn.classList.toggle('active', open);
+      if (open) {
+        ensureAudioEl();
+        if (mountEl && !mountEl.dataset.hwMounted) {
+          mountEl.dataset.hwMounted = '1';
+          mountOnePlaylist(mountEl);
+        } else if (mountEl) {
+          const card = mountEl.querySelector('.hw-playlist');
+          if (card) refreshPlaylistUI(card, targetListId);
+        }
+      }
+    };
+
+    const open = () => setOpen(true);
+    const close = () => setOpen(false);
+    const toggle = () => setOpen(!isOpen());
+
+    backdrop.addEventListener('click', close);
+    if (closeBtn) closeBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); close(); });
+    sheet.addEventListener('click', (e) => e.stopPropagation());
+
+    let dragStartY = null;
+    const handle = sheet.querySelector('.hw-music-sheet-handle');
+    const onPointerDown = (e) => {
+      dragStartY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    };
+    const onPointerMove = (e) => {
+      if (dragStartY == null) return;
+      const y = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+      if (y != null && y - dragStartY > 70) { dragStartY = null; close(); }
+    };
+    const onPointerUp = () => { dragStartY = null; };
+    if (handle) {
+      handle.addEventListener('mousedown', onPointerDown);
+      handle.addEventListener('touchstart', onPointerDown, { passive: true });
+    }
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) close();
+    });
+
+    const syncMenuDot = () => {
+      if (!openBtn) openBtn = document.getElementById('openMusicBtn');
+      if (!openBtn) return;
+      openBtn.classList.toggle('playing-dot', !!state.isPlaying);
+    };
+    document.addEventListener('hwplayer:update', syncMenuDot);
+    syncMenuDot();
+
+    if (mountEl && !mountEl.dataset.hwMounted) {
+      mountEl.dataset.hwMounted = '1';
+      mountOnePlaylist(mountEl);
+    }
+
+    globalSheet = { el: sheet, backdrop, open, close, toggle, isOpen, listId: targetListId };
+    return globalSheet;
+  }
+
+  function openGlobalSheet(listId) { return ensureGlobalSheet(listId).open(); }
+  function closeGlobalSheet() { if (globalSheet) globalSheet.close(); }
+  function toggleGlobalSheet(listId) { return ensureGlobalSheet(listId).toggle(); }
+
+  function initGlobalPlayer(listId) {
+    const sheet = ensureGlobalSheet(listId || DEFAULT_GLOBAL_LIST_ID);
+    const btn = document.getElementById('openMusicBtn');
+    if (btn && !btn.dataset.hwBound) {
+      btn.dataset.hwBound = '1';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        sheet.toggle();
+      });
+    }
+    return sheet;
+  }
+
+  window.HWPlayer = {
+    parseShortcodes,
+    mountAll,
+    initGlobalPlayer,
+    openGlobalSheet,
+    closeGlobalSheet,
+    toggleGlobalSheet,
+    getState: () => ({ ...state }),
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initGlobalPlayer(DEFAULT_GLOBAL_LIST_ID));
+  } else {
+    initGlobalPlayer(DEFAULT_GLOBAL_LIST_ID);
+  }
 })();
