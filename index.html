@@ -3225,7 +3225,28 @@
     .private-search-filter-btn.active { background:var(--accent)!important; color:var(--ink)!important; transform:translate(2px,2px); box-shadow:0 0 0 var(--border); }
     .private-search-filter-btn[hidden] { display:none!important; }
     @media (max-width:768px) { .private-search-filter-btn { width:38px; height:38px; flex-basis:38px; } }
-</style>
+
+      /* 长文字自动跨两列：短文字与图片仍保持原有手账瀑布流布局 */
+      .post.post-long-text .post-content {
+        max-width: 58em;
+        margin: 0 auto;
+        font-size: 1.08rem;
+        line-height: 1.95;
+      }
+
+      .post.post-long-text .post-content p {
+        margin-bottom: 1em;
+      }
+
+      @media (max-width: 768px) {
+        .post.post-long-text .post-content {
+          max-width: none;
+          font-size: 17px;
+          line-height: 1.85;
+        }
+      }
+
+    </style>
     <style id="handwritten-card-overrides">
       :root {
         --hw-bg: #f6eddc;
@@ -5612,48 +5633,56 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         const innerWidth = container.clientWidth - paddingLeft - paddingRight;
         const columns = Math.max(1, getMasonryColumnCount());
         const gap = getMasonryGap();
-        const itemWidth = Math.max(
-          0,
-          (innerWidth - gap * (columns - 1)) / columns,
-        );
+        const itemWidth = Math.max(0, (innerWidth - gap * (columns - 1)) / columns);
         const heights = new Array(columns).fill(0);
+        const containerStyles = getComputedStyle(container);
 
         container.style.setProperty("--masonry-item-width", `${itemWidth}px`);
 
         items.forEach((item, index) => {
-          item.style.width = `${itemWidth}px`;
-
+          const span = item.classList.contains("post-long-text") && columns >= 2 ? 2 : 1;
           let columnIndex = 0;
-          if (index < columns) {
-            columnIndex = index;
-          } else {
+          let y = 0;
+
+          if (span === 1) {
             let minHeight = heights[0];
-            for (let i = 1; i < heights.length; i++) {
+            for (let i = 1; i < columns; i++) {
               if (heights[i] < minHeight) {
                 minHeight = heights[i];
                 columnIndex = i;
               }
             }
+            y = heights[columnIndex];
+          } else {
+            let minHeight = Infinity;
+            for (let i = 0; i <= columns - span; i++) {
+              const groupHeight = Math.max(...heights.slice(i, i + span));
+              if (groupHeight < minHeight) {
+                minHeight = groupHeight;
+                columnIndex = i;
+                y = groupHeight;
+              }
+            }
           }
 
-          const x = columnIndex * (itemWidth + gap);
-          const y = heights[columnIndex];
-          const containerStyles = getComputedStyle(container);
+          const cardWidth = itemWidth * span + gap * (span - 1);
           const extraGap = item.classList.contains("pinned")
-            ? parseFloat(
-                containerStyles.getPropertyValue("--pinned-extra-gap"),
-              ) || 0
+            ? parseFloat(containerStyles.getPropertyValue("--pinned-extra-gap")) || 0
             : index === 0
-              ? parseFloat(
-                  containerStyles.getPropertyValue("--first-card-extra-gap"),
-                ) || 0
+              ? parseFloat(containerStyles.getPropertyValue("--first-card-extra-gap")) || 0
               : 0;
-          item.style.left = `${x}px`;
+
+          item.style.width = `${cardWidth}px`;
+          item.style.left = `${columnIndex * (itemWidth + gap)}px`;
           item.style.top = `${y}px`;
-          heights[columnIndex] += item.offsetHeight + gap + extraGap;
+
+          const nextHeight = y + item.offsetHeight + gap + extraGap;
+          for (let i = columnIndex; i < columnIndex + span; i++) {
+            heights[i] = nextHeight;
+          }
         });
 
-        container.style.height = `${Math.max(...heights) - gap}px`;
+        container.style.height = `${Math.max(0, Math.max(...heights) - gap)}px`;
         container.classList.add("masonry-ready");
       }
 
@@ -5943,6 +5972,13 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
 
       function buildPostHTML(p) {
         let text = Array.isArray(p.content) ? p.content.join("") : p.content;
+        const rawTextForLayout = String(text || "");
+        const plainTextForLayout = rawTextForLayout
+          .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+          .replace(/<[^>]*>/g, "")
+          .replace(/[`*_>#~|\[\]()]/g, "")
+          .replace(/\s+/g, "");
+        const isLongTextPost = plainTextForLayout.length >= 260 && !(Array.isArray(p.images) && p.images.length);
         const isPinned = text.includes(PIN_KEYWORD);
         if (isPinned) text = stripPinKeyword(text);
         const isPolaroid = hasPolaroidTag(text);
@@ -5995,7 +6031,8 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
           : "";
 
         const pinClass = isPinned ? " pinned" : "";
-        return `<article class="post${pinClass}" id="post-${p.id}"${pinStyle}>
+        const longTextClass = isLongTextPost ? " post-long-text" : "";
+        return `<article class="post${pinClass}${longTextClass}" id="post-${p.id}"${pinStyle}>
     ${pinBadge}
     <div class="post-header">
        <span class="post-time">${randomColorBlock()} ${showTime}</span>
