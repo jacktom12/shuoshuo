@@ -4829,7 +4829,57 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
     line-height: 1.76 !important;
   }
 }
-      
+     /* 发布 / 编辑：操作放到标题栏右侧 */
+.publish-top {
+  gap: 12px;
+}
+
+.publish-title {
+  flex: 1;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.publish-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.publish-top-submit {
+  flex: none;
+  min-width: auto;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  box-shadow: 2px 2px 0 var(--border);
+}
+
+.publish-top-submit:hover:not(:disabled) {
+  transform: skewX(6deg) translate(2px, 2px);
+  box-shadow: 0 0 0 transparent;
+}
+
+@media (max-width: 480px) {
+  .publish-top {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .publish-title {
+    font-size: 1.05rem;
+  }
+
+  .publish-top-actions {
+    gap: 7px;
+  }
+
+  .publish-top-submit {
+    padding: 6px 11px;
+    font-size: 0.78rem;
+  }
+} 
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
@@ -7128,7 +7178,14 @@ function jumpMemoPageFromInput(totalPages) {
         publishPreviewDragIndex = null;
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
-        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top"><h3 class="publish-title">发布说说</h3><button id="closeMemo" class="publish-close">✕</button></div><div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools upload-icon-zone" id="selectImg">
+        publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()"><div class="publish-top">
+  <h3 class="publish-title">发布说说</h3>
+
+  <div class="publish-top-actions">
+    <button id="submitMemo" class="publish-submit publish-top-submit">发布</button>
+    <button id="closeMemo" class="publish-close">×</button>
+  </div>
+</div><div class="publish-field"><label class="publish-label">这一刻想说什么</label><textarea id="memoContent" class="publish-textarea" placeholder="可以只发文字，也可以配多张图片。"></textarea></div><div class="publish-field publish-drop-zone" id="publishDropZone"><div class="publish-tools upload-icon-zone" id="selectImg">
     <div class="upload-icon-default">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
             <path d="M0 0h48v48H0z" fill="none" />
@@ -7144,7 +7201,7 @@ function jumpMemoPageFromInput(totalPages) {
         </svg>
     </div>
     <span id="imgCountText" class="publish-tip" style="margin-top: 8px;">点击、拖放 或 粘贴图片至此处</span>
-</div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div></div></div><div class="publish-footer"><button id="submitMemo" class="publish-submit">发布</button><button id="closeMemo2" class="publish-cancel">取消</button></div></div>`;
+</div><input type="file" id="imgFile" accept="image/*" multiple hidden/><div id="previewWrap"><div class="publish-empty">支持多张，可拖动缩略图调整顺序。</div></div></div> </div>`;
         document.body.appendChild(publishModal);
         const close = () => {
           if (publishModal) {
@@ -7163,8 +7220,7 @@ function jumpMemoPageFromInput(totalPages) {
     return;
   }
 };
-        document.getElementById("closeMemo").onclick = close;
-        document.getElementById("closeMemo2").onclick = close;
+         document.getElementById('closeMemo')?.addEventListener('click', close);
         document.getElementById("selectImg").onclick = () =>
           document.getElementById("imgFile").click();
         document.getElementById("imgFile").addEventListener("change", (e) => {
@@ -7469,10 +7525,14 @@ if (contentArea) {
         publishModal = document.createElement("div");
         publishModal.className = "publish-mask";
         publishModal.innerHTML = `<div class="publish-panel" onclick="event.stopPropagation()">
-            <div class="publish-top">
-                <h3 class="publish-title">编辑说说</h3>
-                <button id="closeMemo" class="publish-close">✕</button>
-            </div>
+           <div class="publish-top">
+  <h3 class="publish-title">编辑说说</h3>
+
+  <div class="publish-top-actions">
+    <button id="submitEditMemo" class="publish-submit publish-top-submit">保存更新</button>
+    <button id="closeMemo" class="publish-close">×</button>
+  </div>
+</div>
             <div class="publish-field">
                 <label class="publish-label">内容</label>
                 <textarea id="memoContent" class="publish-textarea" placeholder="可以说点什么...">${contentText}</textarea>
@@ -7506,10 +7566,7 @@ if (contentArea) {
                 <input type="file" id="imgFile" accept="image/*" multiple hidden/>
                 <div id="previewWrap"></div>
             </div>
-            <div class="publish-footer">
-                <button id="submitEditMemo" class="publish-submit">保存更新</button>
-                <button id="closeMemo2" class="publish-cancel">取消</button>
-            </div>
+           
         </div>`;
         document.body.appendChild(publishModal);
 
@@ -7529,8 +7586,7 @@ if (contentArea) {
     return;
   }
 };
-        document.getElementById("closeMemo").onclick = close;
-        document.getElementById("closeMemo2").onclick = close;
+        document.getElementById('closeMemo')?.addEventListener('click', close);
         enhanceHorizontalScroller(
           document.getElementById("existingImagesList"),
         );
