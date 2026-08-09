@@ -4818,6 +4818,23 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
     font-size: 0.78rem;
   }
 } 
+/* 修复有序列表数字与文字间距 */
+#postsContainer .post-content ol > li,
+.search-results .post-content ol > li {
+  padding-left: 44px !important;        /* 从 26px 增大到 44px，给数字留足空间 */
+}
+
+#postsContainer .post-content ol > li::before,
+.search-results .post-content ol > li::before {
+  left: 4px !important;                /* 数字微微右移，与文字拉开更干净 */
+  min-width: 22px !important;          /* 略微加宽，确保两位数不挤 */
+}
+
+/* 顺带优化无序列表，保持统一手感 */
+#postsContainer .post-content ul > li:not(:has(input[type="checkbox"])),
+.search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
+  padding-left: 34px !important;
+}
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
