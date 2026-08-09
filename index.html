@@ -4835,31 +4835,27 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 .search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
   padding-left: 34px !important;
 }
-   /* ========================================
-   普通单张图片：突破卡片内边距，绝对填满宽度
+    /* ========================================
+   普通单张图片：严丝合缝贴合内部，不超越外边框
    保护机制：拍立得 (.polaroid) 不受影响
    ======================================== */
 
-/* ---- 1. 图片容器突破左右内边距 ---- */
+/* ---- 1. 图片容器：取消负边距，占满内部 100% 宽度 ---- */
 #postsContainer .post-image-single:not(.polaroid),
 .search-results .post-image-single:not(.polaroid) {
   display: block !important;
-  margin-left: -26px !important;
-  margin-right: -26px !important;
-  /* 核心修改：用 auto 替代 calc()。
-     在 block 元素下，负边距 + auto 能让浏览器完美吸附边缘，杜绝像素溢出 */
-  width: auto !important; 
-  max-width: none !important;
+  margin: 0 !important; /* 核心修改：取消负边距，不再向外溢出 */
+  width: 100% !important; /* 完美贴合可用内边距区域 */
+  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
-/* 手机端适配：卡片内边距为 18px */
+/* 手机端适配：同样取消负边距 */
 @media (max-width: 768px) {
   #postsContainer .post-image-single:not(.polaroid),
   .search-results .post-image-single:not(.polaroid) {
-    margin-left: -18px !important;
-    margin-right: -18px !important;
-    width: auto !important; /* 同样使用 auto 杜绝手机端撑破卡片 */
+    margin: 0 !important;
+    width: 100% !important;
   }
 }
 
@@ -4879,19 +4875,19 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   overflow: hidden !important; 
 }
 
-/* ---- 3. 图片自身：强制拉满，彻底解除高度封印 ---- */
+/* ---- 3. 图片自身：强制拉满宽度，彻底解除高度封印 ---- */
 #postsContainer .post-image-single:not(.polaroid) img,
 .search-results .post-image-single:not(.polaroid) img {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: none !important; 
+  max-height: none !important; /* 保持高度自由伸展 */
   object-fit: cover !important; 
 
   /* 彻底裸图，去除自带边框/圆角/阴影 */
   border: 0 !important;
-  border-radius: 0 !important;
+  border-radius: 0 !important; /* 如果你希望图片四个角能配合卡片稍微有点圆角，这里可以改成 4px 或者 8px */
   background: transparent !important;
   box-shadow: none !important;
   margin: 0 !important;
