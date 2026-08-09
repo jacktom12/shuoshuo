@@ -4835,12 +4835,12 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 .search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
   padding-left: 34px !important;
 }
- /* ========================================
-   普通单张图片：突破卡片内边距，填满宽度
-   拍立得 #iphone13 不受影响
+  /* ========================================
+   普通单张图片：突破卡片内边距，绝对填满宽度
+   保护机制：拍立得 (.polaroid) 不受影响
    ======================================== */
 
-/* ---- 1. 图片容器突破左右内边距 ---- */
+/* ---- 1. 图片容器突破左右内边距 (精确匹配你卡片的 26px/18px) ---- */
 #postsContainer .post-image-single:not(.polaroid),
 .search-results .post-image-single:not(.polaroid) {
   margin-left: -26px !important;
@@ -4859,7 +4859,7 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   }
 }
 
-/* ---- 2. 移除图片内部所有装饰层 ---- */
+/* ---- 2. 移除图片内部所有装饰层与留白 ---- */
 #postsContainer .post-image-single:not(.polaroid) .post-images-wrap,
 #postsContainer .post-image-single:not(.polaroid) .post-images,
 #postsContainer .post-image-single:not(.polaroid) .img-slide,
@@ -4872,43 +4872,28 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   border: none !important;
   background: transparent !important;
   border-radius: 0 !important;
-  overflow: visible !important;
+  overflow: hidden !important; 
 }
 
-/* ---- 3. 图片自身：宽度拉满，高度自适应 ---- */
+/* ---- 3. 图片自身：强制拉满，彻底解除高度封印 ---- */
 #postsContainer .post-image-single:not(.polaroid) img,
 .search-results .post-image-single:not(.polaroid) img {
   display: block !important;
   width: 100% !important;
+  max-width: 100% !important;
   height: auto !important;
+  max-height: none !important; /* 关键点：让竖图高度自由伸展，确保宽度占满 */
+  object-fit: cover !important; /* 关键点：完美覆盖，不留白边 */
 
-  /* 纵向图可尽量高，但不超过屏幕高度的 80% */
-  max-height: 80vh !important;
-  object-fit: contain !important;
-
-  /* 彻底裸图 */
+  /* 彻底裸图，去除任何自带边框/圆角/阴影 */
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
+  margin: 0 !important;
 }
 
-/* ---- 4. 图片下方的文字保留舒适内边距 ---- */
-#postsContainer .post-image-single:not(.polaroid) + .post-content,
-.search-results .post-image-single:not(.polaroid) + .post-content {
-  padding-left: 26px !important;
-  padding-right: 26px !important;
-}
-
-@media (max-width: 768px) {
-  #postsContainer .post-image-single:not(.polaroid) + .post-content,
-  .search-results .post-image-single:not(.polaroid) + .post-content {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-}
-
-/* ---- 5. 如果只有图片没有文字，卡片本身也干净利落 ---- */
+/* ---- 4. 如果单张图片下没有文字，清除卡片底部多余的空白 ---- */
 #postsContainer .post:has(.post-image-single:not(.polaroid)):not(:has(.post-content *)) {
   padding-bottom: 0 !important;
 }
