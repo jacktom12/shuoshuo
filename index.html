@@ -4844,9 +4844,10 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 #postsContainer .post-image-single:not(.polaroid),
 .search-results .post-image-single:not(.polaroid) {
   display: block !important;
-  margin: 0 !important; /* 核心修改：取消负边距，不再向外溢出 */
-  width: 100% !important; /* 完美贴合可用内边距区域 */
-  max-width: 100% !important;
+  margin-left: -14px !important;
+  margin-right: -14px !important;
+  width: calc(100% + 28px) !important; /* 注意：这里的 28 是 14 的两倍 */
+  max-width: none !important;
   box-sizing: border-box !important;
 }
 
@@ -4854,8 +4855,10 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 @media (max-width: 768px) {
   #postsContainer .post-image-single:not(.polaroid),
   .search-results .post-image-single:not(.polaroid) {
-    margin: 0 !important;
-    width: 100% !important;
+    margin-left: -10px !important; /* 手机端稍微小一点 */
+    margin-right: -10px !important;
+    width: calc(100% + 20px) !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -4887,7 +4890,7 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 
   /* 彻底裸图，去除自带边框/圆角/阴影 */
   border: 0 !important;
-  border-radius: 0 !important; /* 如果你希望图片四个角能配合卡片稍微有点圆角，这里可以改成 4px 或者 8px */
+  border-radius: 8px !important; /* 如果你希望图片四个角能配合卡片稍微有点圆角，这里可以改成 4px 或者 8px */
   background: transparent !important;
   box-shadow: none !important;
   margin: 0 !important;
