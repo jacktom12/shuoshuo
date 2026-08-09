@@ -4835,18 +4835,22 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 .search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
   padding-left: 34px !important;
 }
-  /* ========================================
+   /* ========================================
    普通单张图片：突破卡片内边距，绝对填满宽度
    保护机制：拍立得 (.polaroid) 不受影响
    ======================================== */
 
-/* ---- 1. 图片容器突破左右内边距 (精确匹配你卡片的 26px/18px) ---- */
+/* ---- 1. 图片容器突破左右内边距 ---- */
 #postsContainer .post-image-single:not(.polaroid),
 .search-results .post-image-single:not(.polaroid) {
+  display: block !important;
   margin-left: -26px !important;
   margin-right: -26px !important;
-  width: calc(100% + 52px) !important;
+  /* 核心修改：用 auto 替代 calc()。
+     在 block 元素下，负边距 + auto 能让浏览器完美吸附边缘，杜绝像素溢出 */
+  width: auto !important; 
   max-width: none !important;
+  box-sizing: border-box !important;
 }
 
 /* 手机端适配：卡片内边距为 18px */
@@ -4855,7 +4859,7 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   .search-results .post-image-single:not(.polaroid) {
     margin-left: -18px !important;
     margin-right: -18px !important;
-    width: calc(100% + 36px) !important;
+    width: auto !important; /* 同样使用 auto 杜绝手机端撑破卡片 */
   }
 }
 
@@ -4882,10 +4886,10 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: none !important; /* 关键点：让竖图高度自由伸展，确保宽度占满 */
-  object-fit: cover !important; /* 关键点：完美覆盖，不留白边 */
+  max-height: none !important; 
+  object-fit: cover !important; 
 
-  /* 彻底裸图，去除任何自带边框/圆角/阴影 */
+  /* 彻底裸图，去除自带边框/圆角/阴影 */
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
