@@ -4835,6 +4835,27 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 .search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
   padding-left: 34px !important;
 }
+/* ===== 普通单张图片：移除装饰包裹 ===== */
+/* 移除包裹层的边框、背景、内边距和圆角 */
+#postsContainer .post-image-single:not(.polaroid) .post-images-wrap,
+.search-results .post-image-single:not(.polaroid) .post-images-wrap {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* 移除图片自身的圆角和背景（拍立得样式不受影响） */
+#postsContainer .post-image-single:not(.polaroid) .post-images img,
+#postsContainer .post-image-single:not(.polaroid) .post-images.single-image img,
+.search-results .post-image-single:not(.polaroid) .post-images img,
+.search-results .post-image-single:not(.polaroid) .post-images.single-image img {
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
