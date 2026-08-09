@@ -4835,8 +4835,12 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 .search-results .post-content ul > li:not(:has(input[type="checkbox"])) {
   padding-left: 34px !important;
 }
-/* ===== 普通单张图片：移除装饰包裹 ===== */
-/* 移除包裹层的边框、背景、内边距和圆角 */
+/* ========================================
+   普通单张图片：裸图直出 + 纵向图铺满宽度
+   (拍立得 #iphone13 不受影响)
+   ======================================== */
+
+/* 1. 移除包裹层的装饰 */
 #postsContainer .post-image-single:not(.polaroid) .post-images-wrap,
 .search-results .post-image-single:not(.polaroid) .post-images-wrap {
   border: none !important;
@@ -4846,15 +4850,31 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
   overflow: visible !important;
 }
 
-/* 移除图片自身的圆角和背景（拍立得样式不受影响） */
+/* 2. 图片自身：铺满宽度，高度自适应，不设死高度 */
 #postsContainer .post-image-single:not(.polaroid) .post-images img,
 #postsContainer .post-image-single:not(.polaroid) .post-images.single-image img,
 .search-results .post-image-single:not(.polaroid) .post-images img,
 .search-results .post-image-single:not(.polaroid) .post-images.single-image img {
+  width: 100% !important;
+  height: auto !important;
+
+  /* 🔑 核心改动：大幅提升高度上限到屏幕高度的 80%
+     纵向图（如 3:4、9:16）能自然撑满卡片宽度 */
+  max-height: 80vh !important;
+
+  object-fit: contain !important;
+
+  /* 彻底去除装饰 */
   border-radius: 0 !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
+}
+
+/* 3. （可选）保持图片与文字间距舒适 */
+#postsContainer .post-right.single-media,
+.search-results .post-right.single-media {
+  gap: 12px !important;
 }
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
