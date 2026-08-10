@@ -4900,6 +4900,21 @@ body.dark .search-results .post-content pre::-webkit-scrollbar-thumb {
 #postsContainer .post:has(.post-image-single:not(.polaroid)):not(:has(.post-content *)) {
   padding-bottom: 0 !important;
 }
+
+.public-toggle-btn {
+  color: var(--accent-dark) !important;
+}
+.public-toggle-btn:hover {
+  background: var(--accent) !important;
+  color: var(--ink) !important;
+}
+body.dark .public-toggle-btn {
+  color: var(--accent) !important;
+}
+body.dark .public-toggle-btn:hover {
+  background: var(--accent) !important;
+  color: var(--ink) !important;
+}
 </style>
     <link rel="stylesheet" href="hw-music-player.css" />
     <script src="hw-music-player.js"></script>
@@ -5367,6 +5382,9 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
       }
       // ---------- 数据层 ----------
       const PIN_KEYWORD = "#置顶";
+      // ===== 公开/隐私 图标 =====
+const PUBLIC_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none"/><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m4.5.25v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H7v-1.5a1.5 1.5 0 0 1 2.443-1.167a.75.75 0 0 0 .943-1.166A3 3 0 0 0 5.5 5.75v1.5a1 1 0 0 0-1 1"/></svg>`;
+const PRIVATE_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32"><path d="M0 0h32v32H0z" fill="none"/><path fill="currentColor" d="M30 31h-8a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h1v-2c0-1.654 1.346-3 3-3s3 1.346 3 3v2h1a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1m-7-2h6v-3h-6zm2-5h2v-2a1 1 0 0 0-2 0zm-9 6C8.28 30 2 23.72 2 16S8.28 2 16 2c7.383 0 13.45 5.746 13.965 13H30v2H12.02c.243 6.077 2.64 9.864 3.46 10.99q.259.01.52.01zM4.042 17c.42 5.08 4.02 9.273 8.8 10.578c-1.162-2.06-2.645-5.621-2.824-10.578zm17.94-2h5.977c-.422-5.088-4.033-9.286-8.823-10.584C20.298 6.49 21.799 10.08 21.98 15m-9.961 0h7.958c-.246-5.99-2.645-9.839-3.466-10.99c-.34-.014-.686-.014-1.026 0c-.821 1.151-3.22 5-3.466 10.99m-7.98 0h5.978c.182-4.92 1.683-8.51 2.845-10.584C8.074 5.714 4.463 9.912 4.04 15"/></svg>`;
       const POLAROID_KEYWORD = "#iphone13";
       let allPosts = [],
         filtered = [],
@@ -5933,6 +5951,16 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         return `<div class="post-content">${parts.map((item) => `<span class="pinned-pill">${escapeHTML(item)}</span>`).join("")}</div>`;
       }
 
+function buildPublicToggleButton(post) {
+  if (!isLoggedIn) return "";
+  const isPublic = !!post.isPublic;
+  const icon = isPublic ? PUBLIC_ICON_SVG : PRIVATE_ICON_SVG;
+  const title = isPublic ? "取消公开" : "设为公开";
+  return `<button class="post-action-btn public-toggle-btn" onclick="togglePublicStatus('${post.id}')" title="${title}">${icon}</button>`;
+}
+
+
+
       function buildPrivateMemoMark(post) {
         if (!post?.isPrivate) return "";
         return `<span class="private-memo-mark" title="私密手账" aria-label="私密手账"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 80 80" aria-hidden="true"><path d="M0 0h80v80H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m27.649 48.634l-.119.044l-1.23.462A15.87 15.87 0 0 0 16 64a4 4 0 0 0 4 4h40a4 4 0 0 0 4-4a15.87 15.87 0 0 0-10.3-14.86l-1.23-.462l-.119-.044l-6.443 5.456a9.14 9.14 0 0 1-11.816 0z"/><path d="M27.034 18.843c6.387-8.834 19.546-8.834 25.933 0l6.614 9.15a12 12 0 0 1-1.97 16.189L45.908 54.09a9.14 9.14 0 0 1-11.816 0L22.39 44.182a12 12 0 0 1-1.97-16.19z"/><path d="M18.201 36.195A32.96 32.96 0 0 1 40.001 28a32.97 32.97 0 0 1 21.798 8.194"/><path d="M26.455 30.89q.074.929.27 1.852l.224 1.046a13.347 13.347 0 0 0 26.103 0l.224-1.046q.196-.923.27-1.853M40 56.255V68"/></g></svg></span>`;
@@ -5959,10 +5987,11 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         }
         return `<article class="post pinned pinned-hero-card" id="post-${p.id}"${pinStyle}>
           <div class="post-header">
-            <span class="post-time">${randomColorBlock()} ${showTime}</span>
-            ${buildPrivateMemoMark(p)}
-            ${actionsHtml}
-          </div>
+  <span class="post-time">${randomColorBlock()} ${showTime}</span>
+  ${hasAuth ? buildPublicToggleButton(p) : ''}
+  ${buildPrivateMemoMark(p)}
+  ${actionsHtml}
+</div>
           <div class="post-right">
             ${buildPinnedHeroContent(text)}
           </div>
@@ -6033,11 +6062,12 @@ marked.setOptions({ breaks: true, gfm: true, renderer });
         const longTextClass = isLongTextPost ? " post-long-text" : "";
         return `<article class="post${pinClass}${longTextClass}" id="post-${p.id}"${pinStyle}>
     ${pinBadge}
-    <div class="post-header">
-       <span class="post-time">${randomColorBlock()} ${showTime}</span>
-      ${buildPrivateMemoMark(p)}
-      ${actionsHtml}
-    </div>
+     <div class="post-header">
+  <span class="post-time">${randomColorBlock()} ${showTime}</span>
+  ${hasAuth ? buildPublicToggleButton(p) : ''}
+  ${buildPrivateMemoMark(p)}
+  ${actionsHtml}
+</div>
     <div class="post-right${hasSingleImage ? " single-media" : ""}">
       ${imagesHtml}
       <div class="post-content">${parsed}</div>
@@ -7025,10 +7055,11 @@ function jumpMemoPageFromInput(totalPages) {
 
           div.innerHTML = `
             <div class="post-header">
-                <span class="post-time">${randomColorBlock()} ${showTime}</span>
-                ${privateMemoMark}
-                ${actionsHtml}
-            </div>
+    <span class="post-time">${randomColorBlock()} ${showTime}</span>
+    ${hasAuth ? buildPublicToggleButton(post) : ''}
+    ${privateMemoMark}
+    ${actionsHtml}
+  </div>
             <div class="${postRightClass}">
                 ${imagesHtml}
                 <div class="post-content">${parsed}</div>
@@ -7481,7 +7512,105 @@ if (contentArea) {
           }
         }
       }
+async function togglePublicStatus(postId) {
+  // 查找手账数据
+  const post = allPosts.find(p => p.id === postId) || filtered.find(p => p.id === postId);
+  if (!post) {
+    showToast("未找到该手账", "error");
+    return;
+  }
 
+  const currentIsPublic = !!post.isPublic;
+  const targetIsPublic = !currentIsPublic;
+
+  // 检查是否包含 #hzw 标签（私密标签），如果试图公开则阻止
+  if (targetIsPublic) {
+    const content = Array.isArray(post.content) ? post.content.join("") : post.content || "";
+    if (content.includes("#hzw")) {
+      showToast("该手账包含 #hzw 标签，不可公开", "error");
+      return;
+    }
+  }
+
+  // ---- 手绘风格确认弹框 ----
+  const confirmModal = document.createElement("div");
+  confirmModal.className = "publish-mask";
+  const actionText = targetIsPublic ? "公开" : "取消公开";
+  const confirmText = targetIsPublic ? "确认公开" : "确认取消";
+  const descText = targetIsPublic
+    ? "公开后，其他用户将可以看到这条说说。"
+    : "取消公开后，其他用户将无法看到这条说说。";
+
+  confirmModal.innerHTML = `
+    <div class="publish-panel" style="max-width: 340px; padding: 30px 20px;" onclick="event.stopPropagation()">
+      <h3 class="publish-title" style="border-bottom: none; text-align: center; padding: 0 0 12px 0;">✍️ 确定要${actionText}吗？</h3>
+      <p style="text-align:center; color:var(--secondary-text); font-size:0.95rem; margin:0 0 20px 0;">${descText}</p>
+      <div class="publish-footer" style="justify-content: center; margin-top: 0; gap: 15px;">
+        <button id="confirmPublicToggleBtn" class="publish-submit" style="background: var(--accent); border-color: var(--border); color: var(--ink);">${confirmText}</button>
+        <button id="cancelPublicToggleBtn" class="publish-cancel">取消</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(confirmModal);
+
+  const close = () => confirmModal.remove();
+
+  confirmModal.onclick = (e) => {
+    if (e.target === confirmModal) close();
+  };
+  document.getElementById("cancelPublicToggleBtn").onclick = close;
+
+  document.getElementById("confirmPublicToggleBtn").onclick = async () => {
+    close();
+
+    // 本地演示模式
+    if (isLocalPreviewMode()) {
+      preserveViewportDuring(() => {
+        const update = (list) => {
+          const found = list.find(p => p.id === postId);
+          if (found) found.isPublic = targetIsPublic;
+        };
+        update(allPosts);
+        update(filtered);
+        render(true);
+      });
+      showToast(targetIsPublic ? "已设为公开" : "已取消公开", "success");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${WORKER_URL}/api/toggle-public`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: postId, targetPublic: targetIsPublic }),
+      });
+      const json = await res.json();
+
+      if (json.code === 200) {
+        preserveViewportDuring(() => {
+          const update = (list) => {
+            const found = list.find(p => p.id === postId);
+            if (found) found.isPublic = targetIsPublic;
+          };
+          update(allPosts);
+          update(filtered);
+          render(true);
+        });
+        showToast(json.msg || (targetIsPublic ? "已设为公开" : "已取消公开"), "success");
+        refreshSearchAfterMutation();
+      } else if (json.code === 401) {
+        isLoggedIn = false;
+        showToast("登录已过期，请重新登录", "error");
+        setTimeout(() => location.reload(), 1200);
+      } else {
+        showToast(json.msg || "操作失败", "error");
+      }
+    } catch (e) {
+      showToast("网络错误，操作失败", "error");
+    }
+  };
+}
       function deletePost(id) {
         const confirmModal = document.createElement("div");
         confirmModal.className = "publish-mask";
