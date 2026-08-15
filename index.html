@@ -5897,8 +5897,8 @@ function renderTagSuggestions(query) {
   });
 }
 
-function closeTagSuggestions() {
- if (closeTagSuggestions.isClosing) return;
+ function closeTagSuggestions() {
+  if (closeTagSuggestions.isClosing) return;
   closeTagSuggestions.isClosing = true;
   setTimeout(() => { closeTagSuggestions.isClosing = false; }, 80);
   const panel = document.getElementById("publishTagSuggest");
@@ -5919,40 +5919,44 @@ function addPublishTagId(tagId) {
   if (input) input.value = "";
   closeTagSuggestions();
 }
- 
- 
- // ====================== 全局点击监听器（必须放在最外层） ======================
-document.addEventListener("click", (ev) => {
-  const field = document.querySelector(".publish-tag-field");
-  const suggestPanel = document.getElementById("publishTagSuggest");
 
-  const isClickOutsideField = field ? !field.contains(ev.target) : true;
-  const isClickOutsidePanel = suggestPanel ? !suggestPanel.contains(ev.target) : true;
-
-  if (isClickOutsideField && isClickOutsidePanel) {
-    closeTagSuggestions();
-  }
-});
- 
- 
 function bindPublishTagInput() {
   const input = document.getElementById("publishTagInput");
   if (!input || input.dataset.boundTagInput) return;
   input.dataset.boundTagInput = "true";
 
+  const panel = document.getElementById("publishTagSuggest");
+
+  // 核心改动 1：给下拉面板绑定 mousedown 并阻止默认行为
+  // 点击下拉框内部时，不会让 input 失去焦点，从而不触发 blur
+  if (panel && !panel.dataset.boundMousedown) {
+    panel.dataset.boundMousedown = "true";
+    panel.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+    });
+  }
+
+  // 核心改动 2：监听 blur
+  // 只要点击页面任何其他非下拉框区域，input 失去焦点时自动收起
+  input.addEventListener("blur", () => {
+    closeTagSuggestions();
+  });
+
   input.addEventListener("focus", async () => {
     await ensureTagsLoaded();
     renderTagSuggestions(input.value);
   });
+
   input.addEventListener("input", () => {
     tagSuggestIndex = -1;
     renderTagSuggestions(input.value);
   });
+
   input.addEventListener("keydown", async (e) => {
-    const panel = document.getElementById("publishTagSuggest");
-    const items = panel
+    const suggestPanel = document.getElementById("publishTagSuggest");
+    const items = suggestPanel
       ? Array.from(
-          panel.querySelectorAll(".publish-tag-suggest-item:not([disabled])"),
+          suggestPanel.querySelectorAll(".publish-tag-suggest-item:not([disabled])"),
         )
       : [];
     if (e.key === "ArrowDown") {
@@ -5991,7 +5995,6 @@ function bindPublishTagInput() {
       }
     }
   });
-  
 }
 
 // ---------- mock ----------
