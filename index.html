@@ -8132,13 +8132,16 @@ async function submitMemo() {
         filtered = sortPostsByDateDesc(filtered);
         expandLoadedRangeForPrependedPost();
 
-        if (publishModal) {
-          publishModal.remove();
-          publishModal = null;
-        }
-        selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
-        selectedPublishFiles = [];
-        selectedPublishTagIds = [];
+        // === 关键修改 ===
+  ensureTagsLoaded(true).then(() => {   // 强制刷新标签
+    if (publishModal) {
+      publishModal.remove();
+      publishModal = null;
+    }
+    selectedPublishFiles.forEach(i => URL.revokeObjectURL(i.previewUrl));
+    selectedPublishFiles = [];
+    selectedPublishTagIds = [];
+  });
         render(true);
       });
 
@@ -8169,13 +8172,16 @@ async function submitMemo() {
         filtered = sortPostsByDateDesc(filtered);
         expandLoadedRangeForPrependedPost();
 
-        if (publishModal) {
-          publishModal.remove();
-          publishModal = null;
-        }
-        selectedPublishFiles.forEach((i) => URL.revokeObjectURL(i.previewUrl));
-        selectedPublishFiles = [];
-        selectedPublishTagIds = [];
+        // === 关键修改 ===
+  ensureTagsLoaded(true).then(() => {   // 强制刷新标签
+    if (publishModal) {
+      publishModal.remove();
+      publishModal = null;
+    }
+    selectedPublishFiles.forEach(i => URL.revokeObjectURL(i.previewUrl));
+    selectedPublishFiles = [];
+    selectedPublishTagIds = [];
+  });
         render(true);
       });
 
