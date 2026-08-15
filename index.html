@@ -5826,7 +5826,7 @@ function getTagSuggestions(query) {
     .toLowerCase()
     .replace(/^#/, "");
   const entries = Object.entries(allTagsMap);
-  if (!q) return entries.slice(0, 8);
+  if (!q) return entries;
   return entries
     .filter(([, name]) => String(name).toLowerCase().includes(q))
     .slice(0, 8);
