@@ -5898,6 +5898,9 @@ function renderTagSuggestions(query) {
 }
 
 function closeTagSuggestions() {
+ if (closeTagSuggestions.isClosing) return;
+  closeTagSuggestions.isClosing = true;
+  setTimeout(() => { closeTagSuggestions.isClosing = false; }, 80);
   const panel = document.getElementById("publishTagSuggest");
   if (panel) {
     panel.classList.remove("open");
@@ -5916,19 +5919,22 @@ function addPublishTagId(tagId) {
   if (input) input.value = "";
   closeTagSuggestions();
 }
-// 监听全局点击事件（放在 bindPublishTagInput 函数外部或内部即可，注意避免重复绑定）
+ 
+ 
+ // ====================== 全局点击监听器（必须放在最外层） ======================
 document.addEventListener("click", (ev) => {
   const field = document.querySelector(".publish-tag-field");
   const suggestPanel = document.getElementById("publishTagSuggest");
 
-  // 如果点击的目标元素 既不在输入框包裹区内，也不在下拉建议面板内，才收起
-  const isClickOutsideField = field && !field.contains(ev.target);
-  const isClickOutsidePanel = suggestPanel && !suggestPanel.contains(ev.target);
+  const isClickOutsideField = field ? !field.contains(ev.target) : true;
+  const isClickOutsidePanel = suggestPanel ? !suggestPanel.contains(ev.target) : true;
 
   if (isClickOutsideField && isClickOutsidePanel) {
     closeTagSuggestions();
   }
 });
+ 
+ 
 function bindPublishTagInput() {
   const input = document.getElementById("publishTagInput");
   if (!input || input.dataset.boundTagInput) return;
@@ -5985,7 +5991,10 @@ function bindPublishTagInput() {
       }
     }
   });
- 
+ // === 新增：失去焦点时直接收起下拉 ===
+  input.addEventListener("blur", () => {
+    closeTagSuggestions();
+  });
  
 }
 
