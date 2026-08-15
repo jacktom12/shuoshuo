@@ -5916,7 +5916,10 @@ function addPublishTagId(tagId) {
     renderSelectedPublishTags();
   }
   const input = document.getElementById("publishTagInput");
-  if (input) input.value = "";
+  if (input) {
+    input.value = "";
+    input.blur(); // 👈 新增：选中标签后强制让输入框失去焦点
+  }
   closeTagSuggestions();
 }
 
