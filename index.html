@@ -4942,8 +4942,18 @@ body.dark .public-toggle-btn:hover {
   border-radius: 999px;
   box-shadow: 1.5px 1.5px 0 var(--border);
   transform: rotate(-1deg);
-  cursor: default;
+  cursor: pointer;
   user-select: none;
+  transition: all 0.15s ease;
+}
+.post-tag-chip:hover {
+  background: color-mix(in srgb, var(--accent) 48%, var(--paper));
+  transform: rotate(-1deg) translateY(-1px);
+  box-shadow: 2px 2.5px 0 var(--border);
+}
+.post-tag-chip:active {
+  transform: rotate(-1deg) translateY(0.5px);
+  box-shadow: 1px 1px 0 var(--border);
 }
 .post-tag-chip::before {
   content: "#";
@@ -4959,6 +4969,104 @@ body.dark .post-tag-chip {
 }
 body.dark .post.pinned .post-tag-chip {
   background: rgba(22, 18, 18, 0.36);
+}
+
+/* ===== 标签手账列表弹窗 ===== */
+.tag-posts-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(243, 233, 221, 0.97);
+  backdrop-filter: blur(18px);
+  z-index: 200001; /* 高于搜索弹窗，低于灯箱(300000) */
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 20px 20px;
+  overflow-y: auto;
+}
+body.dark .tag-posts-modal {
+  background: rgba(26, 25, 23, 0.97);
+}
+.tag-posts-modal.open {
+  display: flex;
+}
+.tag-posts-header {
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  border: 2px solid var(--border);
+  padding: 10px 12px 10px 18px;
+  box-shadow: 5px 5px 0 var(--border);
+  border-radius: var(--sketch-radius-1);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+.tag-posts-title {
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: var(--text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag-posts-title .tag-posts-count {
+  color: var(--secondary-text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: 10px;
+}
+.tag-posts-header .close-search-btn {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  box-shadow: 3px 3px 0 var(--border);
+  border-radius: var(--sketch-radius-btn);
+}
+.tag-posts-list {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.tag-posts-list .post {
+  margin: 0 0 18px;
+  transform: none;
+}
+.tag-posts-list .post-right {
+  transform: none;
+}
+.tag-posts-empty {
+  text-align: center;
+  color: var(--secondary-text);
+  padding: 40px;
+  font-weight: 900;
+}
+.tag-posts-pagination {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .tag-posts-modal {
+    padding: calc(10px + env(safe-area-inset-top)) 12px 12px;
+  }
+  .tag-posts-header {
+    margin-bottom: 14px;
+  }
 }
 
 /* 发布/编辑：标题行标签输入 */
@@ -5500,6 +5608,22 @@ body {
 </div>
       <div class="search-results" id="searchResults"></div>
       <div class="close-search-btn" id="closeSearchModal">✕</div>
+    </div>
+    <!-- 标签手账列表弹窗：点击任意手账的标签打开 -->
+    <div class="tag-posts-modal" id="tagPostsModal">
+      <div class="tag-posts-header">
+        <div class="tag-posts-title" id="tagPostsTitle">#标签</div>
+        <button
+          type="button"
+          class="close-search-btn"
+          id="closeTagPostsModalBtn"
+          title="关闭"
+          aria-label="关闭"
+          onclick="closeTagPostsModal()"
+        >✕</button>
+      </div>
+      <div class="tag-posts-list" id="tagPostsList"></div>
+      <div class="tag-posts-pagination" id="tagPostsPagination"></div>
     </div>
     <div class="tmdb-modal" id="tmdbModal">
       <div class="tmdb-modal-inner">
@@ -7833,6 +7957,258 @@ function closeSearchModalFunc() {
   window.scrollTo(0, lastScrollY);
 }
 
+// ---------- 标签手账列表弹窗 ----------
+let tagPostsTagId = null;
+let tagPostsData = [];
+let tagPostsPage = 1;
+const tagPostsPerPage = perPage;
+
+function getTagPostsModal() {
+  return document.getElementById("tagPostsModal");
+}
+
+function collectPostsByTag(tagId) {
+  return sortPostsByDateDesc(
+    allPosts.filter((p) => Array.isArray(p.tags) && p.tags.includes(tagId)),
+  );
+}
+
+async function openTagPostsModalById(tagId) {
+  if (!tagId) return;
+  const modal = getTagPostsModal();
+  if (!modal) return;
+  try {
+    await ensureTagsLoaded();
+  } catch (e) {}
+  tagPostsTagId = tagId;
+  tagPostsData = collectPostsByTag(tagId);
+  tagPostsPage = 1;
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+  renderTagPostsList();
+  requestAnimationFrame(() => modal.scrollTo({ top: 0 }));
+}
+
+function closeTagPostsModal() {
+  const modal = getTagPostsModal();
+  if (!modal) return;
+  modal.classList.remove("open");
+  // 若搜索弹窗仍开着，保持 body 锁定
+  if (!searchModal?.classList.contains("open")) {
+    document.body.style.overflow = "";
+  }
+}
+
+function buildTagPostHTML(post) {
+  const hasImages = Array.isArray(post.images) && post.images.length > 0;
+  const hasSingleImage =
+    Array.isArray(post.images) && post.images.length === 1;
+  const privateMemoMark = buildPrivateMemoMark(post);
+
+  let raw = Array.isArray(post.content)
+    ? post.content.join("\n\n")
+    : post.content || "";
+  const isPolaroid = hasPolaroidTag(raw);
+  if (isPolaroid) raw = stripPolaroidKeyword(raw);
+  let processed = raw;
+  if (
+    window.HWPlayer &&
+    typeof window.HWPlayer.parseShortcodes === "function"
+  ) {
+    processed = window.HWPlayer.parseShortcodes(raw);
+  }
+  const parsed = marked.parse(processed);
+  const showTime = formatRelativeTime(post.date);
+
+  let imagesHtml = "";
+  if (hasImages) {
+    const imgs = post.images
+      .map((url) => `<img src="${url}" alt="" draggable="false">`)
+      .join("");
+    if (hasSingleImage) {
+      const polaroidClass = isPolaroid ? " polaroid" : "";
+      imagesHtml = `<div class="post-image-single${polaroidClass}"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div></div>`;
+    } else {
+      const scrapbookHtml = window.__scrapbookPreview
+        ? window.__scrapbookPreview.buildScrapbookPreview(post)
+        : "";
+      imagesHtml = `<div class="post-image-dual"><div class="post-images-wrap scrapbook-gallery-source"><div class="post-images"><div class="img-slide">${imgs}</div><div class="img-dots"></div></div></div><div class="scrapbook-preview-host">${scrapbookHtml}</div></div>`;
+    }
+  }
+
+  const hasAuth = isLoggedIn;
+  let actionsHtml = "";
+  if (hasAuth) {
+    actionsHtml = `<div class="post-actions">
+      <button class="post-action-btn" onclick="viewPostFromTag('${post.id}')" title="查看">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+          </g>
+        </svg>
+      </button>
+      <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
+        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+      </button>
+      <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
+        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+      </button>
+    </div>`;
+  }
+
+  const postRightClass = hasImages
+    ? `post-right${hasSingleImage ? " single-media" : ""}`
+    : "post-content-only";
+
+  return `<article class="post">
+    <div class="post-header">
+      <span class="post-time">${randomColorBlock()} ${showTime}</span>
+      ${hasAuth ? buildPublicToggleButton(post) : ""}
+      ${privateMemoMark}
+      ${actionsHtml}
+    </div>
+    <div class="${postRightClass}">
+      ${imagesHtml}
+      <div class="post-content">${parsed}</div>
+      ${buildPostTagsHTML(post)}
+    </div>
+  </article>`;
+}
+
+function renderTagPostsList() {
+  const modal = getTagPostsModal();
+  const listEl = document.getElementById("tagPostsList");
+  const titleEl = document.getElementById("tagPostsTitle");
+  const pagEl = document.getElementById("tagPostsPagination");
+  if (!modal || !listEl || !titleEl) return;
+
+  const name = getTagName(tagPostsTagId);
+  titleEl.innerHTML = `<span class="tag-posts-title-name">#${escapeHTML(
+    name,
+  )}</span><span class="tag-posts-count">${tagPostsData.length} 条手账</span>`;
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(tagPostsData.length / tagPostsPerPage),
+  );
+  if (tagPostsPage > totalPages) tagPostsPage = totalPages;
+  if (tagPostsPage < 1) tagPostsPage = 1;
+  const start = (tagPostsPage - 1) * tagPostsPerPage;
+  const pageItems = tagPostsData.slice(start, start + tagPostsPerPage);
+
+  listEl.innerHTML = pageItems.length
+    ? pageItems.map(buildTagPostHTML).join("")
+    : '<div class="tag-posts-empty">该标签下暂无手账</div>';
+
+  if (pagEl) pagEl.innerHTML = buildTagPostsPaginationHTML(totalPages);
+
+  bindImagesInContainer(listEl);
+  if (window.__scrapbookPreview) {
+    window.__scrapbookPreview.bindScrapbookPreviewClicks(listEl);
+  }
+  if (window.HWPlayer && typeof window.HWPlayer.mountAll === "function") {
+    window.HWPlayer.mountAll(listEl);
+  }
+}
+
+function buildTagPostsPaginationHTML(totalPages) {
+  if (totalPages <= 1) return "";
+  const cur = tagPostsPage;
+  const pages = [];
+  for (let p = Math.max(1, cur - 2); p <= Math.min(totalPages, cur + 2); p++) {
+    pages.push(p);
+  }
+  const numBtns = pages
+    .map(
+      (p) =>
+        `<button class="tmdb-page-btn${p === cur ? " active" : ""}" onclick="goToTagPostsPage(${p})">${String(p).padStart(2, "0")}</button>`,
+    )
+    .join("");
+  const prevDisabled = cur <= 1 ? "disabled" : "";
+  const nextDisabled = cur >= totalPages ? "disabled" : "";
+  const backTenDisabled = cur <= 1 ? "disabled" : "";
+  const fwdTenDisabled = cur >= totalPages ? "disabled" : "";
+  const backTenTarget = Math.max(1, cur - 10);
+  const fwdTenTarget = Math.min(totalPages, cur + 10);
+  return `<div class="tmdb-pagination memo-pagination">
+  <span class="memo-page-total">${tagPostsData.length} 条</span>
+  <span class="memo-page-total">${totalPages} 页</span>
+  <button class="tmdb-page-btn jump-ten-btn" ${backTenDisabled} onclick="goToTagPostsPage(${backTenTarget})" title="后退10页">◀ 10</button>
+  <button class="tmdb-page-btn prev-next-btn" ${prevDisabled} onclick="goToTagPostsPage(${cur - 1})">上页</button>
+  ${numBtns}
+  <button class="tmdb-page-btn prev-next-btn" ${nextDisabled} onclick="goToTagPostsPage(${cur + 1})">下页</button>
+  <button class="tmdb-page-btn jump-ten-btn" ${fwdTenDisabled} onclick="goToTagPostsPage(${fwdTenTarget})" title="前进10页">10 ▶</button>
+  <span class="memo-page-jump">
+    到<input type="text" inputmode="numeric" pattern="[0-9]*" id="tagPostsPageJumpInput" maxlength="4"
+      placeholder="${cur}"
+      oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+      onkeydown="if(event.key==='Enter'){jumpTagPostsPageFromInput(${totalPages});}">页
+    <button class="tmdb-page-btn" onclick="jumpTagPostsPageFromInput(${totalPages})">Go</button>
+  </span>
+</div>`;
+}
+
+function goToTagPostsPage(p) {
+  const totalPages = Math.max(
+    1,
+    Math.ceil(tagPostsData.length / tagPostsPerPage),
+  );
+  const target = Math.min(Math.max(1, p), totalPages);
+  if (target === tagPostsPage) return;
+  tagPostsPage = target;
+  renderTagPostsList();
+  const modal = getTagPostsModal();
+  if (modal) {
+    requestAnimationFrame(() => {
+      modal.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+}
+
+function jumpTagPostsPageFromInput(totalPages) {
+  const input = document.getElementById("tagPostsPageJumpInput");
+  if (!input) return;
+  const val = parseInt(input.value, 10);
+  if (!val || isNaN(val)) return;
+  const target = Math.min(Math.max(1, val), totalPages);
+  goToTagPostsPage(target);
+  input.value = "";
+}
+
+// 从标签弹窗跳到主页定位该手账
+function viewPostFromTag(id) {
+  closeTagPostsModal();
+  viewPost(id);
+}
+
+// 发布/编辑/删除/隐私变更后，若标签弹窗开着则同步刷新
+function refreshTagPostsAfterMutation() {
+  const modal = getTagPostsModal();
+  if (!modal || !modal.classList.contains("open") || !tagPostsTagId) return;
+  tagPostsData = collectPostsByTag(tagPostsTagId);
+  renderTagPostsList();
+}
+
+// 全局委托：点击任意手账标签 → 打开标签手账列表弹窗
+document.addEventListener("click", (e) => {
+  const chip = e.target.closest ? e.target.closest(".post-tag-chip") : null;
+  if (!chip) return;
+  const tagId = chip.getAttribute("data-tag-id");
+  if (!tagId) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openTagPostsModalById(tagId);
+});
+
+// Esc 关闭标签弹窗
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const modal = getTagPostsModal();
+  if (modal && modal.classList.contains("open")) closeTagPostsModal();
+});
+
 function getNowBeijingString() {
   const d = new Date(Date.now() + 8 * 3600000);
   const p = (n) => String(n).padStart(2, "0");
@@ -8326,6 +8702,7 @@ async function togglePublicStatus(postId) {
           "success",
         );
         refreshSearchAfterMutation();
+        refreshTagPostsAfterMutation();
       } else if (json.code === 401) {
         isLoggedIn = false;
         showToast("登录已过期，请重新登录", "error");
@@ -8384,6 +8761,7 @@ function deletePost(id) {
         });
         showToast("删除成功", "delete");
         refreshSearchAfterMutation();
+        refreshTagPostsAfterMutation();
       } else if (json.code === 401) {
         isLoggedIn = false;
         showToast("登录已过期，请重新登录", "error");
@@ -8639,6 +9017,7 @@ async function submitEditMemo() {
 
       showToast(toastText, "edit");
       refreshSearchAfterMutation();
+      refreshTagPostsAfterMutation();
     };
 
     if (isLocalPreviewMode()) {
