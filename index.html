@@ -2187,6 +2187,67 @@
         color: #fc8181;
       }
 
+      /* ===== 更多操作菜单（编辑/删除收纳进 gg:more 图标） ===== */
+      .post-more-wrap {
+        position: relative;
+        display: flex;
+      }
+      .post-more-btn svg {
+        display: block;
+      }
+      .post-more-btn.active {
+        background: color-mix(in srgb, var(--accent) 35%, var(--paper));
+        transform: rotate(0deg) skewX(0deg);
+      }
+      .post-more-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px;
+        min-width: 100px;
+        background: var(--paper);
+        border: 2px solid var(--border);
+        border-radius: var(--sketch-radius-btn);
+        box-shadow: 4px 4px 0 var(--border);
+        z-index: 60;
+      }
+      .post-more-menu.open {
+        display: flex;
+        animation: postMorePop 0.15s ease;
+      }
+      @keyframes postMorePop {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .post-more-menu .post-action-btn {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        font-family: inherit;
+        white-space: nowrap;
+        transform: none;
+      }
+      .post-more-menu .post-action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 3px 3px 0px var(--border);
+      }
+      .post-more-menu .post-action-btn:active {
+        transform: translateY(1px);
+        box-shadow: 1px 1px 0px var(--border);
+      }
+
             /* ===== 2026-07 final visual fixes ===== */
             :root {
               --menu-paper-bg: rgba(243, 233, 221, 0.84);
@@ -5903,6 +5964,63 @@ function buildPostTagsHTML(post) {
   return `<div class="post-tags">${chips}</div>`;
 }
 
+// ---------- 手账操作菜单（编辑/删除收纳） ----------
+const GG_MORE_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6m0-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2m7 2a3 3 0 1 0 0-6a3 3 0 0 0 0 6m0-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2m10-1a3 3 0 1 1-6 0a3 3 0 0 1 6 0m-2 0a1 1 0 1 1-2 0a1 1 0 0 1 2 0" clip-rule="evenodd"/></svg>`;
+const POST_EDIT_ICON_SVG = `<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>`;
+const POST_DELETE_ICON_SVG = `<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
+const POST_VIEW_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" /></g></svg>`;
+
+// viewFn：可选，传 "viewPost" / "viewPostFromTag" 时在菜单外保留「查看」按钮
+function buildPostActionsMenuHTML(p, viewFn) {
+  const viewBtn = viewFn
+    ? `<button class="post-action-btn" onclick="${viewFn}('${p.id}')" title="查看">${POST_VIEW_ICON_SVG}</button>`
+    : "";
+  return `<div class="post-actions">
+    ${viewBtn}
+    <div class="post-more-wrap">
+      <button type="button" class="post-action-btn post-more-btn" title="更多操作" aria-label="更多操作" aria-haspopup="true" onclick="togglePostActionsMenu(event, this)">${GG_MORE_ICON_SVG}</button>
+      <div class="post-more-menu">
+        <button type="button" class="post-action-btn edit-btn" onclick="closeAllPostActionsMenus();openEditEditor('${p.id}')" title="编辑">${POST_EDIT_ICON_SVG}<span>编辑</span></button>
+        <button type="button" class="post-action-btn delete-btn" onclick="closeAllPostActionsMenus();deletePost('${p.id}')" title="删除">${POST_DELETE_ICON_SVG}<span>删除</span></button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function togglePostActionsMenu(e, btn) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const wrap = btn.closest ? btn.closest(".post-more-wrap") : null;
+  const menu = wrap ? wrap.querySelector(".post-more-menu") : null;
+  if (!menu) return;
+  const willOpen = !menu.classList.contains("open");
+  closeAllPostActionsMenus();
+  if (willOpen) {
+    menu.classList.add("open");
+    btn.classList.add("active");
+  }
+}
+
+function closeAllPostActionsMenus() {
+  document
+    .querySelectorAll(".post-more-menu.open")
+    .forEach((m) => m.classList.remove("open"));
+  document
+    .querySelectorAll(".post-more-btn.active")
+    .forEach((b) => b.classList.remove("active"));
+}
+
+// 点击菜单外部 / 按 Esc 时收起所有操作菜单
+document.addEventListener("click", (e) => {
+  if (e.target.closest && e.target.closest(".post-more-wrap")) return;
+  closeAllPostActionsMenus();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeAllPostActionsMenus();
+});
+
 async function createTagByName(name) {
   const clean = String(name || "")
     .trim()
@@ -6675,14 +6793,7 @@ function buildPinnedHeroHTML(p) {
   const hasAuth = isLoggedIn;
   let actionsHtml = "";
   if (hasAuth) {
-    actionsHtml = `<div class="post-actions">
-      <button class="post-action-btn edit-btn" onclick="openEditEditor('${p.id}')" title="编辑">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-      </button>
-      <button class="post-action-btn delete-btn" onclick="deletePost('${p.id}')" title="删除">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-      </button>
-    </div>`;
+    actionsHtml = buildPostActionsMenuHTML(p);
   }
   return `<article class="post pinned pinned-hero-card" id="post-${p.id}"${pinStyle}>
     <div class="post-header">
@@ -6740,14 +6851,7 @@ function buildPostHTML(p) {
   const hasAuth = isLoggedIn;
   let actionsHtml = "";
   if (hasAuth) {
-    actionsHtml = `<div class="post-actions">
-      <button class="post-action-btn edit-btn" onclick="openEditEditor('${p.id}')" title="编辑">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-      </button>
-      <button class="post-action-btn delete-btn" onclick="deletePost('${p.id}')" title="删除">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-      </button>
-    </div>`;
+    actionsHtml = buildPostActionsMenuHTML(p);
   }
   const pinBadge = isPinnedPost
     ? `
@@ -7775,23 +7879,7 @@ function renderSearchResults(resetPage = true) {
     const hasAuth = isLoggedIn;
     let actionsHtml = "";
     if (hasAuth) {
-      actionsHtml = `<div class="post-actions">
-        <button class="post-action-btn" onclick="viewPost('${post.id}')" title="查看">
-          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
-            </g>
-          </svg>
-        </button>
-        <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
-          <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-        </button>
-        <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
-          <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-        </button>
-      </div>`;
+      actionsHtml = buildPostActionsMenuHTML(post, "viewPost");
     }
 
     const postRightClass = hasImages
@@ -8039,23 +8127,7 @@ function buildTagPostHTML(post) {
   const hasAuth = isLoggedIn;
   let actionsHtml = "";
   if (hasAuth) {
-    actionsHtml = `<div class="post-actions">
-      <button class="post-action-btn" onclick="viewPostFromTag('${post.id}')" title="查看">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-          <path d="M0 0h24v24H0z" fill="none" />
-          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M3 7V5a2 2 0 0 1 2-2h2m10 0h2a2 2 0 0 1 2 2v2m0 10v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
-          </g>
-        </svg>
-      </button>
-      <button class="post-action-btn edit-btn" onclick="openEditEditor('${post.id}')" title="编辑">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-      </button>
-      <button class="post-action-btn delete-btn" onclick="deletePost('${post.id}')" title="删除">
-        <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-      </button>
-    </div>`;
+    actionsHtml = buildPostActionsMenuHTML(post, "viewPostFromTag");
   }
 
   const postRightClass = hasImages
